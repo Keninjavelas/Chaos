@@ -17,7 +17,10 @@ export const GameUI: React.FC<GameUIProps> = ({ onOverlayStateChange }) => {
       
       if (key === "tab" || key === "m") {
         e.preventDefault();
-        setIsActive(prev => !prev);
+        setIsActive(prev => {
+          if (!prev) document.exitPointerLock?.();
+          return !prev;
+        });
       } else if (key === "escape" && isActive) {
         setIsActive(false);
       }

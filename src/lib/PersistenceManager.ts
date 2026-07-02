@@ -48,9 +48,6 @@ export const PersistenceManager = {
       memoryIntegrity: state.memoryIntegrity,
       favoriteSection: state.favoriteSection,
       lastVisitedPage: state.lastVisitedPage,
-      totalSessionTime: state.totalSessionTime,
-      idleEvents: state.idleEvents,
-      panicEvents: state.panicEvents,
       totalTimeSpent: state.totalTimeSpent,
       archiveMetrics: {
         idleEvents: state.archiveMetrics.idleEvents,

@@ -2,9 +2,10 @@ import React from "react";
 import { RoomProps } from "../types";
 import { DocumentProp } from "../props/DocumentProp";
 import { Collectible } from "../props/Collectible";
-import { InteractableObject } from "../../Gameplay/InteractableObject";
+import { InteractableObject } from "../../Interactables/InteractableObject";
 import { useArchiveStore } from "@/lib/state";
 import * as THREE from "three";
+import { HorrorMaterial } from "../materials/HorrorMaterial";
 
 export function Sublevel({ position }: RoomProps) {
   const { setTeleportTarget } = useArchiveStore();
@@ -12,27 +13,27 @@ export function Sublevel({ position }: RoomProps) {
   return (
     <group position={position}>
       {/* ─── ATMOSPHERE & LIGHTING ─── */}
-      <ambientLight intensity={0.3} color="#fff1e0" />
-      <pointLight position={[0, 2.5, 0]} intensity={2.5} color="#ffecd1" distance={15} decay={2} />
+      {/* Removed ambientLight to make it dark */}
+      <pointLight position={[0, 2.5, 0]} intensity={1.5} color="#ffecd1" distance={10} decay={2} castShadow shadow-mapSize={[512, 512]} shadow-bias={-0.002} />
       {/* Desk Lamp */}
-      <pointLight position={[0.5, 1.2, 0]} intensity={1.8} color="#ffb347" distance={4} decay={2} />
+      <pointLight position={[0.5, 1.2, 0]} intensity={2.0} color="#ffb347" distance={5} decay={2} castShadow shadow-mapSize={[512, 512]} shadow-bias={-0.002} />
 
       {/* ─── ARCHITECTURE ─── */}
       {/* Floor – Warm concrete */}
-      <mesh position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="#8b5a2b" roughness={0.6} />
+        <HorrorMaterial color="#4a3525" roughness={0.7} noiseScale={8.0} bumpStrength={0.5} />
       </mesh>
       {/* Ceiling – Light concrete */}
-      <mesh position={[0, 3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+      <mesh position={[0, 3, 0]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="#a58c7b" roughness={0.8} />
+        <HorrorMaterial color="#6a5c53" roughness={0.9} noiseScale={8.0} />
       </mesh>
       {/* Walls – Dark walnut paneling */}
-      <mesh position={[0, 1.25, -5]}><boxGeometry args={[10, 3.5, 0.2]} /><meshStandardMaterial color="#3b2f2f" /></mesh>
-      <mesh position={[0, 1.25, 5]}><boxGeometry args={[10, 3.5, 0.2]} /><meshStandardMaterial color="#3b2f2f" /></mesh>
-      <mesh position={[-5, 1.25, 0]}><boxGeometry args={[0.2, 3.5, 10]} /><meshStandardMaterial color="#3b2f2f" /></mesh>
-      <mesh position={[5, 1.25, 0]}><boxGeometry args={[0.2, 3.5, 10]} /><meshStandardMaterial color="#3b2f2f" /></mesh>
+      <mesh position={[0, 1.25, -5]} receiveShadow><boxGeometry args={[10, 3.5, 0.2]} /><HorrorMaterial color="#1b1212" roughness={0.8} noiseScale={4.0} /></mesh>
+      <mesh position={[0, 1.25, 5]} receiveShadow><boxGeometry args={[10, 3.5, 0.2]} /><HorrorMaterial color="#1b1212" roughness={0.8} noiseScale={4.0} /></mesh>
+      <mesh position={[-5, 1.25, 0]} receiveShadow><boxGeometry args={[0.2, 3.5, 10]} /><HorrorMaterial color="#1b1212" roughness={0.8} noiseScale={4.0} /></mesh>
+      <mesh position={[5, 1.25, 0]} receiveShadow><boxGeometry args={[0.2, 3.5, 10]} /><HorrorMaterial color="#1b1212" roughness={0.8} noiseScale={4.0} /></mesh>
 
       {/* Bookshelves – Left back wall */}
       <group position={[-4.5, 0.5, -2]}>
@@ -44,35 +45,37 @@ export function Sublevel({ position }: RoomProps) {
 
       {/* Return elevator (back wall) */}
       <group position={[0, -0.5, 4.9]}>
-        <mesh position={[0, 1.2, 0]}><boxGeometry args={[2.2, 2.5, 0.2]} /><meshStandardMaterial color="#111" /></mesh>
-        <mesh position={[-0.5, 1.2, -0.1]}><boxGeometry args={[1.0, 2.4, 0.05]} /><meshStandardMaterial color="#cccccc" metalness={0.5} /></mesh>
-        <mesh position={[0.5, 1.2, -0.1]}><boxGeometry args={[1.0, 2.4, 0.05]} /><meshStandardMaterial color="#cccccc" metalness={0.5} /></mesh>
+        <mesh position={[0, 1.2, 0]} castShadow receiveShadow><boxGeometry args={[2.2, 2.5, 0.2]} /><HorrorMaterial color="#111" /></mesh>
+        <mesh position={[-0.5, 1.2, -0.1]} castShadow receiveShadow><boxGeometry args={[1.0, 2.4, 0.05]} /><HorrorMaterial color="#444" metalness={0.7} roughness={0.6} /></mesh>
+        <mesh position={[0.5, 1.2, -0.1]} castShadow receiveShadow><boxGeometry args={[1.0, 2.4, 0.05]} /><HorrorMaterial color="#444" metalness={0.7} roughness={0.6} /></mesh>
         <InteractableObject
-          position={[1.3, 1.2, -0.1]}
-          size={[0.3, 0.5, 0.05]}
           label="RETURN TO SURFACE"
-          color="#336633"
           onInteract={() => setTeleportTarget([0, 1, -8])}
-        />
+        >
+          <mesh position={[1.3, 1.2, -0.1]} castShadow>
+            <boxGeometry args={[0.3, 0.5, 0.05]} />
+            <HorrorMaterial color="#112211" roughness={0.4} metalness={0.8} />
+          </mesh>
+        </InteractableObject>
       </group>
 
       {/* ─── WORKSTATION (center) ─── */}
       <group position={[0, 0, 0]}>
         {/* Desk */}
-        <mesh position={[0, 0.75, 0]}><boxGeometry args={[2.4, 0.05, 1.2]} /><meshStandardMaterial color="#dddddd" /></mesh>
+        <mesh position={[0, 0.75, 0]} castShadow receiveShadow><boxGeometry args={[2.4, 0.05, 1.2]} /><HorrorMaterial color="#666" roughness={0.7} /></mesh>
         {/* Legs */}
-        <mesh position={[-1.1, 0.375, -0.5]}><cylinderGeometry args={[0.03, 0.03, 0.75]} /><meshStandardMaterial color="#222" /></mesh>
-        <mesh position={[1.1, 0.375, -0.5]}><cylinderGeometry args={[0.03, 0.03, 0.75]} /><meshStandardMaterial color="#222" /></mesh>
-        <mesh position={[-1.1, 0.375, 0.5]}><cylinderGeometry args={[0.03, 0.03, 0.75]} /><meshStandardMaterial color="#222" /></mesh>
-        <mesh position={[1.1, 0.375, 0.5]}><cylinderGeometry args={[0.03, 0.03, 0.75]} /><meshStandardMaterial color="#222" /></mesh>
+        <mesh position={[-1.1, 0.375, -0.5]} castShadow><cylinderGeometry args={[0.03, 0.03, 0.75]} /><HorrorMaterial color="#111" metalness={0.8} /></mesh>
+        <mesh position={[1.1, 0.375, -0.5]} castShadow><cylinderGeometry args={[0.03, 0.03, 0.75]} /><HorrorMaterial color="#111" metalness={0.8} /></mesh>
+        <mesh position={[-1.1, 0.375, 0.5]} castShadow><cylinderGeometry args={[0.03, 0.03, 0.75]} /><HorrorMaterial color="#111" metalness={0.8} /></mesh>
+        <mesh position={[1.1, 0.375, 0.5]} castShadow><cylinderGeometry args={[0.03, 0.03, 0.75]} /><HorrorMaterial color="#111" metalness={0.8} /></mesh>
         {/* Chair */}
-        <mesh position={[0, 0.45, 0.8]}><cylinderGeometry args={[0.3, 0.3, 0.05]} /><meshStandardMaterial color="#333" /></mesh>
-        <mesh position={[0, 0.8, 1.0]} rotation={[-0.1, 0, 0]}><boxGeometry args={[0.5, 0.6, 0.1]} /><meshStandardMaterial color="#333" /></mesh>
-        <mesh position={[0, 0.225, 0.8]}><cylinderGeometry args={[0.05, 0.05, 0.45]} /><meshStandardMaterial color="#111" /></mesh>
+        <mesh position={[0, 0.45, 0.8]} castShadow><cylinderGeometry args={[0.3, 0.3, 0.05]} /><HorrorMaterial color="#1a1a1a" roughness={0.9} /></mesh>
+        <mesh position={[0, 0.8, 1.0]} rotation={[-0.1, 0, 0]} castShadow><boxGeometry args={[0.5, 0.6, 0.1]} /><HorrorMaterial color="#1a1a1a" roughness={0.9} /></mesh>
+        <mesh position={[0, 0.225, 0.8]} castShadow><cylinderGeometry args={[0.05, 0.05, 0.45]} /><HorrorMaterial color="#111" /></mesh>
         {/* Monitor */}
-        <mesh position={[0, 1.1, -0.3]}>
+        <mesh position={[0, 1.1, -0.3]} castShadow>
           <boxGeometry args={[0.8, 0.5, 0.05]} />
-          <meshStandardMaterial color="#111" />
+          <HorrorMaterial color="#111" />
         </mesh>
         <DocumentProp
           position={[0, 1.1, -0.27]}
@@ -152,11 +155,11 @@ export function Sublevel({ position }: RoomProps) {
 
       {/* ─── WHITEBOARD (left wall) ─── */}
       <group position={[-4.9, 1.5, 0]} rotation={[0, Math.PI/2, 0]}>
-        <mesh><boxGeometry args={[4, 2, 0.1]} /><meshStandardMaterial color="#ffffff" /></mesh>
-        <mesh position={[0, 1, 0]}><boxGeometry args={[4.1, 0.05, 0.15]} /><meshStandardMaterial color="#888" /></mesh>
-        <mesh position={[0, -1, 0]}><boxGeometry args={[4.1, 0.05, 0.15]} /><meshStandardMaterial color="#888" /></mesh>
-        <mesh position={[-2, 0, 0]}><boxGeometry args={[0.05, 2, 0.15]} /><meshStandardMaterial color="#888" /></mesh>
-        <mesh position={[2, 0, 0]}><boxGeometry args={[0.05, 2, 0.15]} /><meshStandardMaterial color="#888" /></mesh>
+        <mesh castShadow receiveShadow><boxGeometry args={[4, 2, 0.1]} /><HorrorMaterial color="#ffffff" roughness={0.4} /></mesh>
+        <mesh position={[0, 1, 0]} castShadow receiveShadow><boxGeometry args={[4.1, 0.05, 0.15]} /><HorrorMaterial color="#222" metalness={0.7} /></mesh>
+        <mesh position={[0, -1, 0]} castShadow receiveShadow><boxGeometry args={[4.1, 0.05, 0.15]} /><HorrorMaterial color="#222" metalness={0.7} /></mesh>
+        <mesh position={[-2, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.05, 2, 0.15]} /><HorrorMaterial color="#222" metalness={0.7} /></mesh>
+        <mesh position={[2, 0, 0]} castShadow receiveShadow><boxGeometry args={[0.05, 2, 0.15]} /><HorrorMaterial color="#222" metalness={0.7} /></mesh>
         <DocumentProp
           position={[0, 0, 0.06]}
           rotation={[0, 0, 0]}

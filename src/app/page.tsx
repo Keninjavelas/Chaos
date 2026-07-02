@@ -1,5 +1,6 @@
-import Renderer from "@/game/Engine/Renderer";
+"use client";
+import { IntroFlow } from "@/components/intro/IntroFlow";
 
 export default function Home() {
-    return <Renderer />;
+    return <IntroFlow />;
 }

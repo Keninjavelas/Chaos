@@ -35,8 +35,14 @@ export const getCorruptionStage = () => {
 
 /** Session risk level – a simple heuristic */
 export const getSessionRiskLevel = () => {
-  const { degradationLevel, panicEvents, idleEvents } = useArchiveStore.getState();
-  const score = degradationLevel * 0.6 + panicEvents * 0.2 + idleEvents * 0.2;
+  // These were removed in a previous refactor
+  // hasExperiencedPanic: (state: ArchiveState) => state.panicEvents.length > 0,
+  // getRecentPanicEvents: (state: ArchiveState) => {
+  //   const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
+  //   return state.panicEvents.filter(e => e.timestamp > tenMinutesAgo);
+  // },
+  // getIdleEvents: (state: ArchiveState) => state.idleEvents,
+  const score = 0; 
   if (score < 0.3) return "Low";
   if (score < 0.6) return "Medium";
   return "High";

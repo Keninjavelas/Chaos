@@ -1,79 +1,35 @@
 import React, { useState } from "react";
 import { RoomProps } from "../types";
-import { RoomFloor, RoomCeiling, RoomWall, NoticeBoard } from "../props/RoomArchitecture";
+import { RoomFloor, RoomCeiling, RoomWall, NoticeBoard, VisitorChairs, InstitutionalDoor } from "../props/RoomArchitecture";
 import { ReceptionDesk } from "../props/ReceptionDesk";
 import { FilingCabinet } from "../props/FilingCabinet";
-import { VisitorChairs } from "../props/RoomArchitecture";
-
-import { RingingPhone } from "../props/RingingPhone";
 import { DocumentProp } from "../props/DocumentProp";
-import { useArchiveStore, DocumentData } from "@/lib/state";
-import { RigidBody } from "@react-three/rapier";
+import { InteractableObject } from "../../Interactables/InteractableObject";
+import { useGameState } from "../../useGameState";
+import { DocumentContent } from "@/data/types";
+import { HorrorMaterial } from "../materials/HorrorMaterial";
+import { VendingMachine, TrashBin } from "../props/HeavyProps";
+import { CoffeeMug, Pen, StickyNote, EmployeeID, Keyboard, CRTMonitor, DeskPhone, Magazine, WallSign } from "../props/Clutter";
+import { InstancedDebris } from "../props/InstancedDebris";
+import { CubicleDivider, SupervisorDesk, OldRefrigerator, Microwave, CoffeeMachine, OfficePrinter, AudioRecorder, CassetteTape, FamilyPhoto, WallClock, DeskLamp } from "../props/PersonnelProps";
 
-function FramedCertificate({ position, rotation, document }: { position: [number, number, number], rotation: [number, number, number], document: DocumentData }) {
-  const { setActiveDocument } = useArchiveStore();
+function InteractiveItem({ position, rotation, label, icon, onInteract, children }: { position: [number, number, number], rotation: [number, number, number], label: string, icon?: string, onInteract: () => void, children: React.ReactNode }) {
   return (
-    <RigidBody type="fixed" position={position} rotation={rotation}>
-      <group 
-        onPointerOver={(e) => { e.stopPropagation(); window.document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { window.document.body.style.cursor = 'auto'; }}
-        onClick={(e) => { 
-          e.stopPropagation(); 
-          setActiveDocument(document);
-          window.document.body.style.cursor = 'auto';
-        }}
-      >
-        {/* Frame */}
-        <mesh position={[0, 0, 0]}><boxGeometry args={[0.5, 0.7, 0.05]} /><meshStandardMaterial color="#1a1a1a" roughness={0.6} /></mesh>
-        {/* Glass/Paper */}
-        <mesh position={[0, 0, 0.03]}><planeGeometry args={[0.45, 0.65]} /><meshStandardMaterial color="#e5e0d8" roughness={0.2} metalness={0.1} /></mesh>
-      </group>
-    </RigidBody>
-  );
-}
-
-function ResumeEnvelope({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) {
-  const [collected, setCollected] = useState(false);
-  const { addInventoryItem, setActiveDocument } = useArchiveStore();
-
-  if (collected) {
-    return (
-      <DocumentProp 
-        position={position} 
-        rotation={rotation}
-        document={{ 
-          id: "DOC-RESUME-NOTE", 
-          title: "HANDWRITTEN NOTE", 
-          type: "note", 
-          content: "Most people start here.\nThey should have started with the records." 
-        }} 
-      />
-    );
-  }
-
-  return (
-    <RigidBody type="fixed" position={position} rotation={rotation}>
-      <mesh 
-        onPointerOver={(e) => { e.stopPropagation(); window.document.body.style.cursor = 'pointer'; }}
-        onPointerOut={(e) => { window.document.body.style.cursor = 'auto'; }}
-        onClick={(e) => { 
-          e.stopPropagation(); 
-          addInventoryItem("Resume.pdf");
-          setCollected(true);
-          window.document.body.style.cursor = 'auto';
-        }}
-      >
-        <boxGeometry args={[0.4, 0.02, 0.3]} />
-        <meshStandardMaterial color="#d4a373" roughness={0.9} /> {/* Manila envelope color */}
-      </mesh>
-    </RigidBody>
+    <InteractableObject label={label} onInteract={onInteract}>
+      <group position={position} rotation={rotation}>{children}</group>
+    </InteractableObject>
   );
 }
 
 export function PersonnelWing({ position }: RoomProps) {
-  // Center is global X=12, Z=-5.
-  // Room is 8x8m (X: -4 to 4, Z: -4 to 4 relative)
-  // Entrance corridor connects on Left Wall (X=-4) from Z=1 to Z=3 (Relative Z=2, width 2m)
+  const inspectDocument = useGameState(state => state.inspectDocument);
+
+  // ZONES:
+  // - Supervisor Office: X: -4 to -1.5, Z: -4 to 0
+  // - Lockers: X: 3.5 to 4, Z: -4 to -1
+  // - Break Area: X: -2 to 1, Z: 2.5 to 4
+  // - Filing/Printing: X: 2 to 4, Z: 2 to 4
+  // - Workstations: 4 cubicles in center (X: -1 to 2.5, Z: -2 to 1.5)
 
   return (
     <group position={position}>
@@ -93,90 +49,156 @@ export function PersonnelWing({ position }: RoomProps) {
 
       {/* ─── ENTRY CORRIDOR ─── */}
       <group position={[-5.75, 0, 2]}>
-        {/* Floor and Ceiling exactly bridge the 3.5m gap (X: 4.5 to 8.0) */}
         <RoomFloor args={[3.5, 4]} position={[0, -0.5, 0]} />
         <RoomCeiling args={[3.5, 0.1, 4]} position={[0, 2.5, 0]} hasLights={false} />
-        {/* Walls are slightly longer (3.9m) to overlap into the rooms and prevent visual seams */}
         <RoomWall position={[0, 0, -1]} args={[3.9, 3.4, 0.2]} />
         <RoomWall position={[0, 0, 1]} args={[3.9, 3.4, 0.2]} />
       </group>
 
-      {/* ─── ATMOSPHERE & LIGHTING ─── */}
-      <ambientLight intensity={0.15} color="#ffe5cc" /> 
-      
-      {/* Single harsh overhead light over the desk */}
+      {/* ─── LIGHTING & ATMOSPHERE ─── */}
+      {/* Broken/Flickering Overhead Light */}
       <group position={[0, 2.8, 0]}>
-        <mesh><boxGeometry args={[1.2, 0.1, 0.3]} /><meshStandardMaterial color="#fff" emissive="#ffe5cc" emissiveIntensity={0.8} /></mesh>
-        <pointLight color="#ffe5cc" distance={6} decay={2} intensity={3.0} />
+        <mesh><boxGeometry args={[1.2, 0.1, 0.3]} /><HorrorMaterial color="#111" /></mesh>
+        <pointLight color="#ffe5cc" distance={8} decay={2} intensity={0.3} />
       </group>
+      {/* Light coming from corridor */}
+      <spotLight position={[-4, 2, 2]} target-position={[0, 0, 0]} angle={0.8} penumbra={0.5} intensity={2.0} distance={10} color="#aaccff" />
+      <mesh position={[0, 0, 0]} visible={false}><boxGeometry args={[0.1, 0.1, 0.1]} /></mesh>
+      {/* General dirt */}
+      <InstancedDebris count={150} areaSize={[8, 8]} position={[0, 0.01, 0]} type="paper" />
+      <InstancedDebris count={50} areaSize={[8, 8]} position={[0, 0.01, 0]} type="rubble" />
+      <InstancedDebris count={20} areaSize={[3, 3]} position={[-2, 0.01, 3]} type="blood" /> {/* Spilled coffee near break area */}
 
-      {/* ─── ITEM 1, 2, & 5: THE DESK (CENTERPIECE) ─── */}
-      <group position={[0, -0.5, -0.5]}>
-        <ReceptionDesk position={[0, 0, 0]} rotation={[0, 0, 0]} onInteractMap={() => {}} />
+      {/* ─── ZONE 1: SUPERVISOR OFFICE ─── */}
+      <group position={[-2.5, 0, -2.5]}>
+        {/* Office Partition Walls */}
+        <mesh position={[1, 1.4, 0]}><boxGeometry args={[0.1, 2.8, 3]} /><HorrorMaterial color="#2a2a2a" roughness={0.9} /></mesh>
+        <mesh position={[1, 1.4, 2]}><boxGeometry args={[0.1, 2.8, 1]} /><HorrorMaterial color="#2a2a2a" roughness={0.9} /></mesh>
+        {/* Doorway header */}
+        <mesh position={[1, 2.6, 1.25]}><boxGeometry args={[0.1, 0.4, 0.5]} /><HorrorMaterial color="#2a2a2a" /></mesh>
         
-        {/* Lamp */}
-        <mesh position={[-1, 0.61, -0.5]}><cylinderGeometry args={[0.1, 0.15, 0.3]} /><meshStandardMaterial color="#111" /></mesh>
-        <spotLight position={[-1, 1.2, -0.5]} target-position={[-0.2, 0.6, -0.2]} angle={0.5} penumbra={0.3} intensity={4} distance={2} color="#fff2cc" />
-        <mesh position={[-0.2, 0.6, -0.2]} visible={false}><boxGeometry args={[0.1, 0.1, 0.1]} /></mesh> {/* SpotLight Target */}
-
-        {/* Coffee Mug */}
-        <mesh position={[-0.8, 0.65, -0.2]}><cylinderGeometry args={[0.06, 0.06, 0.1]} /><meshStandardMaterial color="#ddd" /></mesh>
-
-        {/* Notebook */}
-        <DocumentProp position={[-0.2, 0.62, -0.2]} rotation={[-Math.PI/2, 0, 0.1]}
-          document={{ id: "DOC-NOTEBOOK", title: "OPEN NOTEBOOK", type: "note", content: `Most people build features.\nSome build systems.\nSystems last longer.\n\nNeed more Kubernetes experience.` }} 
-        />
-
-        {/* Personnel Folder (Clean, separate) */}
-        <DocumentProp position={[0.8, 0.61, -0.3]} rotation={[-Math.PI/2, 0, -0.1]}
-          document={{ id: "DOC-RESUME", title: "PERSONNEL FOLDER", type: "dossier", content: `NAME: Aryan Kapoor\nLOCATION: Bangalore\nGRADUATION: 2027\nEDUCATION: B.E. Computer Science\n\nRESEARCH: Published Paper\n\nINTERESTS:\n- Backend Systems\n- Cloud Infrastructure\n- Security Engineering\n- Platform Engineering` }} 
-        />
-
-        {/* Resume Envelope (Collectible) - Partially sticking out of the drawer area */}
-        <ResumeEnvelope position={[-0.6, 0.45, 0.6]} rotation={[-Math.PI/2, 0, 0.2]} />
-      </group>
-
-      {/* ─── ITEM 3: THE LOCKER WALL ─── */}
-      <group position={[-3.5, -0.5, -2.5]} rotation={[0, Math.PI/2, 0]}>
-        {/* Lockers */}
-        <mesh position={[0, 1.0, 0]}><boxGeometry args={[1.5, 2.0, 0.6]} /><meshStandardMaterial color="#4a5a6a" metalness={0.6} /></mesh>
-        {/* Open Locker Door */}
-        <mesh position={[0.75, 1.0, 0.3]} rotation={[0, -0.6, 0]}><boxGeometry args={[0.5, 2.0, 0.05]} /><meshStandardMaterial color="#4a5a6a" metalness={0.6} /></mesh>
-
-        {/* Old Laptop */}
-        <mesh position={[0.5, 0.6, 0]}><boxGeometry args={[0.3, 0.02, 0.2]} /><meshStandardMaterial color="#111" /></mesh>
+        {/* Glass panel */}
+        <mesh position={[1, 1.5, -0.5]} rotation={[0, Math.PI/2, 0]}>
+          <planeGeometry args={[1.8, 1.5]} />
+          <meshStandardMaterial color="#fff" transparent opacity={0.1} roughness={0.1} />
+        </mesh>
         
-        {/* Sticky Notes / Planner */}
-        <DocumentProp position={[0.6, 0.65, 0.1]} rotation={[-Math.PI/2, 0, 0.2]}
-          document={{ id: "DOC-LOCKER", title: "LOCKER NOTES", type: "note", content: `[PLANNER ENTRY]\nApply for internships.\n\n[CROSSED OUT HEAVILY IN RED INK]\n\n[STICKY NOTE]\nBuild something worth hiring.` }} 
-        />
+        <SupervisorDesk position={[-0.5, 0, -0.5]} rotation={[0, Math.PI/2, 0]} />
+        <DeskLamp position={[-0.2, 0.8, -0.9]} rotation={[0, 0.5, 0]} on={true} />
+        <CRTMonitor position={[-0.4, 0.8, -0.4]} rotation={[0, Math.PI/2 - 0.2, 0]} on={false} />
+        <Keyboard position={[0.0, 0.8, -0.4]} rotation={[0, Math.PI/2 - 0.2, 0]} />
         
-        {/* Hidden Interview Notes */}
-        <DocumentProp position={[0.1, 0.51, -0.1]} rotation={[-Math.PI/2, 0, 0.1]}
-          document={{ id: "DOC-INTERVIEW", title: "INTERVIEW PREPARATION NOTES", type: "note", content: `THINGS TO IMPROVE:\n• Kubernetes\n• Open Source Contributions\n• Larger Scale Experience\n\nCURRENT STRENGTHS:\n• Research\n• Communication\n• Systems Thinking` }} 
+        <DocumentProp position={[-0.2, 0.8, -0.1]} rotation={[-Math.PI/2, 0, 0.3]}
+          document={{ id: "DOC-TERMINATION", title: "TERMINATION NOTICE", type: "dossier", content: "To: Vance, A.\n\nYour employment is hereby terminated effective immediately.\n\nPlease return your access card to Security." }} 
         />
-      </group>
-
-      {/* ─── ITEM 4: THE WHITEBOARD (THE HORROR LAYER) ─── */}
-      <group position={[-1.5, 0.5, -3.8]} rotation={[0, 0, 0]}>
-        <NoticeBoard position={[0, 0, 0]} rotation={[0, 0, 0]} />
-        <DocumentProp position={[0, 0, 0.05]} rotation={[0, 0, 0]}
-          document={{ id: "DOC-WHITEBOARD", title: "WHITEBOARD", type: "note", content: `Why did it fail?\nSymptoms ≠ Root Cause\n\n[Root Cause Unknown]\n\nTemporary Fix Applied.\nInvestigation Continues.` }} 
+        <CassetteTape position={[-0.6, 0.8, -0.2]} rotation={[0, 0.5, 0]} />
+        <AudioRecorder position={[-0.7, 0.8, -0.3]} rotation={[0, 0.8, 0]} />
+        
+        <FilingCabinet position={[-1.2, 0, 1.0]} rotation={[0, Math.PI/2, 0]} />
+        <NoticeBoard position={[-1.48, 1.5, 0.5]} rotation={[0, Math.PI/2, 0]} />
+        <DocumentProp position={[-1.47, 1.5, 0.5]} rotation={[0, Math.PI/2, 0]}
+          document={{ id: "DOC-TIMELINE", title: "ERASED TIMELINE", type: "note", content: "08:00 - Initial breach detected\n08:15 - Containment failed\n08:30 - Do not let them leave" }} 
         />
+        {/* Supervisor Chair */}
+        <mesh position={[0.2, 0.4, -0.5]}><boxGeometry args={[0.5, 0.8, 0.5]} /><HorrorMaterial color="#1a1a1a" roughness={0.8} /></mesh>
       </group>
 
-      {/* ─── ITEM 6: CERTIFICATE WALL ─── */}
-      {/* Right Wall (X=3.9) */}
-      <group position={[3.9, 1.5, 0]} rotation={[0, -Math.PI/2, 0]}>
-        <FramedCertificate position={[-1.2, 0.2, 0]} rotation={[0, 0, 0]} document={{ id: "CERT-1", title: "VERIFIED COMPETENCY", type: "case_file", content: "Certificate Frame 01\n\nCloud / Infrastructure"}} />
-        <FramedCertificate position={[0, 0.4, 0]} rotation={[0, 0, 0]} document={{ id: "CERT-2", title: "VERIFIED COMPETENCY", type: "case_file", content: "Certificate Frame 02\n\nSecurity / Platform"}} />
-        <FramedCertificate position={[1.2, 0.1, 0]} rotation={[0, 0, 0]} document={{ id: "CERT-3", title: "VERIFIED COMPETENCY", type: "case_file", content: "Certificate Frame 03\n\nEngineering Achievement"}} />
-        <FramedCertificate position={[-0.5, -0.6, 0]} rotation={[0, 0, 0]} document={{ id: "CERT-4", title: "VERIFIED COMPETENCY", type: "case_file", content: "Certificate Frame 04\n\nResearch Publication"}} />
+      {/* ─── ZONE 2: WORKSTATIONS (CUBICLES) ─── */}
+      <group position={[0.5, 0, -0.5]}>
+        {/* Cross Divider */}
+        <CubicleDivider position={[0, 0, 0]} rotation={[0, 0, 0]} length={4} />
+        <CubicleDivider position={[0, 0, 0]} rotation={[0, Math.PI/2, 0]} length={4} />
+        
+        {/* Desk 1: Overworked (Bottom-Right of cross) */}
+        <group position={[1.0, 0, -1.0]}>
+          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><HorrorMaterial color="#ddd" roughness={0.8} /></mesh>
+          <DeskLamp position={[0.5, 0.8, -0.5]} rotation={[0, -0.5, 0]} on={true} />
+          <CRTMonitor position={[0.2, 0.8, -0.2]} rotation={[0, -Math.PI/4, 0]} on={true} />
+          <Keyboard position={[-0.1, 0.8, 0.1]} rotation={[0, -Math.PI/4, 0]} />
+          <CoffeeMug position={[-0.4, 0.8, -0.2]} spilled={true} />
+          <DocumentProp position={[0.4, 0.8, 0.4]} rotation={[-Math.PI/2, 0, 0.2]} document={{ id: "DOC-ROTA", title: "STAFF ROTA", type: "dossier", content: "Shift 1: Vance, Miller\nShift 2: Chen, Harrison\n\nNote: Mandatory overtime until further notice." }} />
+          <WallClock position={[-0.9, 1.4, 0]} rotation={[0, Math.PI/2, 0]} />
+          {/* Chair pushed back */}
+          <mesh position={[-0.3, 0.4, 0.5]} rotation={[0, 0.4, 0]}><boxGeometry args={[0.4, 0.4, 0.4]} /><HorrorMaterial color="#333" /></mesh>
+        </group>
+
+        {/* Desk 2: Left in a hurry (Bottom-Left of cross) */}
+        <group position={[-1.0, 0, -1.0]}>
+          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><HorrorMaterial color="#ddd" roughness={0.8} /></mesh>
+          <CRTMonitor position={[-0.2, 0.8, -0.2]} rotation={[0, Math.PI/4, 0]} on={true} />
+          <DeskPhone position={[-0.6, 0.8, 0.2]} rotation={[0, 0.5, 0]} /> {/* Phone off hook implied */}
+          <DocumentProp position={[0.2, 0.8, -0.5]} rotation={[-Math.PI/2, 0, -0.2]} document={{ id: "DOC-REPORT", title: "INCIDENT REPORT", type: "case_file", content: "Subject 44 exhibited extreme aggression.\nThree staff injured.\nProtocol 7 initiated." }} />
+          {/* Tipped Chair */}
+          <mesh position={[0.2, 0.2, 0.5]} rotation={[Math.PI/2, 0, 0.4]}><boxGeometry args={[0.4, 0.4, 0.4]} /><HorrorMaterial color="#333" /></mesh>
+        </group>
+
+        {/* Desk 3: Personalized (Top-Left of cross) */}
+        <group position={[-1.0, 0, 1.0]}>
+          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><HorrorMaterial color="#ddd" roughness={0.8} /></mesh>
+          <FamilyPhoto position={[-0.5, 0.8, 0.5]} rotation={[0, Math.PI, 0]} />
+          <DeskLamp position={[-0.5, 0.8, 0.1]} rotation={[0, 1.5, 0]} on={false} />
+          <Pen position={[0.2, 0.8, 0.2]} rotation={[0, 0.1, 0]} />
+          <Pen position={[0.3, 0.8, 0.25]} rotation={[0, 0.2, 0]} />
+          <DocumentProp position={[-0.2, 0.8, 0.4]} rotation={[-Math.PI/2, 0, 0]} document={{ id: "DOC-PASSWORD", title: "PASSWORD NOTE", type: "note", content: "Network Login: admin\nPassword: god_help_us_all" }} />
+          <mesh position={[0.1, 0.4, 0.1]}><boxGeometry args={[0.4, 0.4, 0.4]} /><HorrorMaterial color="#333" /></mesh>
+        </group>
+
+        {/* Desk 4: Empty/New Hire (Top-Right of cross) */}
+        <group position={[1.0, 0, 1.0]}>
+          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><HorrorMaterial color="#ddd" roughness={0.8} /></mesh>
+          <DocumentProp position={[0.0, 0.8, 0.0]} rotation={[-Math.PI/2, 0, 0.1]} document={{ id: "DOC-HANDBOOK", title: "PERSONNEL HANDBOOK", type: "dossier", content: "Welcome to Auxilium Asylum.\n\nRule 1: Never enter the Sublevel alone.\nRule 2: Report all hallucinations." }} />
+          <StickyNote position={[0.4, 0.8, 0.2]} rotation={[0, -0.4, 0]} color="#ff9e9e" />
+          <mesh position={[-0.1, 0.4, 0.1]}><boxGeometry args={[0.4, 0.4, 0.4]} /><HorrorMaterial color="#333" /></mesh>
+        </group>
       </group>
 
-      {/* Filing Shelf to complete the room structure (Visual only) */}
-      <FilingCabinet position={[2, -0.5, -3.5]} rotation={[0, 0, 0]} />
-      <FilingCabinet position={[2.8, -0.5, -3.5]} rotation={[0, 0, 0]} />
+      {/* ─── ZONE 3: BREAK AREA ─── */}
+      <group position={[-2, 0, 3]}>
+        <OldRefrigerator position={[-1.5, 0, 0]} rotation={[0, Math.PI/2, 0]} />
+        <mesh position={[-0.5, 0.4, 0.5]}><boxGeometry args={[1.5, 0.05, 0.8]} /><HorrorMaterial color="#ddd" /></mesh> {/* Counter */}
+        <Microwave position={[-0.8, 0.45, 0.5]} rotation={[0, 0, 0]} />
+        <CoffeeMachine position={[-0.2, 0.45, 0.5]} rotation={[0, -0.2, 0]} />
+        <VendingMachine position={[1.0, 0, 0.5]} rotation={[0, Math.PI, 0]} />
+        <TrashBin position={[1.8, 0, 0.5]} rotation={[0, 0, 0]} />
+        
+        <WallSign position={[-1.98, 1.8, 0.5]} rotation={[0, Math.PI/2, 0]} text="KITCHEN" size="large" />
+        <DocumentProp position={[-0.5, 0.48, 0.8]} rotation={[-Math.PI/2, 0, 0.4]} document={{ id: "DOC-MEMO", title: "WARNING MEMO", type: "note", content: "Please clean the microwave after use.\nAlso, stop putting blood vials in the fridge." }} />
+        
+        {/* Plastic chairs scattered */}
+        <mesh position={[0, 0.2, -0.5]} rotation={[0, 0.3, 0]}><boxGeometry args={[0.3, 0.4, 0.3]} /><HorrorMaterial color="#2a4d69" /></mesh>
+        <mesh position={[1.2, 0.2, -0.2]} rotation={[Math.PI/2, 0, 0.8]}><boxGeometry args={[0.3, 0.4, 0.3]} /><HorrorMaterial color="#2a4d69" /></mesh>
+      </group>
+
+      {/* ─── ZONE 4: FILING & PRINTING ─── */}
+      <group position={[2.5, 0, 3]}>
+        <OfficePrinter position={[-0.5, 0, 0]} rotation={[0, 0, 0]} />
+        
+        <FilingCabinet position={[0.5, 0, 0.6]} rotation={[0, Math.PI, 0]} />
+        <FilingCabinet position={[1.1, 0, 0.6]} rotation={[0, Math.PI, 0]} />
+        
+        {/* Tipped over cabinet */}
+        <group position={[1.0, 0.2, -0.8]} rotation={[Math.PI/2, 0, 0.3]}>
+          <FilingCabinet position={[0, 0, 0]} rotation={[0, 0, 0]} />
+        </group>
+        
+        <DocumentProp position={[1.0, 0.05, -1.8]} rotation={[-Math.PI/2, 0, 0.2]} document={{ id: "DOC-SECURITY", title: "SECURITY NOTICE", type: "dossier", content: "Lockdown overridden.\nFacility compromised.\nEvacuate immediately." }} />
+        
+        <InstancedDebris count={30} areaSize={[2, 2]} position={[0.5, 0.01, -1]} type="paper" />
+      </group>
+
+      {/* ─── ZONE 5: LOCKERS ─── */}
+      <group position={[3.6, 0, -2]} rotation={[0, -Math.PI/2, 0]}>
+        {/* Bank of lockers */}
+        <mesh position={[0, 1.0, 0]}><boxGeometry args={[3.0, 2.0, 0.6]} /><HorrorMaterial color="#3a4a5a" metalness={0.7} roughness={0.6} noiseScale={4.0} /></mesh>
+        {/* Open doors */}
+        <mesh position={[0.75, 1.0, 0.3]} rotation={[0, -0.6, 0]}><boxGeometry args={[0.5, 2.0, 0.05]} /><HorrorMaterial color="#3a4a5a" metalness={0.7} roughness={0.6} noiseScale={3.0} /></mesh>
+        <mesh position={[-0.75, 1.0, 0.3]} rotation={[0, -1.2, 0]}><boxGeometry args={[0.5, 2.0, 0.05]} /><HorrorMaterial color="#3a4a5a" metalness={0.7} roughness={0.6} noiseScale={3.0} /></mesh>
+        
+        <DocumentProp position={[0.6, 0.51, 0.1]} rotation={[-Math.PI/2, 0, 0.2]} document={{ id: "DOC-MEETING", title: "MEETING MINUTES", type: "note", content: "Management refuses to acknowledge the screaming.\nWe are organizing a walk-out on Friday." }} />
+        
+        {/* Backpack inside open locker */}
+        <mesh position={[-0.7, 0.3, 0]}><boxGeometry args={[0.3, 0.4, 0.2]} /><HorrorMaterial color="#8b0000" /></mesh>
+      </group>
 
     </group>
   );

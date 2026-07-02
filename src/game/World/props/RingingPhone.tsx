@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { useArchiveStore } from "@/lib/state";
+import * as THREE from "three";
 
 interface RingingPhoneProps {
   position: [number, number, number];

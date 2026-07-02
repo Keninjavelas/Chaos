@@ -14,7 +14,7 @@ export function FilingCabinet({ position, rotation = [0, 0, 0], openDrawers = []
       <RigidBody type="fixed">
         {/* Main Cabinet Body */}
         <RoundedBox args={[0.8, 1.8, 0.8]} position={[0, 0.9, 0]} radius={0.02} smoothness={4}>
-          <meshStandardMaterial color="#323639" roughness={0.7} metalness={0.4} />
+          <meshStandardMaterial color="#222425" roughness={0.6} metalness={0.6} />
         </RoundedBox>
 
         {/* Drawers */}
