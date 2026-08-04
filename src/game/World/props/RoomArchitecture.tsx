@@ -18,8 +18,8 @@ export function RoomFloor({ position = [0, -0.5, 0], args = [20, 40] }: FloorPro
         <HorrorMaterial color="#1a1a1a" roughness={0.7} metalness={0.2} noiseScale={8.0} bumpStrength={0.5} />
       </mesh>
       
-      {/* Collision Box underlying the plane - made thick to prevent falling through on spawn */}
-      <mesh position={[0, -0.01, 0]}>
+      {/* Collision Box underlying the plane - top surface aligns precisely with Y=0.0 */}
+      <mesh position={[0, 0.0, 0]}>
         <boxGeometry args={[args[0], 1.0, args[1]]} />
         <meshBasicMaterial visible={false} />
       </mesh>
@@ -117,47 +117,25 @@ export function RoomWall({ position, rotation = [0,0,0], args, width, height, de
   );
 }
 
-export function InstitutionalDoor({ position, rotation = [0,0,0], isOpen = false }: { position: [number, number, number], rotation?: [number, number, number], isOpen?: boolean }) {
-  // Institutional heavy metal door with frame
+export function InstitutionalDoor({ position, rotation = [0,0,0], isOpen = true }: { position: [number, number, number], rotation?: [number, number, number], isOpen?: boolean }) {
+  // Institutional double-doorway frame (2.0m clear opening for accessible navigation)
   return (
     <group position={position} rotation={rotation}>
       <RigidBody type="fixed">
-        {/* Frame Sides */}
-        <mesh position={[-0.45, 1.05, 0]} castShadow receiveShadow>
+        {/* Frame Sides (2.0m clear inner opening) */}
+        <mesh position={[-1.05, 1.05, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.1, 2.1, 0.25]} />
           <HorrorMaterial color="#1a1a1a" roughness={0.6} metalness={0.5} />
         </mesh>
-        <mesh position={[0.45, 1.05, 0]} castShadow receiveShadow>
+        <mesh position={[1.05, 1.05, 0]} castShadow receiveShadow>
           <boxGeometry args={[0.1, 2.1, 0.25]} />
           <HorrorMaterial color="#1a1a1a" roughness={0.6} metalness={0.5} />
         </mesh>
-        {/* Frame Top */}
+        {/* Frame Top Header */}
         <mesh position={[0, 2.15, 0]} castShadow receiveShadow>
-          <boxGeometry args={[1.0, 0.1, 0.25]} />
+          <boxGeometry args={[2.2, 0.1, 0.25]} />
           <HorrorMaterial color="#1a1a1a" roughness={0.6} metalness={0.5} />
         </mesh>
-        
-        {/* Actual Door */}
-        <group position={[-0.4, 1.05, 0]} rotation={[0, isOpen ? -Math.PI / 2.2 : 0, 0]}>
-          <mesh position={[0.4, 0, 0]} castShadow receiveShadow>
-            <boxGeometry args={[0.8, 2.05, 0.05]} />
-            <HorrorMaterial color="#3a302a" roughness={0.8} metalness={0.3} noiseScale={3.0} />
-          </mesh>
-          {/* Kickplate */}
-          <mesh position={[0.4, -0.9, 0.026]} receiveShadow>
-            <planeGeometry args={[0.8, 0.2]} />
-            <HorrorMaterial color="#555" roughness={0.4} metalness={0.8} />
-          </mesh>
-          <mesh position={[0.4, -0.9, -0.026]} rotation={[0, Math.PI, 0]} receiveShadow>
-            <planeGeometry args={[0.8, 0.2]} />
-            <HorrorMaterial color="#555" roughness={0.4} metalness={0.8} />
-          </mesh>
-          {/* Handle */}
-          <mesh position={[0.7, 0, 0.04]} castShadow>
-            <cylinderGeometry args={[0.02, 0.02, 0.15]} />
-            <meshStandardMaterial color="#888" roughness={0.3} metalness={0.9} />
-          </mesh>
-        </group>
       </RigidBody>
     </group>
   );
@@ -197,12 +175,12 @@ export function ElevatorDoor({ position, rotation = [0,0,0] }: { position: [numb
           <meshStandardMaterial color="#050505" />
         </mesh>
         
-        {/* Left Door */}
-        <RoundedBox ref={leftDoorRef} args={[0.7, 2.3, 0.05]} position={[-0.35, 1.15, 0.15]} radius={0.01}>
+        {/* Left Door (Permanently open in dev mode) */}
+        <RoundedBox ref={leftDoorRef} args={[0.7, 2.3, 0.05]} position={[-0.9, 1.15, 0.15]} radius={0.01}>
           <meshStandardMaterial color="#362f2d" roughness={0.7} metalness={0.8} />
         </RoundedBox>
-        {/* Right Door */}
-        <RoundedBox ref={rightDoorRef} args={[0.7, 2.3, 0.05]} position={[0.35, 1.15, 0.15]} radius={0.01}>
+        {/* Right Door (Permanently open in dev mode) */}
+        <RoundedBox ref={rightDoorRef} args={[0.7, 2.3, 0.05]} position={[0.9, 1.15, 0.15]} radius={0.01}>
           <meshStandardMaterial color="#362f2d" roughness={0.7} metalness={0.8} />
         </RoundedBox>
 

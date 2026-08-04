@@ -42,6 +42,9 @@ import { Sublevel } from "../World/rooms/Sublevel";
 import { PlayerController } from "../Gameplay/PlayerController";
 import { AnomalyEngine } from "../Narrative/AnomalyEngine";
 import { GameUI } from "../UI/GameUI";
+import { ReceptionTerminalUI } from "../UI/ReceptionTerminalUI";
+import { KeypadSafeUI } from "../UI/KeypadSafeUI";
+import { DocumentOverlay } from "../UI/DocumentOverlay";
 import { ResumeOverlay } from "../UI/ResumeOverlay";
 import { InteractionPrompt } from "../UI/InteractionPrompt";
 import { InspectionView } from "../Interactables/InspectionView";
@@ -112,10 +115,10 @@ export default function Renderer() {
             
             <group>
         <ReceptionWing position={[0, 0, 0]} onInteractMap={() => {}} />
-        <RecordsHall position={[-8, 0, -4]} />
+        <RecordsHall position={[-9.5, 0, -6.5]} rotation={[0, 0, 0]} />
         <ElevatorLobby position={[0, 0, -8]} />
-        <PersonnelWing position={[12, 0, -5]} />
-        <CommunicationsOffice position={[-8, 0, 6]} rotation={[0, Math.PI, 0]} />
+        <PersonnelWing position={[17, 0, 0]} rotation={[0, 0, 0]} />
+        <CommunicationsOffice position={[-9.5, 0, 4.5]} rotation={[0, 0, 0]} />
         <Sublevel position={[0, -50, 0]} />
       </group>
           </Physics>
@@ -143,6 +146,9 @@ export default function Renderer() {
       {/* 2D HUD Overlays */}
       <InteractionPrompt />
       <GameUI onOverlayStateChange={setIsGameUIActive} />
+      <ReceptionTerminalUI />
+      <KeypadSafeUI />
+      <DocumentOverlay />
       <ResumeOverlay />
     </div>
   );

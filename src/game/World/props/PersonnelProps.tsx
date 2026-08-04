@@ -272,9 +272,9 @@ export function DeskLamp({ position = [0, 0, 0], rotation = [0, 0, 0], on = true
             target-position={[0, 0, 0.3]} 
             angle={0.6} 
             penumbra={0.5} 
-            intensity={4.0} 
-            distance={4} 
-            color="#ffddaa" 
+            intensity={0.85} 
+            distance={2.5} 
+            color="#ffc888" 
             castShadow={false} 
           />
           <mesh position={[0, 0, 0.3]} visible={false}><boxGeometry args={[0.1, 0.1, 0.1]}/></mesh>

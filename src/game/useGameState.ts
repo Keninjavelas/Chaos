@@ -18,9 +18,17 @@ interface GameState {
   addInventoryItem: (item: ItemMetadata) => void;
   markItemAsRead: (id: string) => void;
 
-  // Active Inspection
+  // Active Inspection, Computer Terminal & Keypad Safe
   activeDocument: DocumentContent | null;
   inspectDocument: (doc: DocumentContent | null) => void;
+  activeTerminal: string | null;
+  setActiveTerminal: (id: string | null) => void;
+  activeKeypad: string | null;
+  setActiveKeypad: (id: string | null) => void;
+  openDrawers: Record<string, boolean>;
+  toggleDrawer: (id: string) => void;
+  unlockedSafes: Record<string, boolean>;
+  unlockSafe: (id: string) => void;
 
   // Room & Milestones
   unlockedRooms: string[];
@@ -43,6 +51,8 @@ export const useGameState = create<GameState>()(
       setGameMode: (mode) => set({ gameMode: mode }),
       clearInteraction: (resumePlaying = false) => set((state) => ({ 
         activeDocument: null, 
+        activeTerminal: null,
+        activeKeypad: null,
         gameMode: resumePlaying ? GameMode.PLAYING : GameMode.RESUMING 
       })),
 
@@ -61,9 +71,23 @@ export const useGameState = create<GameState>()(
           };
         }),
 
-      // Active Inspection
+      // Active Inspection, Computer Terminal & Keypad Safe
       activeDocument: null,
       inspectDocument: (doc) => set({ activeDocument: doc, gameMode: doc ? GameMode.INSPECTING : GameMode.RESUMING }),
+      activeTerminal: null,
+      setActiveTerminal: (id) => set({ activeTerminal: id, gameMode: id ? GameMode.INSPECTING : GameMode.RESUMING }),
+      activeKeypad: null,
+      setActiveKeypad: (id) => set({ activeKeypad: id, gameMode: id ? GameMode.INSPECTING : GameMode.RESUMING }),
+      openDrawers: {},
+      toggleDrawer: (id) =>
+        set((state) => ({
+          openDrawers: { ...state.openDrawers, [id]: !state.openDrawers[id] },
+        })),
+      unlockedSafes: {},
+      unlockSafe: (id) =>
+        set((state) => ({
+          unlockedSafes: { ...state.unlockedSafes, [id]: true },
+        })),
 
       // Room & Milestones
       unlockedRooms: ['reception', 'personnel', 'records', 'communications'], // Default unlocked for Greybox

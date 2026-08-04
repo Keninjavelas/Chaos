@@ -75,19 +75,21 @@ function ArchiveBox({ position, rotation = [0,0,0], color = "#5a4a3a" }: { posit
 export function RecordsHall({ position }: RoomProps) {
   return (
     <group position={position}>
-      {/* Room Architecture - Proper institutional scale (8m x 10m) */}
-      <RoomFloor args={[8, 10]} position={[0, -0.5, 0]} />
-      <RoomCeiling args={[8, 0.1, 10]} position={[0, 2.9, 0]} hasLights={false} />
+      {/* Room Architecture - Proper institutional scale (8.5m x 10.5m) */}
+      <RoomFloor args={[8.5, 10.5]} position={[0, -0.5, -0.25]} />
+      <RoomCeiling args={[8.5, 0.1, 10.5]} position={[0, 2.9, -0.25]} hasLights={false} />
       
       {/* Walls */}
-      <RoomWall position={[0, 0, -5]} args={[8, 3.2, 0.2]} /> {/* Rear */}
-      <RoomWall position={[-4, 0, 0]} args={[0.2, 3.2, 10]} /> {/* Left */}
-      <RoomWall position={[4, 0, 0]} args={[0.2, 3.2, 10]} /> {/* Right */}
-      {/* Front Wall with proper institutional door opening (1m wide) */}
-      <RoomWall position={[-1.5, 0, 5]} args={[5, 3.2, 0.2]} />
-      <RoomWall position={[2.5, 0, 5]} args={[3, 3.2, 0.2]} />
-      <mesh position={[0.5, 2.8, 5]}><boxGeometry args={[1, 0.4, 0.2]} /><meshStandardMaterial color="#444" /></mesh>
-      <InstitutionalDoor position={[0.5, 0, 5.1]} rotation={[0, 0, 0]} />
+      <RoomWall position={[0, 0, -5]} args={[8, 3.2, 0.2]} /> {/* Rear (South) */}
+      <RoomWall position={[-4, 0, 0]} args={[0.2, 3.2, 10]} /> {/* Left (West) */}
+      <RoomWall position={[4, 0, 0]} args={[0.2, 3.2, 10]} /> {/* Right (East) */}
+      {/* North Wall (3.0m Open Suite Entrance Flush with Corridor) */}
+      <RoomWall position={[-2.75, 0, 5]} args={[2.5, 3.2, 0.2]} />
+      <RoomWall position={[2.75, 0, 5]} args={[2.5, 3.2, 0.2]} />
+      <mesh position={[0, 3.0, 5]}>
+        <boxGeometry args={[3.0, 0.4, 0.2]} />
+        <meshStandardMaterial color="#444" />
+      </mesh>
 
       {/* Ceiling Elements */}
       <CeilingPipes position={[-2, 2.75, 0]} rotation={[0, -Math.PI/2, 0]} length={8} />

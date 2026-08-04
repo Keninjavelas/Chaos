@@ -37,25 +37,21 @@ export function ElevatorLobby({ position }: RoomProps) {
         </group>
       )}
       {/* ─── ARCHITECTURE ─── */}
-      <RoomFloor args={[6, 6]} position={[0, -0.5, 0]} />
-      <RoomCeiling args={[6, 0.1, 6]} position={[0, 3.4, 0]} hasLights={false} />
+      <RoomFloor args={[6.5, 6.5]} position={[0, -0.5, 0.25]} />
+      <RoomCeiling args={[6.5, 0.1, 6.5]} position={[0, 3.2, 0.25]} hasLights={false} />
 
       {/* Left Wall */}
-      <RoomWall position={[-3, 0, 0]} args={[0.2, 3.9, 6]} />
+      <RoomWall position={[-3, 0, 0]} args={[0.2, 3.2, 6]} />
       {/* Right Wall */}
-      <RoomWall position={[3, 0, 0]} args={[0.2, 3.9, 6]} />
+      <RoomWall position={[3, 0, 0]} args={[0.2, 3.2, 6]} />
       
-      {/* Front Wall (Facing the Gate) - Mostly open so the player can see inside */}
-      <RoomWall position={[-2.25, 0, 2.5]} args={[1.5, 3.9, 0.2]} />
-      <RoomWall position={[2.25, 0, 2.5]} args={[1.5, 3.9, 0.2]} />
-      
-      {/* Connector walls to Reception (Spans X=3.0 to X=4.5 to seal the void) */}
-      <RoomWall position={[-3.75, 0, 2.5]} args={[1.5, 3.9, 0.2]} />
-      <RoomWall position={[3.75, 0, 2.5]} args={[1.5, 3.9, 0.2]} />
+      {/* Front Wall (Facing the Security Gate) */}
+      <RoomWall position={[-2.25, 0, 2.5]} args={[1.5, 3.2, 0.2]} />
+      <RoomWall position={[2.25, 0, 2.5]} args={[1.5, 3.2, 0.2]} />
 
       {/* Rear Wall (Z=-3) */}
-      <RoomWall position={[-2, 0, -3]} args={[2, 3.9, 0.2]} />
-      <RoomWall position={[2, 0, -3]} args={[2, 3.9, 0.2]} />
+      <RoomWall position={[-2, 0, -3]} args={[2, 3.2, 0.2]} />
+      <RoomWall position={[2, 0, -3]} args={[2, 3.2, 0.2]} />
 
       {/* ─── THE ELEVATOR ─── */}
       <group position={[0, 0, -3]}>

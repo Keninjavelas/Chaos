@@ -13,6 +13,8 @@ import { ReceptionLighting } from "./ReceptionLighting";
 import { CoffeeMug, Pen, StickyNote, EmployeeID, Keyboard, CRTMonitor, DeskPhone, Intercom, Bell, WallSign, Magazine } from "../props/Clutter";
 import { InstancedDebris } from "../props/InstancedDebris";
 import { VendingMachine, TrashBin, CleaningTrolley, WaterDispenser } from "../props/HeavyProps";
+import { InteractableObject } from "../../Interactables/InteractableObject";
+import { useGameState } from "../../useGameState";
 
 function SparkingCable({ position }: { position: [number, number, number] }) {
   const lightRef = useRef<THREE.PointLight>(null);
@@ -55,81 +57,110 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
   return (
     <group position={position}>
       <ReceptionLighting />
-      {/* ─── ROOM GEOMETRY ─── */}
-      <RoomFloor position={[0, -0.5, -1]} args={[9, 13]} />
 
-      {/* ─── CEILING ─── */}
-      <group position={[0, 0, 0]}>
-        <RoomCeiling position={[0, 2.9, 1.5]} args={[9, 0.1, 8]} hasLights={false} />
-        <RoomCeiling position={[0, 2.5, -4]} args={[9, 0.1, 3]} hasLights={false} />
-        
-        <mesh position={[0, 2.7, -2.5]}><boxGeometry args={[9, 0.4, 0.1]} /><meshStandardMaterial color="#444" /></mesh>
+      {/* ─── CENTRAL RECEPTION HALL ─── */}
+      <RoomFloor position={[0, -0.5, 0]} args={[10, 10.5]} />
+      <RoomCeiling position={[0, 3.2, 0]} args={[10, 0.1, 10.5]} hasLights={false} />
 
-        <StructuralColumn position={[-2.5, 0, -3.5]} height={2.9} />
-        <StructuralColumn position={[2.5, 0, -3.5]} height={2.9} />
+      {/* Ceiling elements */}
+      <CeilingPipes position={[-1.5, 3.0, 0]} rotation={[0, -Math.PI/2, 0]} length={10} />
+      <CeilingPipes position={[2.5, 3.0, 0]} rotation={[0, -Math.PI/2, 0]} length={10} />
+      <HVACVent position={[0, 3.0, 3]} />
+      <SparkingCable position={[1.5, 3.1, -1]} />
 
-        <CeilingPipes position={[-1.5, 2.75, 1.5]} rotation={[0, -Math.PI/2, 0]} length={8} />
-        <CeilingPipes position={[2.5, 2.75, 1.5]} rotation={[0, -Math.PI/2, 0]} length={8} />
-        <HVACVent position={[0, 2.65, 3]} />
-        <SparkingCable position={[1.5, 2.9, -1]} />
-      </group>
+      {/* Outer Reception Boundaries */}
+      {/* South Wall */}
+      <RoomWall position={[0, 0, 5]} args={[10, 3.2, 0.2]} />
 
-      {/* ─── WALLS & BOUNDARIES ─── */}
-      <RoomWall position={[0, 0, 5.5]} args={[9, 3.2, 0.2]} />
+      {/* West Boundary (Opening to Left Wing Corridor) */}
+      <RoomWall position={[-5, 0, 3.25]} args={[0.2, 3.2, 3.5]} />
+      <RoomWall position={[-5, 0, -3.25]} args={[0.2, 3.2, 3.5]} />
+      <mesh position={[-5, 3.0, 0]}>
+        <boxGeometry args={[0.2, 0.4, 3.0]} />
+        <meshStandardMaterial color="#444" />
+      </mesh>
 
-      <RoomWall position={[4.5, 0, 1.75]} args={[0.2, 3.2, 7.5]} />
-      <RoomWall position={[4.5, 0, -4.75]} args={[0.2, 3.2, 1.5]} />
-      <mesh position={[4.5, 2.8, -3]}><boxGeometry args={[0.2, 0.8, 2]} /><meshStandardMaterial color="#444" /></mesh>
+      {/* East Boundary (Opening to Right Wing Corridor) */}
+      <RoomWall position={[5, 0, 3.25]} args={[0.2, 3.2, 3.5]} />
+      <RoomWall position={[5, 0, -3.25]} args={[0.2, 3.2, 3.5]} />
+      <mesh position={[5, 3.0, 0]}>
+        <boxGeometry args={[0.2, 0.4, 3.0]} />
+        <meshStandardMaterial color="#444" />
+      </mesh>
 
-      {/* Left wall with entrance to left corridor */}
-      <RoomWall position={[-4.5, 0, 4.5]} args={[0.2, 3.2, 2]} />
-      <RoomWall position={[-4.5, 0, -2.5]} args={[0.2, 3.2, 7.5]} />
-      <mesh position={[-4.5, 2.8, 1]}><boxGeometry args={[0.2, 0.4, 3]} /><meshStandardMaterial color="#444" /></mesh>
+      {/* North Security Gate (Opening to Elevator Lobby) */}
+      <RoomWall position={[-3.75, 0, -5]} args={[2.5, 3.2, 0.2]} />
+      <RoomWall position={[3.75, 0, -5]} args={[2.5, 3.2, 0.2]} />
+      <mesh position={[0, 3.0, -5]}>
+        <boxGeometry args={[5, 0.4, 0.2]} />
+        <meshStandardMaterial color="#444" />
+      </mesh>
 
-      {/* ─── LEFT CORRIDOR (Leads to Communications Office and Archive) ─── */}
-      <group position={[0, 0, 0]}>
-        {/* Main Left Corridor Floor */}
-        <RoomFloor position={[-5.5, -0.5, 1]} args={[5, 8]} />
-        <RoomCeiling position={[-5.5, 2.6, 1]} args={[5, 0.1, 8]} hasLights={false} />
-        
-        {/* Corridor Walls */}
-        <RoomWall position={[-5.5, 0, -3]} args={[5, 3.2, 0.2]} />
-        <RoomWall position={[-5.5, 0, 5]} args={[5, 3.2, 0.2]} />
-        <RoomWall position={[-8, 0, 1]} args={[0.2, 3.2, 8]} /> {/* Back wall of corridor */}
-        
-        {/* Doorway to Communications Office (upper left) */}
-        <RoomWall position={[-8, 0, 4.5]} args={[0.2, 3.2, 3]} />
-        <RoomWall position={[-8, 0, 7.5]} args={[0.2, 3.2, 3]} />
-        <mesh position={[-8, 2.8, 6]}><boxGeometry args={[0.2, 0.4, 1]} /><meshStandardMaterial color="#444" /></mesh>
-        
-        {/* Doorway to Archive Room (lower left) */}
-        <RoomWall position={[-8, 0, -4.5]} args={[0.2, 3.2, 3]} />
-        <RoomWall position={[-8, 0, -1.5]} args={[0.2, 3.2, 3]} />
-        <mesh position={[-8, 2.8, -3]}><boxGeometry args={[0.2, 0.4, 1]} /><meshStandardMaterial color="#444" /></mesh>
-        
-        {/* Corridor lighting */}
-        <pointLight position={[-5.5, 2.4, 1]} color="#E5E3D4" intensity={2} distance={5} decay={2} />
-        
-        {/* Corridor pipes */}
-        <CeilingPipes position={[-5.5, 2.75, 1]} rotation={[0, 0, 0]} length={5} />
-      </group>
-
-      {/* ─── SECURITY GATE ─── */}
-      <RoomWall position={[-3, 0, -5.5]} args={[3, 3.0, 0.2]} />
-      <RoomWall position={[3, 0, -5.5]} args={[3, 3.0, 0.2]} />
-      <mesh position={[0, 2.8, -5.5]}><boxGeometry args={[3, 0.4, 0.2]} /><meshStandardMaterial color="#444" /></mesh>
-      <mesh position={[0, 3.2, -5.5]}><boxGeometry args={[9, 0.4, 0.2]} /><meshStandardMaterial color="#111" /></mesh>
-      <group position={[0, 0, -5.5]}>
-        {Array.from({ length: 15 }).map((_, i) => (
-          <mesh key={`bar-${i}`} position={[-1.4 + i*0.2, 1.2, 0]}>
+      {/* Security Gate Bars */}
+      <group position={[0, 0, -5]}>
+        {Array.from({ length: 23 }).map((_, i) => (
+          <mesh key={`bar-${i}`} position={[-2.3 + i * 0.2, 1.2, 0]}>
             <cylinderGeometry args={[0.02, 0.02, 2.4]} />
             <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.5} />
           </mesh>
         ))}
-        <mesh position={[0, 0.5, 0]}><boxGeometry args={[3, 0.05, 0.05]} /><meshStandardMaterial color="#1a1a1a" metalness={0.9} /></mesh>
-        <mesh position={[0, 1.5, 0]}><boxGeometry args={[3, 0.05, 0.05]} /><meshStandardMaterial color="#1a1a1a" metalness={0.9} /></mesh>
-        <mesh position={[-1.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
-        <mesh position={[1.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
+        <mesh position={[0, 0.5, 0]}><boxGeometry args={[5, 0.05, 0.05]} /><meshStandardMaterial color="#1a1a1a" metalness={0.9} /></mesh>
+        <mesh position={[0, 1.5, 0]}><boxGeometry args={[5, 0.05, 0.05]} /><meshStandardMaterial color="#1a1a1a" metalness={0.9} /></mesh>
+        <mesh position={[-2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
+        <mesh position={[2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
+      </group>
+
+      {/* ─── LEFT WING CORRIDOR (Leads to Communications & Records) ─── */}
+      <group position={[0, 0, 0]}>
+        <RoomFloor position={[-9, -0.5, 0]} args={[8.5, 3.5]} />
+        <RoomCeiling position={[-9, 3.2, 0]} args={[8.5, 0.1, 3.5]} hasLights={false} />
+
+        {/* North Wall with Communications Office 3.0m suite cutout */}
+        <RoomWall position={[-6.5, 0, 1.5]} args={[3.0, 3.2, 0.2]} />
+        <RoomWall position={[-12.0, 0, 1.5]} args={[2.0, 3.2, 0.2]} />
+        <mesh position={[-9.5, 3.0, 1.5]}>
+          <boxGeometry args={[3.0, 0.4, 0.2]} />
+          <meshStandardMaterial color="#444" />
+        </mesh>
+
+        {/* South Wall with Records Hall 3.0m suite cutout */}
+        <RoomWall position={[-6.5, 0, -1.5]} args={[3.0, 3.2, 0.2]} />
+        <RoomWall position={[-12.0, 0, -1.5]} args={[2.0, 3.2, 0.2]} />
+        <mesh position={[-9.5, 3.0, -1.5]}>
+          <boxGeometry args={[3.0, 0.4, 0.2]} />
+          <meshStandardMaterial color="#444" />
+        </mesh>
+
+        {/* West Terminal Wall */}
+        <RoomWall position={[-13, 0, 0]} args={[0.2, 3.2, 3.0]} />
+
+        {/* Corridor Lighting & Pipes */}
+        <pointLight position={[-9, 2.8, 0]} color="#E5E3D4" intensity={2} distance={6} decay={2} />
+        <CeilingPipes position={[-9, 3.0, 0]} rotation={[0, 0, 0]} length={8} />
+      </group>
+
+      {/* ─── RIGHT WING CORRIDOR (Leads to Personnel Wing) ─── */}
+      <group position={[0, 0, 0]}>
+        <RoomFloor position={[9, -0.5, 0]} args={[8.5, 3.5]} />
+        <RoomCeiling position={[9, 3.2, 0]} args={[8.5, 0.1, 3.5]} hasLights={false} />
+
+        {/* North Wall */}
+        <RoomWall position={[9, 0, 1.5]} args={[8, 3.2, 0.2]} />
+
+        {/* South Wall */}
+        <RoomWall position={[9, 0, -1.5]} args={[8, 3.2, 0.2]} />
+
+        {/* East Terminal Wall with Personnel Wing 3.0m suite cutout */}
+        <RoomWall position={[13, 0, 2.25]} args={[0.2, 3.2, 1.5]} />
+        <RoomWall position={[13, 0, -2.25]} args={[0.2, 3.2, 1.5]} />
+        <mesh position={[13, 3.0, 0]}>
+          <boxGeometry args={[0.2, 0.4, 3.0]} />
+          <meshStandardMaterial color="#444" />
+        </mesh>
+
+        {/* Corridor Lighting & Pipes */}
+        <pointLight position={[9, 2.8, 0]} color="#E5E3D4" intensity={2} distance={6} decay={2} />
+        <CeilingPipes position={[9, 3.0, 0]} rotation={[0, 0, 0]} length={8} />
       </group>
 
       {/* ─── RECEPTION DESK ─── */}
@@ -139,9 +170,22 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
         onInteractMap={onInteractMap}
       />
       <group position={[0, 0, -1.5]}>
-        <CRTMonitor position={[-0.1, 0.81, -0.6]} rotation={[0, -0.2, 0]} on={true} />
+        {/* Reception Computer Terminal Trigger */}
+        <InteractableObject
+          label="Use Reception Computer"
+          onInteract={() => useGameState.getState().setActiveTerminal("RECEPTION_PC")}
+        >
+          <CRTMonitor position={[-0.1, 0.81, -0.6]} rotation={[0, -0.2, 0]} on={true} />
+        </InteractableObject>
         <Keyboard position={[-0.1, 0.81, -0.3]} rotation={[0, -0.2, 0]} />
-        <DeskPhone position={[-0.6, 0.81, -0.4]} rotation={[0, 0.3, 0]} />
+
+        {/* Telephone Static Feedback Trigger */}
+        <InteractableObject
+          label="Pick up Desk Phone"
+          onInteract={() => useGameState.getState().setActivePrompt({ text: "[ PHONE LINE DEAD ] - Heavy static frequency..." })}
+        >
+          <DeskPhone position={[-0.6, 0.81, -0.4]} rotation={[0, 0.3, 0]} />
+        </InteractableObject>
         <Intercom position={[0.4, 0.81, -0.6]} rotation={[0, -0.4, 0]} />
         <Bell position={[0.6, 0.81, -0.1]} />
         <EmployeeID position={[-1.2, 0.81, -0.6]} rotation={[0, 0.4, 0]} name="A. Vance" />
@@ -152,47 +196,51 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
       </group>
       <InstitutionalTablet position={[-0.8, 0.81, -1.4]} rotation={[0, 0.2, 0]} />
       <DocumentProp position={[0.3, 0.81, -1.15]} rotation={[0, -0.1, 0]}
-        document={{ id: "LOGBOOK-01", title: "VISITOR LOG", type: "dossier", content: `Day 17
-
-Still hearing movement below.` }} 
+        document={{ 
+          id: "LOGBOOK-01", 
+          title: "VISITOR REGISTER", 
+          type: "dossier", 
+          content: `AUXILIUM DIGITAL ARCHIVE - VISITOR REGISTER\n\n09:15 - Amazon Recruiter | Status: No Response\n11:42 - Open Source Maintainer | Status: Accepted\n13:20 - Conference Committee | Status: Paper Under Review\n14:50 - Cloud Certification Center | Status: Scheduled\n\n[Handwritten Entry]: 16:00 - UNKNOWN ENTRY: "Do not forget why you started. DO NOT GO BELOW."` 
+        }} 
       />
       <DocumentProp position={[-0.5, 0.81, -1.4]} rotation={[0, 0.2, 0]}
-        document={{ id: "NOTE-WARN-01", title: "HANDWRITTEN NOTE", type: "note", content: `IF THE ELEVATOR OPENS
-
-DO NOT GO DOWN` }} 
+        document={{ 
+          id: "NOTE-WARN-01", 
+          title: "DEVELOPER GOAL NOTE", 
+          type: "note", 
+          content: `Today's Goals:\nFinish one feature.\n\nRemember:\nOne project finished is worth ten abandoned ones.` 
+        }} 
       />
 
       {/* ─── WALL SIGNS ─── */}
-      <WallSign position={[-3.1, 1.8, -5.4]} rotation={[0, 0, 0]} size="small" />
-      <WallSign position={[3.1, 1.8, -5.4]} rotation={[0, 0, 0]} size="small" />
-      <WallSign position={[-4.3, 1.5, -2.5]} rotation={[0, Math.PI/2, 0]} size="large" />
-      <WallSign position={[4.3, 1.5, -2.5]} rotation={[0, -Math.PI/2, 0]} size="large" />
+      <WallSign position={[-4.5, 1.8, -4.9]} rotation={[0, 0, 0]} size="small" />
+      <WallSign position={[4.5, 1.8, -4.9]} rotation={[0, 0, 0]} size="small" />
+      <WallSign position={[-4.8, 1.5, 3]} rotation={[0, Math.PI/2, 0]} size="large" />
+      <WallSign position={[4.8, 1.5, 3]} rotation={[0, -Math.PI/2, 0]} size="large" />
 
       {/* ─── FILING CABINETS ─── */}
-      <group position={[-3.8, 0, 4]}>
+      <group position={[-4.2, 0, 4]}>
         <FilingCabinet position={[0, 0, 0]} rotation={[0, Math.PI/2, 0]} />
         <FilingCabinet position={[0, 0, -0.8]} rotation={[0, Math.PI/2, 0]} />
       </group>
 
-      {/* ─── WAITING AREA ─── */}
-      <VendingMachine position={[3.8, 0, -2]} rotation={[0, -0.1, 0]} />
-      <WaterDispenser position={[3.7, 0, -0.8]} rotation={[0, -0.4, 0]} />
-      <TrashBin position={[2.8, 0, -2.2]} rotation={[0, 0, 0]} />
-      <VisitorChairs position={[2.8, 0, 2.0]} rotation={[0, -Math.PI/2 - 0.1, 0]} />
-      <CleaningTrolley position={[3.5, 0, 0.5]} rotation={[0, 0.6, 0]} />
-      <Magazine position={[2.8, 0.46, 1.0]} rotation={[0, 1.2, 0]} color="#f1c40f" />
-      <CoffeeMug position={[2.8, 0.46, 2.0]} rotation={[0, 0.3, 0]} />
+      {/* ─── WAITING AREA & PROPS ─── */}
+      <VendingMachine position={[4.6, 0, -3]} rotation={[0, -Math.PI/2, 0]} />
+      <WaterDispenser position={[4.8, 0, 1.0]} rotation={[0, -Math.PI/2, 0]} />
+      <TrashBin position={[2.2, 0, -1.5]} rotation={[0, 0, 0]} />
+      <VisitorChairs position={[3.5, 0, 3.5]} rotation={[0, -Math.PI/2 - 0.1, 0]} />
+      <CleaningTrolley position={[4.0, 0, 2.0]} rotation={[0, 0.6, 0]} />
+      <Magazine position={[3.5, 0.46, 2.5]} rotation={[0, 1.2, 0]} color="#f1c40f" />
+      <CoffeeMug position={[3.5, 0.46, 3.5]} rotation={[0, 0.3, 0]} />
 
       {/* ─── DEBRIS ─── */}
-      <InstancedDebris count={30} areaSize={[6, 10]} position={[0, 0.01, 0]} type="paper" />
-      <InstancedDebris count={20} areaSize={[6, 10]} position={[0, 0.01, -1]} type="rubble" />
+      <InstancedDebris count={30} areaSize={[6, 8]} position={[0, 0.01, 0]} type="paper" />
+      <InstancedDebris count={20} areaSize={[6, 8]} position={[0, 0.01, -1]} type="rubble" />
 
       {/* ─── NOTICE BOARD ─── */}
-      <NoticeBoard position={[4.38, 1.2, 1.5]} rotation={[0, -Math.PI/2, 0]} />
-      <DocumentProp position={[4.35, 1.2, 1.7]} rotation={[0, -Math.PI/2, 0]}
-        document={{ id: "NOTE-BOARD-01", title: "NOTICE", type: "note", content: `Missing Employee.
-
-[A photo was here, but only the silhouette of tape remains]` }} 
+      <NoticeBoard position={[4.88, 1.2, 3.5]} rotation={[0, -Math.PI/2, 0]} />
+      <DocumentProp position={[4.85, 1.2, 3.7]} rotation={[0, -Math.PI/2, 0]}
+        document={{ id: "NOTE-BOARD-01", title: "NOTICE", type: "note", content: `Missing Employee.\n\n[A photo was here, but only the silhouette of tape remains]` }} 
       />
     </group>
   );
