@@ -14,7 +14,8 @@ export function DocumentProp({ position, rotation = [0, 0, 0], document }: Docum
 
   return (
     <InteractableObject 
-      label={document.interactionLabel || `Read ${document.title}`}
+      label={document.interactionLabel || document.title}
+      interactionKind="READ"
       onInteract={() => inspectDocument(document)}
     >
       <group position={position} rotation={rotation}>

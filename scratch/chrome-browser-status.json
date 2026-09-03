@@ -1,0 +1,40 @@
+{
+  "ok": true,
+  "list": [
+    {
+      "apiSupportOverrides": {
+        "BrowserUser.history": true,
+        "BrowserUser.claimTab": true,
+        "Tab.markDeliverable": true,
+        "Tab.markHandoff": true,
+        "Tabs.finalize": true
+      },
+      "capabilities": {
+        "browser": [
+          {
+            "id": "visibility",
+            "description": "Use to show or hide the browser to the user, and to determine the browser's current visibility. Keep browser work in the background unless the user asks to see it or live viewing is useful. When the browser should be visible, call set(true)."
+          },
+          {
+            "id": "viewport",
+            "description": "Controls an explicit browser viewport override for responsive or device-size testing. Use it when a task calls for specific dimensions or breakpoint validation; otherwise leave it unset so the browser uses its normal viewport. Reset temporary overrides before finishing unless the user asked to keep them."
+          }
+        ],
+        "tab": [
+          {
+            "id": "pageAssets",
+            "description": "List assets already observed in the current page state and bundle selected assets into a temporary local artifact."
+          }
+        ]
+      },
+      "id": "-e355-4511-a5f3-687d0b7f2207",
+      "name": "Codex In-app Browser",
+      "type": "iab",
+      "metadata": {
+        "codexAppBuildFlavor": "prod",
+        "codexAppSessionId": "8e639038-a12e-4442-90cc-441e5de3dd94",
+        "codexSessionId": "019fd1f1-b4a4-73a1-a5a1-34393c93465c"
+      }
+    }
+  ]
+}

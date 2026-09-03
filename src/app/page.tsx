@@ -1,6 +1,7 @@
-"use client";
 import { IntroFlow } from "@/components/intro/IntroFlow";
+import { ensurePortfolioValidation } from "@/data/validatePortfolioData";
 
 export default function Home() {
-    return <IntroFlow />;
+  ensurePortfolioValidation();
+  return <IntroFlow />;
 }

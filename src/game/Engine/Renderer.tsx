@@ -10,26 +10,13 @@ console.warn = (...args) => {
   }
   originalWarn(...args);
 };
-import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { Physics } from "@react-three/rapier";
-import { EffectComposer, SSAO, Bloom, Vignette, Noise, ChromaticAberration } from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
-import { useEffect } from "react";
+import { EffectComposer, Bloom, Vignette, Noise, ChromaticAberration } from "@react-three/postprocessing";
 
-function ConsoleReporter() {
-  const { camera } = useThree();
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      console.log("[DEBUG] Camera pos:", camera.position.toArray());
-      console.log("[DEBUG] Camera rot:", camera.rotation.toArray());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [camera]);
+const chromaticAberrationOffset = new THREE.Vector2(0.00025, 0.00025);
 
-  return null;
-}
 import { Lighting } from "./Lighting";
 
 import { ReceptionWing } from "../World/rooms/ReceptionWing";
@@ -48,13 +35,13 @@ import { DocumentOverlay } from "../UI/DocumentOverlay";
 import { ResumeOverlay } from "../UI/ResumeOverlay";
 import { InteractionPrompt } from "../UI/InteractionPrompt";
 import { InspectionView } from "../Interactables/InspectionView";
+import { InteractionController } from "../Interactables/InteractionController";
+import { AudioController } from "../Audio/AudioController";
 import { useArchiveStore } from "@/lib/state";
-import { useGameState } from "../useGameState";
-import { AmbientAudio } from "../World/FX/AmbientAudio";
 
 export default function Renderer() {
-  const [isGameUIActive, setIsGameUIActive] = useState(false);
-  const { isDebugMode } = useArchiveStore();
+  const [, setIsGameUIActive] = useState(false);
+  const isDebugMode = useArchiveStore((state) => state.isDebugMode);
 
   // Developer Debug Mode (F1)
   React.useEffect(() => {
@@ -72,34 +59,24 @@ export default function Renderer() {
     <div id="game-container" style={{ width: "100vw", height: "100vh", background: "black", position: "relative" }}>
       
       {/* 3D WebGL Canvas */}
-      <Canvas key="main-game-canvas" shadows camera={{ position: [0, 1.8, 5], fov: 75 }} gl={{ antialias: true, alpha: false }}>
-        <color attach="background" args={["#050505"]} />
+      <Canvas key="main-game-canvas" dpr={[1.25, 2]} shadows camera={{ position: [0, 1.8, 5], fov: 75 }} gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }} onCreated={({ gl }) => { gl.shadowMap.type = THREE.PCFShadowMap; }}>
+        <color attach="background" args={["#0a0d10"]} />
         
         {/* Subtle Volumetric Haze (Fog) */}
-        <fogExp2 attach="fog" args={["#0a0c10", 0.015]} />
+        <fogExp2 attach="fog" args={["#0c1014", 0.012]} />
         
-        {/* Global Indirect Illumination (Layer 1) - Faint architectural readability */}
-        <hemisphereLight args={["#1a202c", "#050505", 0.15]} />
+        {/* Global Indirect Illumination (Layer 1) - Preserves architectural silhouettes in shadows */}
+        <hemisphereLight args={["#354240", "#18201e", 0.28]} />
         
         {/* Core Lighting */}
         <React.Suspense fallback={<mesh position={[0,2,0]}><boxGeometry/><meshBasicMaterial color="green"/></mesh>}>
           <Lighting />
         </React.Suspense>
-        
-        <ConsoleReporter />
-
         {/* Narrative State Manager (No longer wraps rendering) */}
         <AnomalyEngine />
+        <InteractionController />
         <InspectionView />
-        <AmbientAudio />
-
-        {/* DEBUG CUBE 
-        <ambientLight intensity={1} />
-        <mesh position={[0, 1.65, 2]}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="red" />
-        </mesh>
-        */}
+        <AudioController />
 
         {isDebugMode && (
           <>
@@ -114,34 +91,26 @@ export default function Renderer() {
             <PlayerController />
             
             <group>
-        <ReceptionWing position={[0, 0, 0]} onInteractMap={() => {}} />
-        <RecordsHall position={[-9.5, 0, -6.5]} rotation={[0, 0, 0]} />
-        <ElevatorLobby position={[0, 0, -8]} />
-        <PersonnelWing position={[17, 0, 0]} rotation={[0, 0, 0]} />
-        <CommunicationsOffice position={[-9.5, 0, 4.5]} rotation={[0, 0, 0]} />
-        <Sublevel position={[0, -50, 0]} />
-      </group>
+              <ReceptionWing position={[0, 0, 0]} onInteractMap={() => {}} />
+              <RecordsHall position={[-9.5, 0, -6.5]} rotation={[0, 0, 0]} />
+              <ElevatorLobby position={[0, 0, -8]} />
+              <PersonnelWing position={[17, 0, 0]} rotation={[0, 0, 0]} />
+              <CommunicationsOffice position={[-9.5, 0, 4.5]} rotation={[0, 0, 0]} />
+              <Sublevel position={[0, -50, 0]} />
+            </group>
           </Physics>
         </React.Suspense>
 
-        {/* POST PROCESSING */}
+        {/* POST PROCESSING - Crisp Material Clarity & Restrained Atmosphere */}
         {!isDebugMode && (
           <EffectComposer>
-            <Bloom luminanceThreshold={2.0} intensity={0.15} mipmapBlur />
-            <Vignette eskil={false} offset={0.3} darkness={0.9} />
-            <Noise opacity={0.05} />
-            <ChromaticAberration offset={new THREE.Vector2(0.001, 0.001)} />
+            <Bloom luminanceThreshold={2.0} intensity={0.06} />
+            <Vignette eskil={false} offset={0.3} darkness={0.45} />
+            <Noise opacity={0.006} />
+            <ChromaticAberration offset={chromaticAberrationOffset} />
           </EffectComposer>
         )}
       </Canvas>
-
-      {/* Crosshair */}
-      <div 
-        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ color: "rgba(255, 255, 255, 0.5)", fontSize: "20px" }}
-      >
-        +
-      </div>
 
       {/* 2D HUD Overlays */}
       <InteractionPrompt />

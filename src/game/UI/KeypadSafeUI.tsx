@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useGameState } from "../useGameState";
+import { playInteractionFeedback } from "../Interactables/interactionFeedback";
 
 export function KeypadSafeUI() {
   const activeKeypad = useGameState((state) => state.activeKeypad);
-  const setActiveKeypad = useGameState((state) => state.setActiveKeypad);
+  const clearInteraction = useGameState((state) => state.clearInteraction);
   const unlockSafe = useGameState((state) => state.unlockSafe);
-  const setActivePrompt = useGameState((state) => state.setActivePrompt);
+  const setInteractionMessage = useGameState((state) => state.setInteractionMessage);
 
   const [inputCode, setInputCode] = useState("");
   const [statusText, setStatusText] = useState("ENTER 4-DIGIT PIN");
@@ -21,14 +22,15 @@ export function KeypadSafeUI() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       const key = e.key.toLowerCase();
-      if (key === 'e' || key === 'escape') {
-        setActiveKeypad(null);
+      if (key === 'escape') {
+        playInteractionFeedback("close");
+        clearInteraction();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeKeypad, setActiveKeypad]);
+  }, [activeKeypad, clearInteraction]);
 
   if (!activeKeypad) return null;
 
@@ -50,11 +52,13 @@ export function KeypadSafeUI() {
       setStatusText("ACCESS GRANTED");
       setStatusColor("text-green-400 animate-pulse");
       unlockSafe(activeKeypad);
-      setActivePrompt({ text: "[ SAFE UNLOCKED ] - Heavy steel bolt disengaged." });
+      playInteractionFeedback("open");
+      setInteractionMessage("[ SAFE UNLOCKED ] Heavy steel bolt disengaged.");
       setTimeout(() => {
-        setActiveKeypad(null);
+        clearInteraction();
       }, 1000);
     } else {
+      playInteractionFeedback("unavailable");
       setStatusText("ACCESS DENIED");
       setStatusColor("text-red-500 animate-pulse");
       setTimeout(() => {
@@ -117,7 +121,7 @@ export function KeypadSafeUI() {
 
         {/* Footer Dismissal Hint */}
         <div className="w-full pt-3 border-t border-[#2d353c] text-center text-xs text-[#556677]">
-          PRESS <span className="text-[#aaccff] font-bold">[ E ]</span> TO CANCEL
+          PRESS <span className="text-[#aaccff] font-bold">[ ESC ]</span> TO CANCEL
         </div>
       </div>
     </div>

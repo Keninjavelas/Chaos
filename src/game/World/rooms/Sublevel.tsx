@@ -49,7 +49,8 @@ export function Sublevel({ position }: RoomProps) {
         <mesh position={[-0.5, 1.2, -0.1]} castShadow receiveShadow><boxGeometry args={[1.0, 2.4, 0.05]} /><HorrorMaterial color="#444" metalness={0.7} roughness={0.6} /></mesh>
         <mesh position={[0.5, 1.2, -0.1]} castShadow receiveShadow><boxGeometry args={[1.0, 2.4, 0.05]} /><HorrorMaterial color="#444" metalness={0.7} roughness={0.6} /></mesh>
         <InteractableObject
-          label="RETURN TO SURFACE"
+          label="Return elevator panel"
+          interactionKind="USE"
           onInteract={() => setTeleportTarget([0, 1, -8])}
         >
           <mesh position={[1.3, 1.2, -0.1]} castShadow>

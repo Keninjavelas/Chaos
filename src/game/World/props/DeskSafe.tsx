@@ -45,7 +45,8 @@ export function DeskSafe({ position, rotation = [0, 0, 0], safeId = "SUPERVISOR_
       {/* Safe Front Interaction (Keypad trigger when locked, item pickup when unlocked) */}
       {!isUnlocked ? (
         <InteractableObject
-          label="Inspect Security Keypad"
+          label="Security keypad"
+          interactionKind="USE"
           onInteract={() => setActiveKeypad(safeId)}
         >
           <group position={[0, 0.2, 0.23]}>
@@ -75,7 +76,8 @@ export function DeskSafe({ position, rotation = [0, 0, 0], safeId = "SUPERVISOR_
       {isUnlocked && !inventory["KEYCARD-SUBLEVEL"] && (
         <group position={[0, 0.06, 0]}>
           <InteractableObject
-            label="Take Sublevel Access Keycard"
+            label="Sublevel access keycard"
+            interactionKind="OPEN"
             onInteract={() => addInventoryItem({
               id: "KEYCARD-SUBLEVEL",
               name: "Sublevel Access Keycard",

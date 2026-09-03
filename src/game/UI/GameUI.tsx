@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useArchiveStore } from "@/lib/state";
+import { useGameState, GameMode } from "../useGameState";
 
 interface GameUIProps {
   onOverlayStateChange: (isActive: boolean) => void;
@@ -18,11 +19,18 @@ export const GameUI: React.FC<GameUIProps> = ({ onOverlayStateChange }) => {
       if (key === "tab" || key === "m") {
         e.preventDefault();
         setIsActive(prev => {
-          if (!prev) document.exitPointerLock?.();
-          return !prev;
+          const next = !prev;
+          if (next) {
+            document.exitPointerLock?.();
+            useGameState.getState().setGameMode(GameMode.INTERACTING);
+          } else {
+            useGameState.getState().setGameMode(GameMode.PLAYING);
+          }
+          return next;
         });
       } else if (key === "escape" && isActive) {
         setIsActive(false);
+        useGameState.getState().setGameMode(GameMode.PLAYING);
       }
     };
 
@@ -108,7 +116,7 @@ export const GameUI: React.FC<GameUIProps> = ({ onOverlayStateChange }) => {
                 <>
                   <div className="absolute inset-0 opacity-20 bg-[url('/paper-texture.png')] bg-cover mix-blend-overlay"></div>
                   <p className="text-[#111] bg-[#d0c8b8] p-6 text-sm font-serif italic shadow-md rotate-[-2deg] relative z-10 w-[80%]">
-                    "They don't remember me. But I remember everything."
+                    &ldquo;They don&apos;t remember me. But I remember everything.&rdquo;
                     <span className="block text-right mt-4 font-bold">A.</span>
                   </p>
                 </>

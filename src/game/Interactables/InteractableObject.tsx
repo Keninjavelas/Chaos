@@ -1,114 +1,99 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useCursor } from "@react-three/drei";
 import * as THREE from "three";
+import { InteractionKind } from "@/data/types";
+import { playInteractionFeedback } from "./interactionFeedback";
 import { useGameState, GameMode } from "../useGameState";
 
 interface InteractableObjectProps {
-  /** The interaction text prompt, e.g. "Inspect File" */
   label: string;
-  /** Maximum distance to allow interaction */
+  interactionKind?: InteractionKind;
   interactionRange?: number;
-  /** Function called when player interacts */
+  priority?: number;
+  focusThreshold?: number;
   onInteract: () => void;
   children: React.ReactNode;
 }
 
+const inferredKind = (label: string): InteractionKind => {
+  const value = label.toLowerCase();
+  if (value.startsWith("open") || value.startsWith("close") || value.startsWith("take")) return "OPEN";
+  if (value.startsWith("read")) return "READ";
+  if (value.startsWith("use") || value.startsWith("access") || value.startsWith("call")) return "USE";
+  if (value.startsWith("view")) return "VIEW";
+  return "INSPECT";
+};
+
+const tempWorldPos = new THREE.Vector3();
+const tempCameraDir = new THREE.Vector3();
+const tempToTarget = new THREE.Vector3();
+
 export function InteractableObject({ 
-  label, 
+  label,
+  interactionKind,
   interactionRange = 2.5, 
-  onInteract, 
-  children 
+  priority = 0,
+  focusThreshold = 0.965,
+  onInteract,
+  children,
 }: InteractableObjectProps) {
-  const [hovered, setHovered] = useState(false);
-  const [inRange, setInRange] = useState(false);
   const groupRef = useRef<THREE.Group>(null);
-  
-  const setActivePrompt = useGameState((state) => state.setActivePrompt);
+  const interactionId = useId();
+  const [focused, setFocused] = useState(false);
+  const setInteractionTarget = useGameState((state) => state.setInteractionTarget);
+  const clearInteractionTarget = useGameState((state) => state.clearInteractionTarget);
   const gameMode = useGameState((state) => state.gameMode);
+  const kind = interactionKind ?? inferredKind(label);
 
-  // Change cursor to pointer when hovered and in range
-  useCursor(hovered && inRange && gameMode === GameMode.PLAYING);
+  useFrame((state) => {
+    const group = groupRef.current;
+    if (!group) return;
 
-  // Check distance and update global prompt
-  useFrame(({ camera }) => {
     if (gameMode !== GameMode.PLAYING) {
-      if (hovered) setHovered(false);
-      if (inRange) setInRange(false);
+      if (focused) setFocused(false);
+      group.scale.set(1, 1, 1);
       return;
     }
 
-    if (!hovered || !groupRef.current) {
-      if (inRange) {
-        setInRange(false);
-        setActivePrompt(null);
-      }
-      return;
+    group.getWorldPosition(tempWorldPos);
+    state.camera.getWorldDirection(tempCameraDir);
+
+    tempToTarget.subVectors(tempWorldPos, state.camera.position);
+    const distance = tempToTarget.length();
+    
+    let focusDot = 0;
+    if (distance > 0.001) {
+      tempToTarget.divideScalar(distance);
+      focusDot = tempCameraDir.dot(tempToTarget);
     }
 
-    const worldPos = new THREE.Vector3();
-    groupRef.current.getWorldPosition(worldPos);
-    
-    const distance = camera.position.distanceTo(worldPos);
-    const isNowInRange = distance <= interactionRange;
+    const isFocused = distance <= interactionRange && focusDot >= focusThreshold;
 
-    if (isNowInRange !== inRange) {
-      setInRange(isNowInRange);
-      if (isNowInRange) {
-        setActivePrompt({ text: label });
-      } else {
-        setActivePrompt(null);
-      }
+    if (isFocused) {
+      setInteractionTarget({ id: interactionId, kind, label, distance, priority, trigger: onInteract }, state.clock.elapsedTime);
     }
-    
-    // Smooth hover transition (scale)
-    const targetScale = (hovered && inRange) ? 1.05 : 1.0;
-    groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.15);
+
+    if (isFocused !== focused) {
+      setFocused(isFocused);
+      if (isFocused) playInteractionFeedback("focus");
+    }
+
+    const targetScale = isFocused ? 1.018 : 1.0;
+    group.scale.set(targetScale, targetScale, targetScale);
   });
 
-  // Handle interaction key (E)
-  useEffect(() => {
-    if (!hovered || !inRange || gameMode !== GameMode.PLAYING) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === 'e') {
-        onInteract();
-      }
-    };
-    
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hovered, inRange, onInteract]);
-
-  // Clean up prompt on unmount
-  useEffect(() => {
-    return () => {
-      if (hovered && inRange) {
-        setActivePrompt(null);
-      }
-    };
-  }, [hovered, inRange, setActivePrompt]);
+  useEffect(() => () => clearInteractionTarget(), [clearInteractionTarget]);
 
   return (
     <group 
       ref={groupRef}
-      onPointerOver={(e) => { 
-        if (gameMode !== GameMode.PLAYING) return;
-        e.stopPropagation(); 
-        setHovered(true); 
-      }}
-      onPointerOut={() => { 
-        setHovered(false); 
-      }}
       onClick={(e) => { 
-        if (inRange && gameMode === GameMode.PLAYING) {
-          e.stopPropagation(); 
-          onInteract(); 
+        if (focused && gameMode === GameMode.PLAYING) {
+          e.stopPropagation();
+          onInteract();
         }
       }}
     >
-      {/* Optional: Add a visual effect when hovered and inRange by using context or cloning children, 
-          but for now we rely on the crosshair UI to indicate interactivity. */}
       {children}
     </group>
   );

@@ -6,6 +6,8 @@ import { RoomFloor, RoomCeiling, RoomWall, ElevatorDoor } from "../props/RoomArc
 import { InteractableObject } from "../../Interactables/InteractableObject";
 import { useArchiveStore } from "@/lib/state";
 import { HorrorMaterial } from "../materials/HorrorMaterial";
+import { ContactTerminalStation } from "../props/PortfolioExhibits";
+import { InstancedDebris } from "../props/InstancedDebris";
 
 function ElevatorLight({ position }: { position: [number, number, number] }) {
   const lightRef = useRef<THREE.PointLight>(null);
@@ -13,7 +15,7 @@ function ElevatorLight({ position }: { position: [number, number, number] }) {
   useFrame(({ clock }) => {
     if (lightRef.current) {
       const time = clock.getElapsedTime() % 1.8;
-      lightRef.current.intensity = time < 1.5 ? 6.0 : 0.0; // reduced from 150
+      lightRef.current.intensity = time < 1.5 ? 6.0 : 0.0;
     }
   });
 
@@ -22,17 +24,12 @@ function ElevatorLight({ position }: { position: [number, number, number] }) {
 
 export function ElevatorLobby({ position }: RoomProps) {
   const { setTeleportTarget, isBlackout } = useArchiveStore();
-  // Center is global X=0, Z=-8.
-  // Room is 6x6m (X: -3 to 3, Z: -3 to 3 relative)
-  // Front of the lobby (Relative Z=2.5) aligns perfectly with the Reception Security Gate (Global Z=-5.5).
-  // The Elevator sits at the back (Relative Z=-3).
 
   return (
     <group position={position}>
       {!isBlackout && (
         <group>
-          <ElevatorLight position={[0, 2.8, 1.6]} /> {/* Global Z was -6.4, relative Z is 1.6 */}
-          {/* Corridor fill light moved here from global lighting and reduced intensity */}
+          <ElevatorLight position={[0, 2.8, 1.6]} />
           <pointLight position={[-4.5, 2, 3]} intensity={2.0} color="#BFD5FF" distance={15} decay={2} />
         </group>
       )}
@@ -53,13 +50,17 @@ export function ElevatorLobby({ position }: RoomProps) {
       <RoomWall position={[-2, 0, -3]} args={[2, 3.2, 0.2]} />
       <RoomWall position={[2, 0, -3]} args={[2, 3.2, 0.2]} />
 
+      {/* ─── CONTACT / RECRUITER TERMINAL STATION ─── */}
+      <ContactTerminalStation position={[-1.8, 0, -0.8]} rotation={[0, 0.4, 0]} />
+
       {/* ─── THE ELEVATOR ─── */}
       <group position={[0, 0, -3]}>
         <ElevatorDoor position={[0, 0, 0]} />
         
         {/* Call Button Panel */}
         <InteractableObject 
-          label="CALL ELEVATOR" 
+          label="Elevator call panel"
+          interactionKind="USE"
           onInteract={() => setTeleportTarget([0, -48, 0])} 
         >
           <mesh position={[1.3, 1.2, 0.1]} castShadow>
@@ -74,15 +75,9 @@ export function ElevatorLobby({ position }: RoomProps) {
       </group>
 
       {/* ─── SCENERY & DIRT ─── */}
-      {/* Debris on the lobby floor */}
-      {Array.from({ length: 10 }).map((_, i) => (
-        <mesh key={`lobby-debris-${i}`} position={[-2 + Math.random()*4, -0.485, -2 + Math.random()*4]} rotation={[-Math.PI/2, 0, Math.random()*Math.PI]} receiveShadow>
-          <planeGeometry args={[0.3, 0.4]} />
-          <HorrorMaterial color={Math.random() > 0.5 ? "#b8b2a5" : "#444"} roughness={0.9} noiseScale={1.5} />
-        </mesh>
-      ))}
+      <InstancedDebris count={12} areaSize={[4, 4]} position={[0, -0.485, 0]} type="paper" />
 
-      {/* Large blood/dirt stain leading to the elevator */}
+      {/* Stain leading to the elevator */}
       <mesh position={[0, -0.48, 0]} rotation={[-Math.PI/2, 0, 0]} receiveShadow>
         <planeGeometry args={[2, 4]} />
         <meshBasicMaterial color="#0a0a0a" transparent opacity={0.8} depthWrite={false} />

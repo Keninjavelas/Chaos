@@ -45,8 +45,19 @@ export interface DocumentContent {
 
 export type ElevatorState = 'locked' | 'unlocked' | 'maintenance';
 
+export type InteractionKind = 'INSPECT' | 'READ' | 'USE' | 'OPEN' | 'VIEW';
+
 export interface InteractionPromptData {
   text: string;
   /** Optional specific key binding to display, defaults to 'E' */
   key?: string;
+}
+
+export interface InteractionTarget {
+  id: string;
+  kind: InteractionKind;
+  label: string;
+  distance: number;
+  priority: number;
+  trigger: () => void;
 }

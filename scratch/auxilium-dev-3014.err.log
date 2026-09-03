@@ -1,0 +1,95 @@
+[portfolio-validation] Content Approval Pass 1 warnings:
+- [images] identity-biography is missing images: Professional headshot
+- [pdfs] identity-biography is missing PDFs: Current resume PDF
+- [approval] contact-auxilium-url is needs-source.
+- [links] contact-auxilium-url is missing links: Final deployed Auxilium Digital Archive URL
+- [approval] contact-resume-pdf is needs-source.
+- [pdfs] contact-resume-pdf is missing PDFs: Current resume PDF
+- [approval] skill-distributed-systems is needs-approval.
+- [links] project-auxilium is missing links: Live deployment URL
+- [images] project-auxilium is missing images: Three supporting room or interaction screenshots
+- [images] project-poseidon is missing images: Hero dashboard or simulation screenshot, Two supporting workflow or interface screenshots, Architecture diagram
+- [images] project-word-extension is missing images: One supporting QA or workflow screenshot
+- [images] project-ghost-protocol is missing images: One supporting workflow or architecture screenshot
+- [images] publication-a-decision-framework-for-post-quantum-cryptography-deployment-in-zero-trust-architecture is missing images: Cover-page image
+- [pdfs] publication-a-decision-framework-for-post-quantum-cryptography-deployment-in-zero-trust-architecture is missing PDFs: Publication PDF
+- [links] publication-ai-driven-systems-for-education-and-recruitment-a-comprehensive-survey is missing links: External publication or conference record
+- [images] publication-ai-driven-systems-for-education-and-recruitment-a-comprehensive-survey is missing images: Cover-page image
+- [pdfs] publication-ai-driven-systems-for-education-and-recruitment-a-comprehensive-survey is missing PDFs: Publication PDF
+- [approval] certification-google-project-management-professional-certificate is needs-source.
+- [links] certification-google-project-management-professional-certificate is missing links: Verification URL
+- [images] certification-google-project-management-professional-certificate is missing images: Certificate thumbnail
+- [pdfs] certification-google-project-management-professional-certificate is missing PDFs: Certificate PDF or scan
+- [approval] certification-aws-cloud-practitioner-essentials is needs-source.
+- [links] certification-aws-cloud-practitioner-essentials is missing links: Verification URL
+- [images] certification-aws-cloud-practitioner-essentials is missing images: Certificate thumbnail
+- [pdfs] certification-aws-cloud-practitioner-essentials is missing PDFs: Certificate PDF or scan
+- [approval] certification-oracle-cloud-infrastructure-foundations is needs-source.
+- [links] certification-oracle-cloud-infrastructure-foundations is missing links: Verification URL
+- [images] certification-oracle-cloud-infrastructure-foundations is missing images: Certificate thumbnail
+- [pdfs] certification-oracle-cloud-infrastructure-foundations is missing PDFs: Certificate PDF or scan
+- [approval] certification-nptel-introduction-to-quantum-computing-quantum-algorithms-and-qiskit is needs-source.
+- [links] certification-nptel-introduction-to-quantum-computing-quantum-algorithms-and-qiskit is missing links: Verification URL
+- [images] certification-nptel-introduction-to-quantum-computing-quantum-algorithms-and-qiskit is missing images: Certificate thumbnail
+- [pdfs] certification-nptel-introduction-to-quantum-computing-quantum-algorithms-and-qiskit is missing PDFs: Certificate PDF or scan
+- [approval] opensource-first-contributions is needs-source.
+- [links] opensource-first-contributions is missing links: Repository URL, Pull request URL
+- [images] opensource-first-contributions is missing images: Optional discussion screenshot
+- [approval] opensource-latitude-llm is needs-approval.
+- [links] opensource-latitude-llm is missing links: Repository URL, Pull request URL
+- [images] opensource-latitude-llm is missing images: Optional discussion screenshot
+- [approval] leadership-ieee-computer-society-webmaster is needs-approval.
+- [images] leadership-ieee-computer-society-webmaster is missing images: Event or role photo
+- [pdfs] leadership-ieee-computer-society-webmaster is missing PDFs: Role certificate or proof if available
+- [approval] leadership-placement-batch-student-coordinator is needs-approval.
+- [images] leadership-placement-batch-student-coordinator is missing images: Event or role photo
+- [pdfs] leadership-placement-batch-student-coordinator is missing PDFs: Role certificate or proof if available
+- [approval] leadership-class-representative is needs-approval.
+- [images] leadership-class-representative is missing images: Event or role photo
+- [pdfs] leadership-class-representative is missing PDFs: Role certificate or proof if available
+- [approval] leadership-iste-associated-value-added-course-coordinator is needs-approval.
+- [images] leadership-iste-associated-value-added-course-coordinator is missing images: Event or role photo
+- [pdfs] leadership-iste-associated-value-added-course-coordinator is missing PDFs: Role certificate or proof if available
+- [approval] leadership-technical-symposium-organization-may-2025 is needs-approval.
+- [images] leadership-technical-symposium-organization-may-2025 is missing images: Event or role photo
+- [pdfs] leadership-technical-symposium-organization-may-2025 is missing PDFs: Role certificate or proof if available
+- [approval] leadership-24-hour-hackathon-organization is needs-approval.
+- [images] leadership-24-hour-hackathon-organization is missing images: Event or role photo
+- [pdfs] leadership-24-hour-hackathon-organization is missing PDFs: Role certificate or proof if available
+- [approval] leadership-calypso-event-involvement is needs-approval.
+- [images] leadership-calypso-event-involvement is missing images: Event or role photo
+- [pdfs] leadership-calypso-event-involvement is missing PDFs: Role certificate or proof if available
+- [approval] leadership-voicex-public-speaking-participation is needs-approval.
+- [images] leadership-voicex-public-speaking-participation is missing images: Event or role photo
+- [pdfs] leadership-voicex-public-speaking-participation is missing PDFs: Role certificate or proof if available
+- [approval] leadership-college-basketball-team-participation is needs-approval.
+- [images] leadership-college-basketball-team-participation is missing images: Event or role photo
+- [pdfs] leadership-college-basketball-team-participation is missing PDFs: Role certificate or proof if available
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)
+[browser] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. (src/game/Engine/Renderer.tsx:11:3)

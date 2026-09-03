@@ -1,0 +1,17 @@
+
+> archive-app@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3014
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://127.0.0.1:3014
+- Network:       http://127.0.0.1:3014
+✓ Ready in 1339ms
+
+[Archive] ArchiveProvider mounted
+IntroFlow render – current phase: desktop
+Rendering LoadingDesktop
+ GET / 200 in 606ms (next.js: 376ms, application-code: 229ms)
+[Archive] ArchiveProvider mounted
+IntroFlow render – current phase: desktop
+Rendering LoadingDesktop
+ GET / 200 in 173ms (next.js: 10ms, application-code: 163ms)

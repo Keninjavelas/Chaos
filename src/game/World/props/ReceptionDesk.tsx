@@ -1,70 +1,17 @@
 import React from "react";
 import { RigidBody } from "@react-three/rapier";
 import { RoundedBox } from "@react-three/drei";
+import { FacilityMaterial } from "../materials/FacilityMaterials";
+import { useGameState } from "../../useGameState";
+import { InteractableObject } from "../../Interactables/InteractableObject";
+import { useFrame } from "@react-three/fiber";
+import * as THREE from "three";
 
 interface ReceptionDeskProps {
   position: [number, number, number];
   rotation?: [number, number, number];
   onInteractMap?: () => void;
 }
-
-function CRTMonitor({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) {
-  return (
-    <group position={position} rotation={rotation}>
-      {/* Base */}
-      <mesh position={[0, 0.05, 0]} castShadow>
-        <boxGeometry args={[0.3, 0.1, 0.3]} />
-        <meshStandardMaterial color="#222" roughness={0.8} />
-      </mesh>
-      {/* Neck */}
-      <mesh position={[0, 0.15, 0]} castShadow>
-        <cylinderGeometry args={[0.05, 0.08, 0.1]} />
-        <meshStandardMaterial color="#1a1a1a" />
-      </mesh>
-      {/* Monitor Body */}
-      <mesh position={[0, 0.35, 0.05]} rotation={[-0.1, 0, 0]} castShadow>
-        <boxGeometry args={[0.5, 0.4, 0.45]} />
-        <meshStandardMaterial color="#d4d0c8" roughness={0.9} />
-      </mesh>
-      {/* Screen Frame */}
-      <mesh position={[0, 0.35, 0.28]} rotation={[-0.1, 0, 0]} castShadow>
-        <boxGeometry args={[0.45, 0.35, 0.02]} />
-        <meshStandardMaterial color="#a09e98" roughness={0.9} />
-      </mesh>
-      {/* Glass Screen */}
-      <mesh position={[0, 0.35, 0.29]} rotation={[-0.1, 0, 0]}>
-        <planeGeometry args={[0.4, 0.3]} />
-        <meshStandardMaterial color="#050a10" roughness={0.1} metalness={0.9} />
-      </mesh>
-      {/* Power LED */}
-      <mesh position={[0.18, 0.2, 0.29]} rotation={[-0.1, 0, 0]}>
-        <planeGeometry args={[0.01, 0.01]} />
-        <meshBasicMaterial color="#ff3333" />
-      </mesh>
-    </group>
-  );
-}
-
-function Keyboard({ position, rotation }: { position: [number, number, number], rotation: [number, number, number] }) {
-  return (
-    <group position={position} rotation={rotation}>
-      <mesh castShadow>
-        <boxGeometry args={[0.45, 0.02, 0.15]} />
-        <meshStandardMaterial color="#d4d0c8" roughness={0.9} />
-      </mesh>
-      {/* Keys surface */}
-      <mesh position={[0, 0.012, 0]} rotation={[-0.05, 0, 0]}>
-        <boxGeometry args={[0.42, 0.01, 0.13]} />
-        <meshStandardMaterial color="#a09e98" roughness={0.9} />
-      </mesh>
-    </group>
-  );
-}
-
-import { useGameState } from "../../useGameState";
-import { InteractableObject } from "../../Interactables/InteractableObject";
-import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
 
 function InteractiveDeskDrawer() {
   const openDrawers = useGameState((state) => state.openDrawers);
@@ -86,19 +33,20 @@ function InteractiveDeskDrawer() {
     <group position={[-1.4, 0.45, 0]}>
       {/* Interactive Trigger for Opening/Closing Drawer */}
       <InteractableObject
-        label={isOpen ? "Close Desk Drawer" : "Open Desk Drawer"}
+        label="Desk drawer"
+        interactionKind="OPEN"
         onInteract={() => toggleDrawer("RECEPTION_DRAWER")}
       >
         {/* Animated Drawer Box */}
         <group ref={drawerRef}>
           <mesh castShadow receiveShadow>
             <boxGeometry args={[0.55, 0.25, 1.1]} />
-            <meshStandardMaterial color="#2c231a" roughness={0.85} />
+            <FacilityMaterial kind="wood" color="#352920" />
           </mesh>
           {/* Drawer Handle */}
           <mesh position={[0, 0.05, 0.56]}>
             <boxGeometry args={[0.2, 0.03, 0.03]} />
-            <meshStandardMaterial color="#888" metalness={0.9} roughness={0.3} />
+            <FacilityMaterial kind="painted-metal" color="#7a858e" />
           </mesh>
 
           {/* Items Inside Drawer */}
@@ -107,7 +55,8 @@ function InteractiveDeskDrawer() {
               {/* Security Keycard Pickup */}
               {!inventory["KEYCARD-SECURITY"] && (
                 <InteractableObject
-                  label="Take Security Keycard"
+                  label="Security keycard"
+                  interactionKind="USE"
                   onInteract={() => addInventoryItem({
                     id: "KEYCARD-SECURITY",
                     name: "Level 2 Access Card",
@@ -120,7 +69,7 @@ function InteractiveDeskDrawer() {
                 >
                   <mesh position={[-0.1, 0, 0.1]}>
                     <boxGeometry args={[0.08, 0.01, 0.12]} />
-                    <meshStandardMaterial color="#ffdd00" roughness={0.3} metalness={0.8} />
+                    <meshStandardMaterial color="#0A84FF" roughness={0.3} metalness={0.2} />
                   </mesh>
                 </InteractableObject>
               )}
@@ -128,7 +77,8 @@ function InteractiveDeskDrawer() {
               {/* Flashlight Pickup */}
               {!inventory["FLASHLIGHT-AUX"] && (
                 <InteractableObject
-                  label="Take Emergency Flashlight"
+                  label="Heavy flashlight"
+                  interactionKind="USE"
                   onInteract={() => addInventoryItem({
                     id: "FLASHLIGHT-AUX",
                     name: "Heavy Duty Flashlight",
@@ -141,7 +91,7 @@ function InteractiveDeskDrawer() {
                 >
                   <mesh position={[0.1, 0, -0.1]} rotation={[0, 0.4, 0]}>
                     <cylinderGeometry args={[0.03, 0.02, 0.25]} />
-                    <meshStandardMaterial color="#111" roughness={0.5} metalness={0.9} />
+                    <FacilityMaterial kind="painted-metal" color="#1c242a" />
                   </mesh>
                 </InteractableObject>
               )}
@@ -153,7 +103,7 @@ function InteractiveDeskDrawer() {
   );
 }
 
-export function ReceptionDesk({ position, rotation = [0, 0, 0], onInteractMap }: ReceptionDeskProps) {
+export function ReceptionDesk({ position, rotation = [0, 0, 0] }: ReceptionDeskProps) {
   return (
     <group position={position} rotation={rotation}>
       
@@ -161,24 +111,46 @@ export function ReceptionDesk({ position, rotation = [0, 0, 0], onInteractMap }:
       <RigidBody type="fixed" colliders="cuboid">
         {/* Working Surface */}
         <RoundedBox args={[4.2, 0.1, 2.4]} position={[0, 0.75, 0]} radius={0.02} smoothness={4}>
-          <meshStandardMaterial color="#3a2f24" roughness={0.8} />
+          <FacilityMaterial kind="wood" color="#4a3b2c" />
         </RoundedBox>
-        {/* Static Pedestals */}
-        <mesh position={[-1.4, 0.4, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.6, 0.7, 1.2]} />
-          <meshStandardMaterial color="#2c231a" roughness={0.85} />
+
+        {/* Front Privacy Panel / Shield */}
+        <mesh position={[0, 0.35, 1.15]} receiveShadow>
+          <boxGeometry args={[4.2, 0.8, 0.1]} />
+          <FacilityMaterial kind="wood" color="#352920" />
         </mesh>
-        <mesh position={[1.4, 0.4, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.6, 0.7, 1.2]} />
-          <meshStandardMaterial color="#2c231a" roughness={0.85} />
+
+        {/* Left Side Panel */}
+        <mesh position={[-2.05, 0.35, 0]} receiveShadow>
+          <boxGeometry args={[0.1, 0.8, 2.4]} />
+          <FacilityMaterial kind="wood" color="#352920" />
         </mesh>
-        {/* Static Drawer Handles on right side */}
-        <mesh position={[1.4, 0.6, 0.62]}><boxGeometry args={[0.2, 0.02, 0.02]} /><meshStandardMaterial color="#111" /></mesh>
-        <mesh position={[1.4, 0.3, 0.62]}><boxGeometry args={[0.2, 0.02, 0.02]} /><meshStandardMaterial color="#111" /></mesh>
+
+        {/* Right Side Panel */}
+        <mesh position={[2.05, 0.35, 0]} receiveShadow>
+          <boxGeometry args={[0.1, 0.8, 2.4]} />
+          <FacilityMaterial kind="wood" color="#352920" />
+        </mesh>
       </RigidBody>
 
-      {/* ─── INTERACTIVE LEFT DRAWER ─── */}
+      {/* ─── INTERACTIVE DRAWER (Left Side) ─── */}
       <InteractiveDeskDrawer />
+
+      {/* ─── RECEPTION DESK CHAIR ─── */}
+      <group position={[0, 0, -0.9]} rotation={[0, 0.1, 0]}>
+        <mesh position={[0, 0.4, 0]} castShadow>
+          <boxGeometry args={[0.5, 0.08, 0.5]} />
+          <FacilityMaterial kind="painted-metal" color="#182025" />
+        </mesh>
+        <mesh position={[0, 0.7, -0.22]} castShadow>
+          <boxGeometry args={[0.5, 0.5, 0.06]} />
+          <FacilityMaterial kind="painted-metal" color="#182025" />
+        </mesh>
+        <mesh position={[0, 0.2, 0]}>
+          <cylinderGeometry args={[0.04, 0.04, 0.4]} />
+          <FacilityMaterial kind="painted-metal" color="#2c353c" />
+        </mesh>
+      </group>
     </group>
   );
 }

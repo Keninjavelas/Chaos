@@ -1,59 +1,94 @@
 import React from "react";
+import { Text } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
-import { HorrorMaterial } from "../materials/HorrorMaterial";
+import { FacilityMaterial } from "../materials/FacilityMaterials";
 
 interface ServerRackProps {
   position?: [number, number, number];
   rotation?: [number, number, number];
+  role?: string;
 }
 
-export function ServerRack({ position = [0, 0, 0], rotation = [0, 0, 0] }: ServerRackProps) {
+export function ServerRack({ position = [0, 0, 0], rotation = [0, 0, 0], role = "INFERENCE CLUSTER" }: ServerRackProps) {
   return (
     <group position={position} rotation={rotation}>
       <RigidBody type="fixed" colliders="cuboid">
-        {/* Main Server Tower Frame */}
+        {/* Main 42U Server Cabinet Frame */}
         <mesh position={[0, 1.1, 0]} castShadow receiveShadow>
-          <boxGeometry args={[0.7, 2.2, 0.8]} />
-          <HorrorMaterial color="#12161a" roughness={0.6} metalness={0.8} />
+          <boxGeometry args={[0.75, 2.2, 0.85]} />
+          <FacilityMaterial kind="painted-metal" color="#181f24" />
         </mesh>
       </RigidBody>
 
-      {/* Front Glass Door Frame */}
-      <mesh position={[0, 1.1, 0.41]}>
-        <planeGeometry args={[0.62, 2.1]} />
-        <meshStandardMaterial color="#00aacc" transparent opacity={0.15} roughness={0.1} metalness={0.9} />
+      {/* Recessed Interior Bay */}
+      <mesh position={[0, 1.1, 0.05]}>
+        <boxGeometry args={[0.66, 2.08, 0.74]} />
+        <FacilityMaterial kind="painted-metal" color="#0c1013" />
       </mesh>
 
-      {/* Server Blade Modules (6 Stacked Units) */}
+      {/* Role Identifier Header Plaque */}
+      <mesh position={[0, 2.14, 0.44]}>
+        <boxGeometry args={[0.55, 0.08, 0.02]} />
+        <FacilityMaterial kind="painted-metal" color="#12181c" />
+      </mesh>
+      <Text
+        position={[0, 2.14, 0.455]}
+        fontSize={0.034}
+        color="#87e0c8"
+        anchorX="center"
+        anchorY="middle"
+        material-toneMapped={false}
+      >
+        {role}
+      </Text>
+
+      {/* Perforated Door / Dark Acrylic Front Panel */}
+      <mesh position={[0, 1.1, 0.43]}>
+        <planeGeometry args={[0.65, 2.05]} />
+        <meshStandardMaterial color="#0a1218" transparent opacity={0.35} roughness={0.3} metalness={0.7} />
+      </mesh>
+
+      {/* 6 Server Chassis Blade Units */}
       {Array.from({ length: 6 }).map((_, i) => (
-        <group key={`blade-${i}`} position={[0, 0.3 + i * 0.32, 0.38]}>
+        <group key={`blade-${i}`} position={[0, 0.28 + i * 0.32, 0.38]}>
+          {/* Chassis Unit Faceplate */}
           <mesh castShadow>
-            <boxGeometry args={[0.6, 0.26, 0.04]} />
-            <HorrorMaterial color="#1a2026" roughness={0.5} metalness={0.7} />
+            <boxGeometry args={[0.62, 0.28, 0.06]} />
+            <FacilityMaterial kind="painted-metal" color="#202a32" />
           </mesh>
-          {/* Fan Grill Mesh Lines */}
-          <mesh position={[-0.15, 0, 0.022]}>
-            <planeGeometry args={[0.22, 0.18]} />
-            <meshStandardMaterial color="#0b0d10" roughness={0.9} />
+
+          {/* Air Intake Grill (Left) */}
+          <mesh position={[-0.14, 0, 0.032]}>
+            <planeGeometry args={[0.26, 0.2]} />
+            <meshStandardMaterial color="#080b0e" roughness={0.9} />
           </mesh>
-          {/* Status LEDs */}
-          <mesh position={[0.18, 0.05, 0.022]}>
-            <sphereGeometry args={[0.012]} />
-            <meshBasicMaterial color={i % 2 === 0 ? "#00ff66" : "#00aacc"} toneMapped={false} />
+
+          {/* Drive Caddies (Middle) */}
+          {Array.from({ length: 4 }).map((__, dIdx) => (
+            <mesh key={`drive-${dIdx}`} position={[0.04 + dIdx * 0.04, 0, 0.032]}>
+              <boxGeometry args={[0.032, 0.2, 0.01]} />
+              <FacilityMaterial kind="painted-metal" color="#2c3740" />
+            </mesh>
+          ))}
+
+          {/* Diagnostic Status LEDs (Right) */}
+          <mesh position={[0.24, 0.06, 0.033]}>
+            <sphereGeometry args={[0.008]} />
+            <meshBasicMaterial color={i === 4 ? "#ffaa00" : "#00ff88"} toneMapped={false} />
           </mesh>
-          <mesh position={[0.22, 0.05, 0.022]}>
-            <sphereGeometry args={[0.012]} />
-            <meshBasicMaterial color="#00ff66" toneMapped={false} />
+          <mesh position={[0.26, 0.06, 0.033]}>
+            <sphereGeometry args={[0.008]} />
+            <meshBasicMaterial color="#00ddff" toneMapped={false} />
           </mesh>
-          <mesh position={[0.22, -0.05, 0.022]}>
-            <sphereGeometry args={[0.012]} />
-            <meshBasicMaterial color={i === 4 ? "#ff3333" : "#00ff66"} toneMapped={false} />
+          <mesh position={[0.26, -0.06, 0.033]}>
+            <sphereGeometry args={[0.008]} />
+            <meshBasicMaterial color="#00ff88" toneMapped={false} />
           </mesh>
         </group>
       ))}
 
-      {/* Blue Internal Server Light Glow */}
-      <pointLight position={[0, 1.1, 0.3]} color="#00aacc" intensity={0.8} distance={3} decay={2} />
+      {/* Subdued Internal Equipment Glow */}
+      <pointLight position={[0, 1.1, 0.25]} color="#00b0cc" intensity={0.4} distance={2.5} decay={2} />
     </group>
   );
 }

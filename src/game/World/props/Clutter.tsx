@@ -1,5 +1,4 @@
 import React from "react";
-import * as THREE from "three";
 import { InteractableObject } from "../../Interactables/InteractableObject";
 import { useGameState } from "../../useGameState";
 
@@ -52,7 +51,8 @@ export function EmployeeID({ position, rotation = [0, 0, 0], name = "A. Vance" }
     <group position={position} rotation={rotation as [number, number, number]}>
       <InteractableObject 
         interactionRange={1.5}
-        label="Read ID Badge"
+        label="ID badge"
+        interactionKind="READ"
         onInteract={() => inspectDocument({
           id: "ID-BADGE-01",
           title: "EMPLOYEE ID",
@@ -197,7 +197,7 @@ export function Bell({ position, rotation = [0, 0, 0] }: { position: [number, nu
   );
 }
 
-export function WallSign({ position, rotation = [0, 0, 0], text = "NOTICE", size = "small" }: { position: [number, number, number], rotation?: [number, number, number], text?: string, size?: "small" | "large" }) {
+export function WallSign({ position, rotation = [0, 0, 0], size = "small" }: { position: [number, number, number], rotation?: [number, number, number], text?: string, size?: "small" | "large" }) {
   const width = size === "large" ? 0.6 : 0.3;
   const height = size === "large" ? 0.8 : 0.2;
   

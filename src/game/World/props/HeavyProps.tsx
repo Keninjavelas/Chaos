@@ -1,5 +1,6 @@
 import React from 'react';
 import { HorrorMaterial } from '../materials/HorrorMaterial';
+import { FacilityMaterial } from '../materials/FacilityMaterials';
 
 interface PropProps {
   position?: [number, number, number];
@@ -104,40 +105,40 @@ export function TrashBin({ position = [0, 0, 0], rotation = [0, 0, 0] }: PropPro
 export function CleaningTrolley({ position = [0, 0, 0], rotation = [0, 0, 0] }: PropProps) {
   return (
     <group position={position} rotation={rotation}>
-      {/* Base */}
+      {/* Base Chassis */}
       <mesh position={[0, 0.1, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.6, 0.05, 0.9]} />
-        <HorrorMaterial color="#1a5276" roughness={0.7} />
+        <boxGeometry args={[0.55, 0.05, 0.8]} />
+        <FacilityMaterial kind="painted-metal" color="#222b32" />
       </mesh>
-      {/* Wheels */}
-      {[-0.25, 0.25].map(x => [-0.4, 0.4].map(z => (
+      {/* Caster Wheels */}
+      {[-0.22, 0.22].map(x => [-0.35, 0.35].map(z => (
         <mesh key={`${x}-${z}`} position={[x, 0.05, z]} rotation={[0, 0, Math.PI/2]}>
-          <cylinderGeometry args={[0.05, 0.05, 0.02]} />
+          <cylinderGeometry args={[0.045, 0.045, 0.03]} />
           <meshStandardMaterial color="#111" />
         </mesh>
       )))}
-      {/* Handle */}
-      <mesh position={[0, 0.6, -0.4]} rotation={[0, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.02, 0.02, 1.0]} />
-        <meshStandardMaterial color="#888" metalness={0.8} />
+      {/* Steel Tubular Handle Frame */}
+      <mesh position={[-0.22, 0.55, -0.35]} castShadow>
+        <cylinderGeometry args={[0.015, 0.015, 0.9]} />
+        <FacilityMaterial kind="painted-metal" color="#5c6a74" />
       </mesh>
-      <mesh position={[-0.25, 0.6, -0.4]} rotation={[0, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.02, 0.02, 1.0]} />
-        <meshStandardMaterial color="#888" metalness={0.8} />
+      <mesh position={[0.22, 0.55, -0.35]} castShadow>
+        <cylinderGeometry args={[0.015, 0.015, 0.9]} />
+        <FacilityMaterial kind="painted-metal" color="#5c6a74" />
       </mesh>
-      <mesh position={[0.25, 0.6, -0.4]} rotation={[0, 0, 0]} castShadow>
-        <cylinderGeometry args={[0.02, 0.02, 1.0]} />
-        <meshStandardMaterial color="#888" metalness={0.8} />
+      <mesh position={[0, 1.0, -0.35]} rotation={[0, 0, Math.PI / 2]} castShadow>
+        <cylinderGeometry args={[0.015, 0.015, 0.46]} />
+        <FacilityMaterial kind="painted-metal" color="#5c6a74" />
       </mesh>
-      {/* Mop Bucket */}
-      <mesh position={[0, 0.3, 0.2]} castShadow receiveShadow>
-        <cylinderGeometry args={[0.2, 0.15, 0.4]} />
-        <meshStandardMaterial color="#f1c40f" roughness={0.6} />
+      {/* Muted Janitorial Utility Bucket */}
+      <mesh position={[0, 0.28, 0.15]} castShadow receiveShadow>
+        <cylinderGeometry args={[0.18, 0.14, 0.36]} />
+        <FacilityMaterial kind="painted-metal" color="#44544c" />
       </mesh>
-      {/* Mop handle sticking out */}
-      <mesh position={[0.1, 0.8, 0.2]} rotation={[0.2, 0, -0.2]} castShadow>
-        <cylinderGeometry args={[0.02, 0.02, 1.2]} />
-        <meshStandardMaterial color="#d4ac0d" roughness={0.9} />
+      {/* Stainless Mop Handle */}
+      <mesh position={[0.08, 0.72, 0.15]} rotation={[0.18, 0, -0.15]} castShadow>
+        <cylinderGeometry args={[0.015, 0.015, 1.1]} />
+        <FacilityMaterial kind="painted-metal" color="#788894" />
       </mesh>
     </group>
   );

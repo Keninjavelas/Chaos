@@ -1,6 +1,7 @@
 import React from "react";
 import { Text } from "@react-three/drei";
 import { HorrorMaterial } from "../materials/HorrorMaterial";
+import { portfolioManifest } from "@/data/portfolioData";
 
 interface GlassWhiteboardProps {
   position?: [number, number, number];
@@ -8,21 +9,20 @@ interface GlassWhiteboardProps {
 }
 
 export function GlassWhiteboard({ position = [0, 0, 0], rotation = [0, 0, 0] }: GlassWhiteboardProps) {
+  const [leftNode, centerNode, rightNode] = portfolioManifest.researchWorkbench.whiteboard.nodes;
+
   return (
     <group position={position} rotation={rotation}>
-      {/* Aluminum Wall Mount Stand */}
       <mesh position={[0, 0, 0]} castShadow>
         <boxGeometry args={[2.2, 1.2, 0.02]} />
         <HorrorMaterial color="#1a2026" roughness={0.4} metalness={0.8} />
       </mesh>
 
-      {/* Translucent Glass Plane */}
       <mesh position={[0, 0, 0.015]}>
         <planeGeometry args={[2.14, 1.14]} />
         <meshStandardMaterial color="#00aacc" transparent opacity={0.35} roughness={0.1} metalness={0.9} />
       </mesh>
 
-      {/* Illuminated Architecture Diagram Text */}
       <Text
         position={[0, 0.42, 0.025]}
         fontSize={0.05}
@@ -31,51 +31,51 @@ export function GlassWhiteboard({ position = [0, 0, 0], rotation = [0, 0, 0] }: 
         anchorY="middle"
         material-toneMapped={false}
       >
-        LOCAL-FIRST AGENTIC AI ARCHITECTURE
+        {portfolioManifest.researchWorkbench.whiteboard.title}
       </Text>
 
-      {/* Diagram Flowchart Nodes */}
       <group position={[0, 0.05, 0.025]}>
         <Text position={[-0.7, 0.15, 0]} fontSize={0.035} color="#00ff99" anchorX="center" material-toneMapped={false}>
-          [ LOCAL LLM ]
+          {leftNode.title}
         </Text>
-        <Text position={[-0.7, 0.05, 0]} fontSize={0.022} color="#aaccff" anchorX="center" material-toneMapped={false}>
-          Qwen-14B / 16GB VRAM
+        <Text position={[-0.7, 0.05, 0]} fontSize={0.022} color="#aaccff" anchorX="center" maxWidth={0.48} lineHeight={1.2} material-toneMapped={false}>
+          {leftNode.subtitle}
         </Text>
 
         <Text position={[-0.3, 0.15, 0]} fontSize={0.035} color="#aaccff" anchorX="center" material-toneMapped={false}>
-          →
+          {"->"}
         </Text>
 
         <Text position={[0, 0.15, 0]} fontSize={0.035} color="#00ff99" anchorX="center" material-toneMapped={false}>
-          [ CONTEXT ENGINE ]
+          {centerNode.title}
         </Text>
-        <Text position={[0, 0.05, 0]} fontSize={0.022} color="#aaccff" anchorX="center" material-toneMapped={false}>
-          Zero-Cloud / Vector Store
+        <Text position={[0, 0.05, 0]} fontSize={0.022} color="#aaccff" anchorX="center" maxWidth={0.48} lineHeight={1.2} material-toneMapped={false}>
+          {centerNode.subtitle}
         </Text>
 
         <Text position={[0.4, 0.15, 0]} fontSize={0.035} color="#aaccff" anchorX="center" material-toneMapped={false}>
-          →
+          {"->"}
         </Text>
 
         <Text position={[0.75, 0.15, 0]} fontSize={0.035} color="#00ff99" anchorX="center" material-toneMapped={false}>
-          [ HERMES CORE ]
+          {rightNode.title}
         </Text>
-        <Text position={[0.75, 0.05, 0]} fontSize={0.022} color="#aaccff" anchorX="center" material-toneMapped={false}>
-          Autonomous Execution
+        <Text position={[0.75, 0.05, 0]} fontSize={0.022} color="#aaccff" anchorX="center" maxWidth={0.48} lineHeight={1.2} material-toneMapped={false}>
+          {rightNode.subtitle}
         </Text>
       </group>
 
-      {/* Principles Footnote */}
       <Text
         position={[0, -0.38, 0.025]}
-        fontSize={0.025}
+        fontSize={0.022}
         color="#aaccff"
         anchorX="center"
         anchorY="middle"
+        maxWidth={1.9}
+        lineHeight={1.2}
         material-toneMapped={false}
       >
-        "Local First → Privacy → Offline → Total Ownership"
+        {portfolioManifest.researchWorkbench.whiteboard.footer}
       </Text>
     </group>
   );

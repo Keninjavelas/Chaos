@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { ItemMetadata, DocumentContent, ElevatorState, InteractionPromptData } from '../data/types';
+import { ItemMetadata, DocumentContent, ElevatorState, InteractionPromptData, InteractionTarget } from '../data/types';
 
 export enum GameMode {
   PLAYING = "PLAYING",
   INSPECTING = "INSPECTING",
+  INTERACTING = "INTERACTING",
   RESUMING = "RESUMING"
 }
 
@@ -12,7 +13,7 @@ interface GameState {
   // Core Game State
   gameMode: GameMode;
   setGameMode: (mode: GameMode) => void;
-  clearInteraction: (resumePlaying?: boolean) => void;
+  clearInteraction: () => void;
   // Inventory
   inventory: Record<string, ItemMetadata>;
   addInventoryItem: (item: ItemMetadata) => void;
@@ -41,6 +42,12 @@ interface GameState {
   // Interaction Prompts
   activePrompt: InteractionPromptData | null;
   setActivePrompt: (prompt: InteractionPromptData | null) => void;
+  activeInteraction: InteractionTarget | null;
+  setInteractionTarget: (target: InteractionTarget, frame: number) => void;
+  clearInteractionTarget: () => void;
+  interactionTargetFrame: number | null;
+  interactionMessage: string | null;
+  setInteractionMessage: (message: string | null) => void;
 }
 
 export const useGameState = create<GameState>()(
@@ -49,11 +56,12 @@ export const useGameState = create<GameState>()(
       // Core Game State
       gameMode: GameMode.PLAYING,
       setGameMode: (mode) => set({ gameMode: mode }),
-      clearInteraction: (resumePlaying = false) => set((state) => ({ 
+      clearInteraction: () => set(() => ({
         activeDocument: null, 
         activeTerminal: null,
         activeKeypad: null,
-        gameMode: resumePlaying ? GameMode.PLAYING : GameMode.RESUMING 
+        activeInteraction: null,
+        gameMode: GameMode.RESUMING,
       })),
 
       // Inventory
@@ -75,9 +83,9 @@ export const useGameState = create<GameState>()(
       activeDocument: null,
       inspectDocument: (doc) => set({ activeDocument: doc, gameMode: doc ? GameMode.INSPECTING : GameMode.RESUMING }),
       activeTerminal: null,
-      setActiveTerminal: (id) => set({ activeTerminal: id, gameMode: id ? GameMode.INSPECTING : GameMode.RESUMING }),
+      setActiveTerminal: (id) => set({ activeTerminal: id, gameMode: id ? GameMode.INTERACTING : GameMode.RESUMING }),
       activeKeypad: null,
-      setActiveKeypad: (id) => set({ activeKeypad: id, gameMode: id ? GameMode.INSPECTING : GameMode.RESUMING }),
+      setActiveKeypad: (id) => set({ activeKeypad: id, gameMode: id ? GameMode.INTERACTING : GameMode.RESUMING }),
       openDrawers: {},
       toggleDrawer: (id) =>
         set((state) => ({
@@ -108,6 +116,18 @@ export const useGameState = create<GameState>()(
       // Interaction Prompts
       activePrompt: null,
       setActivePrompt: (prompt) => set({ activePrompt: prompt }),
+      activeInteraction: null,
+      interactionTargetFrame: null,
+      setInteractionTarget: (target, frame) => set((state) => {
+        const current = state.interactionTargetFrame === frame ? state.activeInteraction : null;
+        const shouldReplace = !current || target.priority > current.priority || (target.priority === current.priority && target.distance < current.distance);
+        return shouldReplace
+          ? { activeInteraction: target, interactionTargetFrame: frame }
+          : { interactionTargetFrame: frame };
+      }),
+      clearInteractionTarget: () => set({ activeInteraction: null, interactionTargetFrame: null }),
+      interactionMessage: null,
+      setInteractionMessage: (message) => set({ interactionMessage: message }),
     }),
     {
       name: 'auxilium-asylum-save',

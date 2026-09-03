@@ -16,11 +16,11 @@ export function Lighting() {
 
   return (
     <group>
-      {/* 1. Ambient light kept very low for horror atmosphere */}
-      <ambientLight intensity={isBlackout ? 0.02 : 0.04} />
+      {/* 1. Ambient light for baseline architectural silhouette readability */}
+      <ambientLight intensity={isBlackout ? 0.06 : 0.12} />
       
-      {/* Atmosphere dust */}
-      <Sparkles count={100} scale={[9, 3.2, 8]} size={1.2} speed={0.05} opacity={0.3} color="#ffffff" position={[0, 1.6, 1.5]} />
+      {/* Subtle, sparse atmospheric dust concentrated in central volume */}
+      <Sparkles count={12} scale={[8, 3.0, 7]} size={0.5} speed={0.012} opacity={0.07} color="#b4c8bc" position={[0, 1.5, 1.0]} />
     </group>
   );
 }

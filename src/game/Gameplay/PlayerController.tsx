@@ -7,26 +7,33 @@ import { useArchiveStore } from "@/lib/state";
 import { useGameState, GameMode } from "../useGameState";
 import { useInput } from "./useInput";
 
-const SPEED = 3.5;
-// SPRINT_MULTIPLIER removed per spec (Player run: DISABLED)
+const MAX_WALK_SPEED = 3.5;
+const ACCEL_RATE = 14.0;
+const DECEL_RATE = 16.0;
+
+// Reusable math vectors to avoid per-frame allocations
+const desiredDirection = new THREE.Vector3();
+const frontVector = new THREE.Vector3();
+const sideVector = new THREE.Vector3();
+const handOffset = new THREE.Vector3();
+const lookAtVector = new THREE.Vector3();
 
 export function PlayerController() {
   const body = useRef<RapierRigidBody>(null);
   const { camera } = useThree();
   const input = useInput();
   const { teleportTarget, setTeleportTarget } = useArchiveStore();
-  const gameMode = useGameState(state => state.gameMode);
-  const setGameMode = useGameState(state => state.setGameMode);
-  const clearInteraction = useGameState(state => state.clearInteraction);
-
-  const direction = new THREE.Vector3();
-  const frontVector = new THREE.Vector3();
-  const sideVector = new THREE.Vector3();
+  const gameMode = useGameState((state) => state.gameMode);
+  const setGameMode = useGameState((state) => state.setGameMode);
 
   const flashlightRef = useRef<THREE.SpotLight>(null);
-  const targetRef = useRef<THREE.Object3D>(null);
+  const targetRef = useRef<THREE.Group>(null);
 
-  useFrame(({ clock }) => {
+  // Smooth bobbing state
+  const bobPhase = useRef(0);
+  const smoothedSpeed = useRef(0);
+
+  useFrame(({ clock }, delta) => {
     if (!body.current) return;
 
     if (teleportTarget) {
@@ -35,67 +42,87 @@ export function PlayerController() {
       return;
     }
 
-    if (gameMode !== GameMode.PLAYING) return;
+    if (gameMode !== GameMode.PLAYING) {
+      // Zero out horizontal velocity when not playing / in overlay
+      const curLinvel = body.current.linvel();
+      body.current.setLinvel({ x: 0, y: curLinvel.y, z: 0 }, true);
+      return;
+    }
 
-    // Movement calculation
     const currentVelocity = body.current.linvel();
-    
+    const dt = Math.min(delta, 0.1);
+
+    // 1. Calculate desired horizontal movement vector
     frontVector.set(0, 0, Number(input.backward) - Number(input.forward));
     sideVector.set(Number(input.left) - Number(input.right), 0, 0);
 
-    direction.subVectors(frontVector, sideVector)
-      .normalize()
-      .multiplyScalar(SPEED) // Run disabled
-      .applyEuler(camera.rotation);
+    desiredDirection.subVectors(frontVector, sideVector);
+    const inputLength = desiredDirection.length();
 
-    // Apply movement while preserving vertical velocity (gravity)
-    body.current.setLinvel({ x: direction.x, y: currentVelocity.y, z: direction.z }, true);
+    if (inputLength > 0.001) {
+      desiredDirection.divideScalar(inputLength);
+      desiredDirection.multiplyScalar(MAX_WALK_SPEED);
+      desiredDirection.applyEuler(camera.rotation);
+      // Keep purely on horizontal XZ plane
+      desiredDirection.y = 0;
+    } else {
+      desiredDirection.set(0, 0, 0);
+    }
 
-    // Sync camera to physics body (Camera Height: 1.65m per spec)
+    // 2. Smoothly lerp horizontal velocity (Acceleration / Deceleration)
+    const isAccelerating = inputLength > 0.001;
+    const lerpRate = isAccelerating ? ACCEL_RATE : DECEL_RATE;
+    const lerpFactor = Math.min(dt * lerpRate, 1.0);
+
+    const targetX = THREE.MathUtils.lerp(currentVelocity.x, desiredDirection.x, lerpFactor);
+    const targetZ = THREE.MathUtils.lerp(currentVelocity.z, desiredDirection.z, lerpFactor);
+
+    body.current.setLinvel({ x: targetX, y: currentVelocity.y, z: targetZ }, true);
+
+    // 3. Ground Speed & Camera Head Bob
+    const horizontalSpeed = Math.hypot(targetX, targetZ);
+    smoothedSpeed.current = THREE.MathUtils.lerp(smoothedSpeed.current, horizontalSpeed, Math.min(dt * 10, 1.0));
+
+    // Progress bobbing cycle proportionally to speed
+    if (smoothedSpeed.current > 0.1) {
+      bobPhase.current += dt * (smoothedSpeed.current * 2.8);
+    }
+
+    const bobIntensity = Math.min(smoothedSpeed.current / MAX_WALK_SPEED, 1.0);
+    const bobY = Math.sin(bobPhase.current * 2) * (0.02 * bobIntensity);
+    const bobX = Math.cos(bobPhase.current) * (0.012 * bobIntensity);
+
+    // Sync camera to physics body (Camera Height: 1.65m base + bobbing)
     const position = body.current.translation();
-    camera.position.set(position.x, position.y + 0.65, position.z); // Body is at y=1, +0.65 = 1.65m
+    camera.position.set(position.x + bobX, position.y + 0.65 + bobY, position.z);
 
-    // Sync flashlight to camera with bobbing and flickering
+    // 4. Flashlight Dynamics (Restrained sway and battery pulsation)
     if (flashlightRef.current && targetRef.current) {
       const time = clock.getElapsedTime();
-      
-      // Calculate speed for head bob
-      const speed = new THREE.Vector2(currentVelocity.x, currentVelocity.z).length();
-      const isMoving = speed > 0.5;
-      
-      // Head bob and subtle hand sway offsets
-      const bobX = isMoving ? Math.sin(time * 8) * 0.03 : 0;
-      const bobY = isMoving ? Math.abs(Math.sin(time * 8)) * 0.03 : 0;
-      
-      // Very subtle hand sway
-      const swayX = Math.sin(time * 0.5) * 0.005;
-      const swayY = Math.cos(time * 0.3) * 0.005;
 
-      // Position flashlight slightly to the right of the camera
-      const handOffset = new THREE.Vector3(0.3 + swayX, -0.2 + swayY, 0);
+      const swayX = Math.sin(time * 0.6) * 0.004;
+      const swayY = Math.cos(time * 0.4) * 0.004;
+
+      handOffset.set(0.28 + swayX + bobX * 0.5, -0.18 + swayY + bobY * 0.5, 0);
       handOffset.applyQuaternion(camera.quaternion);
       flashlightRef.current.position.copy(camera.position).add(handOffset);
-      
-      // Calculate target point
-      const lookAtVector = new THREE.Vector3(bobX + swayX, bobY + swayY, -1);
+
+      lookAtVector.set(swayX * 2, swayY * 2, -1);
       lookAtVector.applyQuaternion(camera.quaternion);
-      
       targetRef.current.position.copy(camera.position).add(lookAtVector);
       flashlightRef.current.target = targetRef.current;
 
-      // Subtle Battery Variation (±5% at 0.3 Hz)
+      // Subtle Battery Ambient Ripple (±4% at 0.25 Hz)
       const baseIntensity = 30.0;
-      const variation = Math.sin(time * Math.PI * 2 * 0.3) * 0.05; // 0.3Hz
+      const variation = Math.sin(time * Math.PI * 2 * 0.25) * 0.04;
       flashlightRef.current.intensity = baseIntensity * (1.0 + variation);
     }
   });
 
   const handleUnlock = () => {
-    // When the user presses ESC, the browser naturally unlocks the pointer.
-    // We catch that here and sync our state.
     const currentMode = useGameState.getState().gameMode;
-    if (currentMode === GameMode.INSPECTING) {
-      // Do nothing. The pointer is intentionally unlocked for inspection.
+    if (currentMode === GameMode.INSPECTING || currentMode === GameMode.INTERACTING) {
+      // Pointer intentionally released for document / terminal modal
     } else if (currentMode === GameMode.PLAYING) {
       setGameMode(GameMode.RESUMING);
     }
@@ -113,29 +140,29 @@ export function PlayerController() {
         onUnlock={handleUnlock}
       />
       
-      {/* Player Flashlight (Production Spec) */}
+      {/* Player Flashlight */}
       <spotLight 
         ref={flashlightRef} 
         intensity={15.0} 
-        angle={0.45} // Wider, softer flood
-        penumbra={1.0} // Maximum softness
-        distance={20} // Realistic falloff
+        angle={0.48}
+        penumbra={1.0}
+        distance={22}
         decay={2.0} 
         color="#ffffff"
         castShadow
         shadow-mapSize={[1024, 1024]}
         shadow-bias={-0.001}
       />
-      <group ref={targetRef as any} />
+      <group ref={targetRef} />
       <RigidBody
         ref={body}
         colliders={false}
         mass={1}
         type="dynamic"
-        position={[0, 1, 4]} // Spawn Position Z: 4
+        position={[0, 1, 4]}
         enabledRotations={[false, false, false]}
         ccd={true}
-        friction={0} // We handle movement directly
+        friction={0}
       >
         <CapsuleCollider args={[0.5, 0.3]} />
       </RigidBody>

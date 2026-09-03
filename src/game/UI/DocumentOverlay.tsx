@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useGameState } from "../useGameState";
+import { playInteractionFeedback } from "../Interactables/interactionFeedback";
 
 export function DocumentOverlay() {
   const activeDocument = useGameState((state) => state.activeDocument);
@@ -14,8 +15,9 @@ export function DocumentOverlay() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       const key = e.key.toLowerCase();
-      if (key === 'e' || key === 'escape') {
-        clearInteraction(true);
+      if (key === 'escape') {
+        playInteractionFeedback("close");
+        clearInteraction();
       }
     };
 
@@ -28,20 +30,35 @@ export function DocumentOverlay() {
   const isNote = activeDocument.type === 'note';
 
   return (
-    <div className="fixed inset-0 z-[160] flex flex-col items-center justify-between bg-black/85 p-6 md:p-12 font-mono select-none pointer-events-auto cursor-default">
+    <div 
+      className="fixed inset-0 z-[160] flex flex-col items-center justify-between bg-black/85 p-6 md:p-12 font-mono select-none pointer-events-auto cursor-default"
+      onClick={() => {
+        playInteractionFeedback("close");
+        clearInteraction();
+      }}
+    >
       {/* Top Header Mode Label */}
-      <div className="w-full max-w-2xl flex justify-between items-center text-xs text-[#eddcb9]/60 tracking-widest uppercase">
+      <div 
+        className="w-full max-w-2xl flex justify-between items-center text-xs text-[#eddcb9]/60 tracking-widest uppercase"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div>[ INSPECTION MODE // {activeDocument.type.toUpperCase()} ]</div>
         <button
-          onClick={() => clearInteraction(true)}
+          onClick={() => {
+            playInteractionFeedback("close");
+            clearInteraction();
+          }}
           className="px-3 py-1 bg-[#eddcb9]/10 border border-[#eddcb9]/30 hover:bg-[#eddcb9] hover:text-black transition-colors text-xs font-bold tracking-wider rounded cursor-pointer"
         >
-          [ E ] PUT AWAY
+          [ ESC ] PUT AWAY
         </button>
       </div>
 
       {/* 2D High-Resolution Document Paper Container (Centered, Vector-Sharp HTML) */}
-      <div className="w-full max-w-xl max-h-[70vh] flex flex-col my-auto shadow-2xl rounded-lg overflow-hidden border-2 border-[#d6be92]/40 transition-all duration-300">
+      <div 
+        className="w-full max-w-xl max-h-[70vh] flex flex-col my-auto shadow-2xl rounded-lg overflow-hidden border-2 border-[#d6be92]/40 transition-all duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div 
           className={`w-full h-full p-8 md:p-10 flex flex-col overflow-y-auto ${
             isNote
@@ -71,7 +88,7 @@ export function DocumentOverlay() {
               whiteSpace: 'pre-wrap'
             }}
           >
-            {activeDocument.content || (activeDocument as any).text || "[ NO CONTENT AVAILABLE ]"}
+            {activeDocument.content || "[ NO CONTENT AVAILABLE ]"}
           </p>
 
           {/* Author Signature */}
@@ -100,7 +117,7 @@ export function DocumentOverlay() {
 
       {/* Bottom Dismissal Instructions */}
       <div className="text-center font-mono text-xs text-[#eddcb9]/80 tracking-widest">
-        PRESS <span className="bg-[#eddcb9]/20 px-2 py-0.5 rounded text-white font-bold">[ E ]</span> TO PUT AWAY
+        PRESS <span className="bg-[#eddcb9]/20 px-2 py-0.5 rounded text-white font-bold">[ ESC ]</span> TO PUT AWAY
       </div>
     </div>
   );

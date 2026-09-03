@@ -1,29 +1,33 @@
 import React from 'react';
 import { ThreeElements } from '@react-three/fiber';
-import { getProceduralRoughness, getProceduralNormal } from './ProceduralNoise';
+import { getSurfaceNormal, getSurfaceRoughness, getSurfaceAlbedo, MaterialSurfaceFamily } from './ProceduralNoise';
 import * as THREE from 'three';
 
 interface HorrorMaterialProps extends Omit<ThreeElements['meshStandardMaterial'], 'color'> {
   color?: string | THREE.Color;
   roughness?: number;
   metalness?: number;
-  noiseScale?: number;
   bumpStrength?: number;
-  roughnessVariance?: number;
+  noiseScale?: number;
+  family?: MaterialSurfaceFamily;
+  colorVariation?: boolean;
 }
 
 export function HorrorMaterial({
-  color = '#ffffff',
-  roughness = 0.8,
+  color = '#687265',
+  roughness = 0.85,
   metalness = 0.0,
-  noiseScale = 4.0,
-  bumpStrength = 1.0,
-  roughnessVariance = 1.0,
+  bumpStrength = 0.35,
+  family = 'aged-plaster',
+  colorVariation = true,
   ...props
 }: HorrorMaterialProps) {
-  // Use the scale-cached textures directly without cloning
-  const roughnessMap = getProceduralRoughness(noiseScale);
-  const normalMap = getProceduralNormal(noiseScale);
+  const colorHex = typeof color === 'string' ? color : `#${color.getHexString()}`;
+  const roughnessMap = getSurfaceRoughness(family, roughness);
+  const normalMap = getSurfaceNormal(family, bumpStrength);
+  const albedoMap = colorVariation ? getSurfaceAlbedo(family, colorHex) : undefined;
+
+  const normalScaleVec = React.useMemo(() => new THREE.Vector2(bumpStrength, bumpStrength), [bumpStrength]);
 
   return (
     <meshStandardMaterial
@@ -32,7 +36,8 @@ export function HorrorMaterial({
       metalness={metalness}
       roughnessMap={roughnessMap}
       normalMap={normalMap}
-      normalScale={new THREE.Vector2(bumpStrength, bumpStrength)}
+      map={albedoMap}
+      normalScale={normalScaleVec}
       {...props}
     />
   );

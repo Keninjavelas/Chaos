@@ -1,0 +1,14 @@
+
+> archive-app@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3002
+
+⨯ Failed to start server
+Error: listen EADDRINUSE: address already in use 127.0.0.1:3002
+    at <unknown> (Error: listen EADDRINUSE: address already in use 127.0.0.1:3002) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 3002
+}
+[?25h
