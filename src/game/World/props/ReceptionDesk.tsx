@@ -41,7 +41,7 @@ function InteractiveDeskDrawer() {
         <group ref={drawerRef}>
           <mesh castShadow receiveShadow>
             <boxGeometry args={[0.55, 0.25, 1.1]} />
-            <FacilityMaterial kind="wood" color="#352920" />
+            <FacilityMaterial kind="wood" color="#241a12" />
           </mesh>
           {/* Drawer Handle */}
           <mesh position={[0, 0.05, 0.56]}>
@@ -107,48 +107,48 @@ export function ReceptionDesk({ position, rotation = [0, 0, 0] }: ReceptionDeskP
   return (
     <group position={position} rotation={rotation}>
       
-      {/* ─── DESK STRUCTURE ─── */}
+      {/* ─── DESK STRUCTURE — deep brown-black aged laminate horror palette ─── */}
       <RigidBody type="fixed" colliders="cuboid">
         {/* Working Surface */}
         <RoundedBox args={[4.2, 0.1, 2.4]} position={[0, 0.75, 0]} radius={0.02} smoothness={4}>
-          <FacilityMaterial kind="wood" color="#4a3b2c" />
+          <FacilityMaterial kind="wood" color="#2f2419" />
         </RoundedBox>
 
         {/* Front Privacy Panel / Shield */}
         <mesh position={[0, 0.35, 1.15]} receiveShadow>
           <boxGeometry args={[4.2, 0.8, 0.1]} />
-          <FacilityMaterial kind="wood" color="#352920" />
+          <FacilityMaterial kind="wood" color="#241a12" />
         </mesh>
 
         {/* Left Side Panel */}
         <mesh position={[-2.05, 0.35, 0]} receiveShadow>
           <boxGeometry args={[0.1, 0.8, 2.4]} />
-          <FacilityMaterial kind="wood" color="#352920" />
+          <FacilityMaterial kind="wood" color="#241a12" />
         </mesh>
 
         {/* Right Side Panel */}
         <mesh position={[2.05, 0.35, 0]} receiveShadow>
           <boxGeometry args={[0.1, 0.8, 2.4]} />
-          <FacilityMaterial kind="wood" color="#352920" />
+          <FacilityMaterial kind="wood" color="#241a12" />
         </mesh>
       </RigidBody>
 
       {/* ─── INTERACTIVE DRAWER (Left Side) ─── */}
       <InteractiveDeskDrawer />
 
-      {/* ─── RECEPTION DESK CHAIR ─── */}
-      <group position={[0, 0, -0.9]} rotation={[0, 0.1, 0]}>
+      {/* ─── RECEPTION DESK CHAIR — noticeably misaligned (someone shoved back hard) ─── */}
+      <group position={[0.18, 0, -0.85]} rotation={[0, -0.42, 0.04]}>
         <mesh position={[0, 0.4, 0]} castShadow>
           <boxGeometry args={[0.5, 0.08, 0.5]} />
-          <FacilityMaterial kind="painted-metal" color="#182025" />
+          <FacilityMaterial kind="painted-metal" color="#12181c" />
         </mesh>
         <mesh position={[0, 0.7, -0.22]} castShadow>
           <boxGeometry args={[0.5, 0.5, 0.06]} />
-          <FacilityMaterial kind="painted-metal" color="#182025" />
+          <FacilityMaterial kind="painted-metal" color="#12181c" />
         </mesh>
         <mesh position={[0, 0.2, 0]}>
           <cylinderGeometry args={[0.04, 0.04, 0.4]} />
-          <FacilityMaterial kind="painted-metal" color="#2c353c" />
+          <FacilityMaterial kind="painted-metal" color="#232b30" />
         </mesh>
       </group>
     </group>

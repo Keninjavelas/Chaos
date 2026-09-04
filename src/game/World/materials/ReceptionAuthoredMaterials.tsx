@@ -112,26 +112,25 @@ export function ReceptionHeroFloor({ position = [0, -0.5, 0], args = [10, 10.5] 
   const meshRef = useRef<THREE.Mesh>(null);
   useEnsureUv2(meshRef);
 
-  // Repeat scaled to institutional tile size (~0.4m per tile)
   const repeatX = Math.max(1, args[0] / 2.0);
   const repeatY = Math.max(1, args[1] / 2.0);
   const maps = useClonedPbrMaps("/textures/reception/floor", repeatX, repeatY);
 
   return (
     <RigidBody type="fixed" position={position}>
-      {/* Base Floor Plane */}
+      {/* Base Floor Plane — deep brown-grey institutional horror tone */}
       <mesh ref={meshRef} receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.5, 0]}>
         <planeGeometry args={args} />
         <meshStandardMaterial
           map={maps.diffuse}
           normalMap={maps.normal}
-          normalScale={useMemo(() => new THREE.Vector2(1.25, 1.25), [])}
+          normalScale={useMemo(() => new THREE.Vector2(1.5, 1.5), [])}
           roughnessMap={maps.roughness}
-          roughness={0.68}
-          metalness={0.04}
+          roughness={0.82}
+          metalness={0.03}
           aoMap={maps.ao}
-          aoMapIntensity={0.85}
-          color="#cfc7ba"
+          aoMapIntensity={1.0}
+          color="#786c58"
         />
       </mesh>
 
@@ -157,7 +156,6 @@ export function ReceptionHeroCeiling({ position = [0, 3.2, 0], args = [10, 0.1, 
   const meshRef = useRef<THREE.Mesh>(null);
   useEnsureUv2(meshRef);
 
-  // Repeat aligned to 1.2m acoustic tile bays
   const repeatX = Math.max(1, args[0] / 2.4);
   const repeatY = Math.max(1, args[2] / 2.4);
   const maps = useClonedPbrMaps("/textures/reception/ceiling", repeatX, repeatY);
@@ -167,33 +165,33 @@ export function ReceptionHeroCeiling({ position = [0, 3.2, 0], args = [10, 0.1, 
 
   return (
     <RigidBody type="fixed" position={position}>
-      {/* Main Ceiling Slab */}
+      {/* Main Ceiling Slab — aged stained acoustic tile tone */}
       <mesh ref={meshRef} receiveShadow position={[0, 0, 0]}>
         <boxGeometry args={args} />
         <meshStandardMaterial
           map={maps.diffuse}
           normalMap={maps.normal}
-          normalScale={useMemo(() => new THREE.Vector2(1.3, 1.3), [])}
+          normalScale={useMemo(() => new THREE.Vector2(1.55, 1.55), [])}
           roughnessMap={maps.roughness}
-          roughness={0.92}
+          roughness={0.97}
           metalness={0.0}
           aoMap={maps.ao}
-          aoMapIntensity={0.8}
-          color="#c8c2b5"
+          aoMapIntensity={0.95}
+          color="#868173"
         />
       </mesh>
 
-      {/* Grid framing strips preserving institutional architectural layout */}
+      {/* Grid framing strips — charcoal metal grid horror tone */}
       {Array.from({ length: tileColumns - 1 }).map((_, index) => (
         <mesh key={`ceiling-column-${index}`} position={[-args[0] / 2 + (index + 1) * 1.2, -args[1] / 2 - 0.006, 0]}>
           <boxGeometry args={[0.02, 0.012, args[2]]} />
-          <meshStandardMaterial color="#222420" roughness={0.92} metalness={0.2} />
+          <meshStandardMaterial color="#161815" roughness={0.95} metalness={0.35} />
         </mesh>
       ))}
       {Array.from({ length: tileRows - 1 }).map((_, index) => (
         <mesh key={`ceiling-row-${index}`} position={[0, -args[1] / 2 - 0.006, -args[2] / 2 + (index + 1) * 1.2]}>
           <boxGeometry args={[args[0], 0.012, 0.02]} />
-          <meshStandardMaterial color="#222420" roughness={0.92} metalness={0.2} />
+          <meshStandardMaterial color="#161815" roughness={0.95} metalness={0.35} />
         </mesh>
       ))}
     </RigidBody>
@@ -214,8 +212,6 @@ export function ReceptionHeroWall({ position, rotation = [0, 0, 0], args }: Rece
   const meshRef = useRef<THREE.Mesh>(null);
   useEnsureUv2(meshRef);
 
-  // Believable real-world plaster/concrete scale (~2.5m per texture tile)
-  // For walls oriented along X or Z:
   const wallSpan = Math.max(args[0], args[2]);
   const wallHeight = args[1];
   const repeatX = Math.max(0.8, wallSpan / 2.5);
@@ -226,40 +222,41 @@ export function ReceptionHeroWall({ position, rotation = [0, 0, 0], args }: Rece
   return (
     <group position={position} rotation={rotation}>
       <RigidBody type="fixed">
+        {/* Moldy grey-green / aged plaster institutional horror base */}
         <mesh ref={meshRef} position={[0, args[1] / 2, 0]} castShadow receiveShadow>
           <boxGeometry args={args} />
           <meshStandardMaterial
             map={maps.diffuse}
             normalMap={maps.normal}
-            normalScale={useMemo(() => new THREE.Vector2(1.35, 1.35), [])}
+            normalScale={useMemo(() => new THREE.Vector2(1.85, 1.85), [])}
             roughnessMap={maps.roughness}
-            roughness={0.86}
+            roughness={0.93}
             metalness={0.02}
             aoMap={maps.ao}
-            aoMapIntensity={0.88}
-            color="#d8d1c2" // Dirty warm grey-beige institutional plaster tone
+            aoMapIntensity={1.0}
+            color="#989380"
           />
         </mesh>
       </RigidBody>
 
-      {/* Dark painted metal baseboards */}
+      {/* Dark charcoal/black metal baseboards with worn metal feel */}
       <mesh position={[0, 0.1, args[2] / 2 + 0.01]} receiveShadow>
         <boxGeometry args={[args[0], 0.2, 0.04]} />
-        <meshStandardMaterial color="#1e2422" roughness={0.55} metalness={0.65} />
+        <meshStandardMaterial color="#141817" roughness={0.62} metalness={0.72} />
       </mesh>
       <mesh position={[0, 0.1, -args[2] / 2 - 0.01]} receiveShadow>
         <boxGeometry args={[args[0], 0.2, 0.04]} />
-        <meshStandardMaterial color="#1e2422" roughness={0.55} metalness={0.65} />
+        <meshStandardMaterial color="#141817" roughness={0.62} metalness={0.72} />
       </mesh>
 
-      {/* Chair Rail (Aged wood/laminate trim) */}
+      {/* Chair Rail — deep brown-black aged laminate */}
       <mesh position={[0, 1.0, args[2] / 2 + 0.01]} receiveShadow>
         <boxGeometry args={[args[0], 0.08, 0.05]} />
-        <meshStandardMaterial color="#3d3024" roughness={0.72} metalness={0.05} />
+        <meshStandardMaterial color="#2e251c" roughness={0.8} metalness={0.04} />
       </mesh>
       <mesh position={[0, 1.0, -args[2] / 2 - 0.01]} receiveShadow>
         <boxGeometry args={[args[0], 0.08, 0.05]} />
-        <meshStandardMaterial color="#3d3024" roughness={0.72} metalness={0.05} />
+        <meshStandardMaterial color="#2e251c" roughness={0.8} metalness={0.04} />
       </mesh>
     </group>
   );
@@ -417,29 +414,309 @@ export function ReceptionRepairPatch({
 }) {
   return (
     <group position={position} rotation={rotation}>
-      {/* Plaster compound patch with subtle border */}
+      {/* Older mismatched plaster repair — different tone from aged wall */}
       <mesh receiveShadow position={[0, 0, 0.002]}>
         <planeGeometry args={[scale[0], scale[1]]} />
         <meshStandardMaterial
-          color="#c2bcb0"
-          roughness={0.95}
+          color="#b0a895"
+          roughness={0.96}
           metalness={0.0}
           polygonOffset
           polygonOffsetFactor={-2}
         />
       </mesh>
-      {/* Faint plaster taping edge */}
+      {/* Yellowed old tape edge around repair */}
       <mesh receiveShadow position={[0, 0, 0.003]}>
         <planeGeometry args={[scale[0] + 0.04, scale[1] + 0.04]} />
         <meshBasicMaterial
-          color="#9e988c"
+          color="#847a64"
           transparent
-          opacity={0.35}
+          opacity={0.42}
           depthWrite={false}
           polygonOffset
           polygonOffsetFactor={-1}
         />
       </mesh>
     </group>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// NEW HORROR DECALS — Narrative Surface Decay
+// ─────────────────────────────────────────────────────────────────────────────
+
+let cachedPeelingTexture: THREE.CanvasTexture | null = null;
+
+function getPeelingPaintTexture(): THREE.CanvasTexture {
+  if (!cachedPeelingTexture && typeof document !== "undefined") {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.clearRect(0, 0, 256, 256);
+      for (let pass = 0; pass < 5; pass++) {
+        const cx = 40 + Math.random() * 176;
+        const cy = 40 + Math.random() * 176;
+        const rx = 25 + Math.random() * 55;
+        const ry = 18 + Math.random() * 45;
+        const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, Math.max(rx, ry));
+        grad.addColorStop(0, "rgba(12, 10, 8, 0.92)");
+        grad.addColorStop(0.6, "rgba(28, 24, 20, 0.55)");
+        grad.addColorStop(1, "rgba(40, 36, 30, 0.0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, Math.random() * Math.PI, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Jagged curl edges
+      ctx.strokeStyle = "rgba(62, 54, 42, 0.75)";
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 9; i++) {
+        ctx.beginPath();
+        let x = Math.random() * 256;
+        let y = Math.random() * 256;
+        ctx.moveTo(x, y);
+        for (let s = 0; s < 6; s++) {
+          x += (Math.random() - 0.5) * 30;
+          y += (Math.random() - 0.5) * 30;
+          ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+    cachedPeelingTexture = new THREE.CanvasTexture(canvas);
+  }
+  return cachedPeelingTexture!;
+}
+
+export function ReceptionPeelingPaint({
+  position,
+  rotation = [0, 0, 0],
+  scale = [0.6, 0.5],
+  opacity = 0.85,
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number];
+  opacity?: number;
+}) {
+  const tex = getPeelingPaintTexture();
+  if (!tex) return null;
+  return (
+    <mesh position={position} rotation={rotation} receiveShadow>
+      <planeGeometry args={[scale[0], scale[1]]} />
+      <meshBasicMaterial
+        map={tex}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        polygonOffset
+        polygonOffsetFactor={-3}
+      />
+    </mesh>
+  );
+}
+
+let cachedGrimeTexture: THREE.CanvasTexture | null = null;
+
+function getGrimeCornerTexture(): THREE.CanvasTexture {
+  if (!cachedGrimeTexture && typeof document !== "undefined") {
+    const canvas = document.createElement("canvas");
+    canvas.width = 256;
+    canvas.height = 512;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.clearRect(0, 0, 256, 512);
+      // Heavy concentration at bottom/top edge, soft vertical fade
+      const vert = ctx.createLinearGradient(0, 0, 0, 512);
+      vert.addColorStop(0.0, "rgba(14, 12, 10, 0.82)");
+      vert.addColorStop(0.15, "rgba(18, 16, 14, 0.62)");
+      vert.addColorStop(0.4, "rgba(22, 20, 18, 0.28)");
+      vert.addColorStop(0.7, "rgba(28, 26, 22, 0.08)");
+      vert.addColorStop(1.0, "rgba(0, 0, 0, 0.0)");
+      ctx.fillStyle = vert;
+      ctx.fillRect(0, 0, 256, 512);
+      // Dark heavy band
+      const band = ctx.createLinearGradient(0, 0, 256, 0);
+      band.addColorStop(0, "rgba(0,0,0,0.0)");
+      band.addColorStop(0.2, "rgba(8, 6, 4, 0.4)");
+      band.addColorStop(0.5, "rgba(8, 6, 4, 0.55)");
+      band.addColorStop(0.8, "rgba(8, 6, 4, 0.4)");
+      band.addColorStop(1, "rgba(0,0,0,0.0)");
+      ctx.fillStyle = band;
+      ctx.fillRect(0, 0, 256, 40);
+      // Speckles
+      for (let i = 0; i < 80; i++) {
+        const x = Math.random() * 256;
+        const y = Math.random() * 200;
+        const r = 0.5 + Math.random() * 2;
+        ctx.fillStyle = `rgba(6, 5, 4, ${0.3 + Math.random() * 0.4})`;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    cachedGrimeTexture = new THREE.CanvasTexture(canvas);
+  }
+  return cachedGrimeTexture!;
+}
+
+export function ReceptionGrimeBand({
+  position,
+  rotation = [0, 0, 0],
+  scale = [4.0, 0.9],
+  opacity = 0.55,
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number];
+  opacity?: number;
+}) {
+  const tex = getGrimeCornerTexture();
+  if (!tex) return null;
+  return (
+    <mesh position={position} rotation={rotation} receiveShadow>
+      <planeGeometry args={[scale[0], scale[1]]} />
+      <meshBasicMaterial
+        map={tex}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        polygonOffset
+        polygonOffsetFactor={-3}
+      />
+    </mesh>
+  );
+}
+
+let cachedRustTexture: THREE.CanvasTexture | null = null;
+
+function getRustBleedTexture(): THREE.CanvasTexture {
+  if (!cachedRustTexture && typeof document !== "undefined") {
+    const canvas = document.createElement("canvas");
+    canvas.width = 128;
+    canvas.height = 384;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.clearRect(0, 0, 128, 384);
+      const grad = ctx.createLinearGradient(0, 0, 0, 384);
+      grad.addColorStop(0, "rgba(90, 38, 16, 0.78)");
+      grad.addColorStop(0.25, "rgba(110, 52, 22, 0.58)");
+      grad.addColorStop(0.55, "rgba(88, 44, 20, 0.28)");
+      grad.addColorStop(0.8, "rgba(66, 34, 16, 0.1)");
+      grad.addColorStop(1, "rgba(0,0,0,0.0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(44, 0);
+      ctx.bezierCurveTo(36, 90, 58, 190, 60, 370);
+      ctx.lineTo(80, 370);
+      ctx.bezierCurveTo(82, 200, 96, 100, 88, 0);
+      ctx.closePath();
+      ctx.fill();
+      // Side rivulet trails
+      ctx.fillStyle = "rgba(76, 34, 16, 0.38)";
+      ctx.fillRect(32, 0, 5, 180);
+      ctx.fillRect(92, 0, 4, 220);
+      ctx.fillRect(22, 14, 3, 80);
+      ctx.fillRect(102, 30, 4, 140);
+    }
+    cachedRustTexture = new THREE.CanvasTexture(canvas);
+  }
+  return cachedRustTexture!;
+}
+
+export function ReceptionRustBleed({
+  position,
+  rotation = [0, 0, 0],
+  scale = [0.28, 1.2],
+  opacity = 0.7,
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number];
+  opacity?: number;
+}) {
+  const tex = getRustBleedTexture();
+  if (!tex) return null;
+  return (
+    <mesh position={position} rotation={rotation} receiveShadow>
+      <planeGeometry args={[scale[0], scale[1]]} />
+      <meshBasicMaterial
+        map={tex}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        polygonOffset
+        polygonOffsetFactor={-3}
+      />
+    </mesh>
+  );
+}
+
+let cachedCeilingStainTexture: THREE.CanvasTexture | null = null;
+
+function getCeilingStainTexture(): THREE.CanvasTexture {
+  if (!cachedCeilingStainTexture && typeof document !== "undefined") {
+    const canvas = document.createElement("canvas");
+    canvas.width = 512;
+    canvas.height = 256;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.clearRect(0, 0, 512, 256);
+      // Long horizontal pipe-run discoloration
+      const grad = ctx.createLinearGradient(0, 0, 0, 256);
+      grad.addColorStop(0.0, "rgba(0,0,0,0.0)");
+      grad.addColorStop(0.3, "rgba(32, 26, 18, 0.2)");
+      grad.addColorStop(0.5, "rgba(44, 36, 26, 0.58)");
+      grad.addColorStop(0.7, "rgba(32, 26, 18, 0.2)");
+      grad.addColorStop(1.0, "rgba(0,0,0,0.0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 256);
+      // Concentrated darker blobs along the center
+      for (let i = 0; i < 6; i++) {
+        const cx = 40 + i * 85 + (Math.random() - 0.5) * 40;
+        const cy = 128 + (Math.random() - 0.5) * 60;
+        const r = 25 + Math.random() * 40;
+        const blob = ctx.createRadialGradient(cx, cy, 2, cx, cy, r);
+        blob.addColorStop(0, "rgba(22, 18, 14, 0.78)");
+        blob.addColorStop(0.5, "rgba(38, 32, 24, 0.35)");
+        blob.addColorStop(1, "rgba(0,0,0,0.0)");
+        ctx.fillStyle = blob;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    cachedCeilingStainTexture = new THREE.CanvasTexture(canvas);
+  }
+  return cachedCeilingStainTexture!;
+}
+
+export function ReceptionCeilingPipeStain({
+  position,
+  rotation = [0, 0, 0],
+  scale = [4.5, 0.8],
+  opacity = 0.65,
+}: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  scale?: [number, number];
+  opacity?: number;
+}) {
+  const tex = getCeilingStainTexture();
+  if (!tex) return null;
+  return (
+    <mesh position={position} rotation={rotation} receiveShadow>
+      <planeGeometry args={[scale[0], scale[1]]} />
+      <meshBasicMaterial
+        map={tex}
+        transparent
+        opacity={opacity}
+        depthWrite={false}
+        polygonOffset
+        polygonOffsetFactor={-3}
+      />
+    </mesh>
   );
 }

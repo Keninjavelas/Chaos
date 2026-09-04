@@ -12,6 +12,10 @@ interface DocumentPropProps {
 export function DocumentProp({ position, rotation = [0, 0, 0], document }: DocumentPropProps) {
   const inspectDocument = useGameState((state) => state.inspectDocument);
 
+  if (!document) {
+    return null;
+  }
+
   return (
     <InteractableObject 
       label={document.interactionLabel || document.title}

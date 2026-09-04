@@ -352,6 +352,10 @@ export function ExperiencePlaque({
 }) {
   const inspectDocument = useGameState((state) => state.inspectDocument);
 
+  if (!experience) {
+    return null;
+  }
+
   return (
     <group position={position} rotation={rotation}>
       <InteractableObject

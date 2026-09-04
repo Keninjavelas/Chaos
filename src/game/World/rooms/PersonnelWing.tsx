@@ -1,281 +1,474 @@
 import React from "react";
+import { Text } from "@react-three/drei";
+import { RigidBody } from "@react-three/rapier";
 import { RoomProps } from "../types";
-import { NoticeBoard } from "../props/RoomArchitecture";
 import { FilingCabinet } from "../props/FilingCabinet";
 import { DocumentProp } from "../props/DocumentProp";
 import { InteractableObject } from "../../Interactables/InteractableObject";
 import { useGameState } from "../../useGameState";
 import { FacilityMaterial } from "../materials/FacilityMaterials";
-import { VendingMachine, TrashBin } from "../props/HeavyProps";
-import { CoffeeMug, Pen, Keyboard, CRTMonitor, DeskPhone, WallSign } from "../props/Clutter";
-import { InstancedDebris } from "../props/InstancedDebris";
-import { CubicleDivider, SupervisorDesk, OldRefrigerator, Microwave, CoffeeMachine, OfficePrinter, AudioRecorder, CassetteTape, FamilyPhoto, DeskLamp } from "../props/PersonnelProps";
+import { CoffeeMug, Pen, Keyboard, CRTMonitor, DeskPhone } from "../props/Clutter";
+import { OfficePrinter, FamilyPhoto } from "../props/PersonnelProps";
 import { DeveloperTimelineWall } from "../props/DeveloperTimelineWall";
-import { FacilityCeilingGrid, FacilityFloorSection, FacilityWallSegment } from "../props/FacilityKit";
+import { PersonnelHeroCeiling, PersonnelHeroFloor, PersonnelHeroWall } from "../materials/PersonnelAuthoredMaterials";
+import { FacilitySignPanel } from "../props/FacilityKit";
 import { FacilityFluorescent, FacilityTaskLight } from "../lighting/FacilityLighting";
 import { ArchiveBoxStack, PaperworkStack, FloorScuffDecal, WaterStainDecal, CableConduitRun } from "../props/EnvironmentalProps";
-import { ExperiencePlaque } from "../props/PortfolioExhibits";
+import { formatExperienceDocument } from "../props/PortfolioExhibits";
 import { portfolioManifest } from "@/data/portfolioData";
 
+type Position = [number, number, number];
+type Rotation = [number, number, number];
+
+function ContextPlaque({
+  position,
+  rotation = [0, 0, 0],
+  width = 0.7,
+  height = 0.22,
+  title,
+  subtitle,
+  accent = "#c9b98f",
+  fontSize,
+}: {
+  position: Position;
+  rotation?: Rotation;
+  width?: number;
+  height?: number;
+  title: string;
+  subtitle?: string;
+  accent?: string;
+  fontSize?: { title?: number };
+}) {
+  const titleSize = fontSize?.title ?? (subtitle ? 0.036 : 0.032);
+  return (
+    <group position={position} rotation={rotation}>
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[width, height, 0.02]} />
+        <FacilityMaterial kind="painted-metal" color="#202a32" />
+      </mesh>
+      <Text
+        position={[0, subtitle ? height * 0.18 : 0, 0.012]}
+        fontSize={titleSize}
+        color="#ffffff"
+        anchorX="center"
+        anchorY="middle"
+        maxWidth={width * 0.9}
+        material-toneMapped={false}
+      >
+        {title}
+      </Text>
+      {subtitle ? (
+        <Text
+          position={[0, -height * 0.22, 0.012]}
+          fontSize={0.022}
+          color={accent}
+          anchorX="center"
+          anchorY="middle"
+          maxWidth={width * 0.92}
+          material-toneMapped={false}
+        >
+          {subtitle}
+        </Text>
+      ) : null}
+    </group>
+  );
+}
+
+const springerExperience = portfolioManifest.experience[0];
+
 export function PersonnelWing({ position }: RoomProps) {
-  const setInteractionMessage = useGameState(state => state.setInteractionMessage);
-  const inspectDocument = useGameState(state => state.inspectDocument);
+  const inspectDocument = useGameState((state) => state.inspectDocument);
 
   return (
-    <group position={position}>
-      {/* ─── ARCHITECTURE ─── */}
-      <FacilityFloorSection args={[8.5, 8.5]} position={[-0.25, -0.5, 0]} />
-      <FacilityCeilingGrid args={[8.5, 0.1, 8.5]} position={[-0.25, 2.9, 0]} hasLights={false} />
+    <group name="PersonnelWing" position={position}>
+      {/* Hero surfaces are complete RigidBody+PBR components (Reception pattern).
+          Never nest them inside a mesh+boxGeometry — that creates default white shells. */}
+      <PersonnelHeroFloor position={[-0.25, -0.5, 0]} args={[8.5, 8.5]} />
+      <PersonnelHeroCeiling position={[-0.25, 2.9, 0]} args={[8.5, 0.1, 8.5]} />
+      <PersonnelHeroWall position={[0, 0, -4]} args={[8, 3.2, 0.2]} />
+      <PersonnelHeroWall position={[0, 0, 4]} args={[8, 3.2, 0.2]} />
+      <PersonnelHeroWall position={[4, 0, 0]} args={[0.2, 3.2, 8]} />
+      <PersonnelHeroWall position={[-4, 0, -2.75]} args={[0.2, 3.2, 2.5]} />
+      <PersonnelHeroWall position={[-4, 0, 2.75]} args={[0.2, 3.2, 2.5]} />
 
-      {/* Main Walls */}
-      <FacilityWallSegment position={[0, 0, -4]} args={[8, 3.2, 0.2]} /> {/* Rear */}
-      <FacilityWallSegment position={[0, 0, 4]} args={[8, 3.2, 0.2]} /> {/* Front */}
-      <FacilityWallSegment position={[4, 0, 0]} args={[0.2, 3.2, 8]} /> {/* Right */}
+      <FacilitySignPanel
+        position={[-3.88, 2.3, 2.05]}
+        rotation={[0, Math.PI / 2, 0]}
+        title="PERSONNEL // IDENTITY & RECORDS"
+        subtitle="DEPARTMENT-02 · AUTHORIZED ACCESS ONLY"
+        accent="#c9b98f"
+      />
 
-      {/* West Wall (3.0m Open Suite Entrance Flush with Right Corridor End Wall) */}
-      <FacilityWallSegment position={[-4, 0, -2.75]} args={[0.2, 3.2, 2.5]} />
-      <FacilityWallSegment position={[-4, 0, 2.75]} args={[0.2, 3.2, 2.5]} />
-      
-      {/* East Wall Developer Timeline Montage */}
-      <InteractableObject
-        label="Developer timeline"
-        interactionKind="VIEW"
-        interactionRange={3.2}
-        priority={3}
-        onInteract={() => inspectDocument({
-          id: "VIEW-DEVELOPER-TIMELINE",
-          title: "DEVELOPER TIMELINE",
-          type: "dossier",
-          content: portfolioManifest.timeline
-            .map((entry) => `${entry.yearLabel} // ${entry.heading}\n${entry.bullets.map((bullet) => `- ${bullet}`).join("\n")}`)
-            .join("\n\n"),
-        })}
-      >
-        <DeveloperTimelineWall position={[3.88, 1.6, 0]} rotation={[0, -Math.PI / 2, 0]} />
-      </InteractableObject>
-
-      {/* ─── LIGHTING & ATMOSPHERE ─── */}
-      <FacilityFluorescent position={[-0.8, 2.78, -1.2]} color="#e5dbc4" intensity={1.2} distance={5.5} />
-      <FacilityFluorescent position={[1.6, 2.78, 1.4]} color="#d8e4d3" intensity={1.0} distance={4.8} />
-      <FacilityTaskLight position={[-1.7, 1.75, -2.7]} />
-      <FacilityTaskLight position={[3.1, 2.1, 0]} color="#e4d6ad" />
-      {/* Light coming from corridor */}
-      <spotLight position={[-4, 2, 2]} target-position={[0, 0, 0]} angle={0.8} penumbra={0.5} intensity={2.0} distance={10} color="#aaccff" />
-      <mesh position={[0, 0, 0]} visible={false}><boxGeometry args={[0.1, 0.1, 0.1]} /></mesh>
-      
-      {/* Localized Floor Debris */}
-      <InstancedDebris count={6} areaSize={[2, 2]} position={[2.5, 0.01, 2.5]} type="paper" />
-      <InstancedDebris count={3} areaSize={[1, 1]} position={[-1.5, 0.01, 2.0]} type="rubble" />
-      
-      {/* Irregular Blood Trail leading towards exit corridor */}
-      <mesh position={[-2.2, 0.01, 2.5]} rotation={[-Math.PI / 2, 0, 0.2]}>
-        <planeGeometry args={[0.8, 0.6]} />
-        <meshBasicMaterial color="#2b0202" transparent opacity={0.85} depthWrite={false} polygonOffset polygonOffsetFactor={-1} />
-      </mesh>
-      <mesh position={[-2.8, 0.01, 1.8]} rotation={[-Math.PI / 2, 0, 0.5]}>
-        <planeGeometry args={[0.25, 0.25]} />
-        <meshBasicMaterial color="#2b0202" transparent opacity={0.75} depthWrite={false} polygonOffset polygonOffsetFactor={-1} />
-      </mesh>
-      <mesh position={[-3.2, 0.01, 1.0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.15, 0.15]} />
-        <meshBasicMaterial color="#2b0202" transparent opacity={0.7} depthWrite={false} polygonOffset polygonOffsetFactor={-1} />
-      </mesh>
-      <mesh position={[-3.6, 0.01, 0.2]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[0.08, 0.08]} />
-        <meshBasicMaterial color="#2b0202" transparent opacity={0.6} depthWrite={false} polygonOffset polygonOffsetFactor={-1} />
-      </mesh>
-
-      {/* ─── ZONE 1: SUPERVISOR OFFICE (DESK A) ─── */}
-      <group position={[-1.5, 0, -2.5]}>
-        <SupervisorDesk position={[-0.5, 0, -0.5]} rotation={[0, Math.PI/2, 0]} />
-        <DeskLamp position={[-0.2, 0.8, -0.9]} rotation={[0, 0.5, 0]} on={true} />
-        <CRTMonitor position={[-0.4, 0.8, -0.4]} rotation={[0, Math.PI/2 - 0.2, 0]} on={false} />
-        <Keyboard position={[0.0, 0.8, -0.4]} rotation={[0, Math.PI/2 - 0.2, 0]} />
-        
-        {/* Springer Capital Internship Record */}
-        {portfolioManifest.experience[0] && (
-          <ExperiencePlaque
-            position={[-0.2, 0.81, -0.1]}
-            rotation={[0, 0.2, 0]}
-            experience={portfolioManifest.experience[0]}
-          />
-        )}
-        <CassetteTape position={[-0.6, 0.8, -0.2]} rotation={[0, 0.5, 0]} />
-        
+      {/* ═══════════════════════════════════════════════
+        ZONE A · DEVELOPER TIMELINE / CAREER WALL · FROZEN
+        Position, scale, viewing area, interaction UNCHANGED.
+        x=+3.88 (east wall), z-centred on 0, viewing prism
+        x∈[+1.0, +3.88], z∈[−2.0, +2.0]. No furniture inside.
+        ═══════════════════════════════════════════════ */}
+      <group position={[3.88, 1.5, 0]} rotation={[0, Math.PI, 0]}>
         <InteractableObject
-          label="Tape log"
-          interactionKind="INSPECT"
-          onInteract={() => setInteractionMessage("[ AUDIO RECORDING ] This place was researching intelligence.")}
+          label="Developer timeline"
+          interactionKind="VIEW"
+          interactionRange={3.2}
+          priority={3}
+          onInteract={() =>
+            inspectDocument({
+              id: "VIEW-DEVELOPER-TIMELINE",
+              title: "DEVELOPER TIMELINE",
+              type: "dossier",
+              content: portfolioManifest.timeline
+                .map((entry) => `${entry.yearLabel} // ${entry.heading}\n${entry.bullets.map((bullet) => `- ${bullet}`).join("\n")}`)
+                .join("\n\n"),
+            })
+          }
         >
-          <AudioRecorder position={[-0.7, 0.8, -0.3]} rotation={[0, 0.8, 0]} />
+          <DeveloperTimelineWall />
         </InteractableObject>
 
-        <NoticeBoard position={[-0.5, 1.5, -1.48]} rotation={[0, 0, 0]} />
-        <DocumentProp position={[-0.5, 1.5, -1.46]} rotation={[0, 0, 0]}
-          document={{ 
-            id: "DOC-ACADEMIC-RECORD", 
-            title: "ACADEMIC & EDUCATION RECORD", 
-            type: "dossier", 
-            content: [
-              `INSTITUTION: ${portfolioManifest.education[0]?.institution || "HKBK College of Engineering"}`,
-              `CREDENTIAL: ${portfolioManifest.education[0]?.credential || "Bachelor of Engineering in Computer Science"}`,
-              `DURATION: ${portfolioManifest.education[0]?.duration || "2023-2027"}`,
-              `LOCATION: ${portfolioManifest.education[0]?.location || "Bengaluru, India"}`,
-              `PERFORMANCE: Current CGPA: 8.93/10`,
-              "",
-              `FOCUS & COURSEWORK:`,
-              "• Data Structures & Algorithms, Systems Programming, Database Systems",
-              "• Computer Networks, Operating Systems, Software Architecture",
-              "",
-              `ACADEMIC SUMMARY:`,
-              portfolioManifest.education[0]?.factualDescription || "Undergraduate computer science degree program in Bengaluru."
-            ].join("\n")
-          }} 
+        {/* Timeline context plaque – LEFT. Removed floating "DEVELOPER JOURNEY"
+            bare Text. Replaced with proper institutional mounted plaque that
+            projects 0.04 m off the wall on painted-metal backing. */}
+        <group position={[-1.9, 0.05, 0]}>
+          <mesh position={[0, 0, -0.01]}>
+            <boxGeometry args={[0.32, 0.18, 0.035]} />
+            <FacilityMaterial kind="painted-metal" color="#1f2724" />
+          </mesh>
+          <ContextPlaque
+            position={[0, 0, 0.01]}
+            rotation={[0, Math.PI, 0]}
+            width={0.26}
+            height={0.12}
+            title="DEVELOPER JOURNEY"
+            accent="#c9b98f"
+            fontSize={{ title: 0.032 }}
+          />
+        </group>
+
+        {/* Timeline context plaque – RIGHT. Removed floating "IDENTITY ARCHIVES"
+            bare Text; matched institutional backing plaque. */}
+        <group position={[1.9, 0.05, 0]}>
+          <mesh position={[0, 0, -0.01]}>
+            <boxGeometry args={[0.32, 0.18, 0.035]} />
+            <FacilityMaterial kind="painted-metal" color="#1f2724" />
+          </mesh>
+          <ContextPlaque
+            position={[0, 0, 0.01]}
+            rotation={[0, Math.PI, 0]}
+            width={0.26}
+            height={0.12}
+            title="IDENTITY ARCHIVES"
+            accent="#c9b98f"
+            fontSize={{ title: 0.032 }}
+          />
+        </group>
+
+        {/* Three milestone context plaques below timeline */}
+        <ContextPlaque
+          position={[-1.3, -0.9, 0.04]}
+          rotation={[0, Math.PI, 0]}
+          width={0.7}
+          height={0.22}
+          title="TECH STACK — FRONTIER"
+          subtitle="Three.js · React Three Fiber · TypeScript · WebGPU forward"
+          accent="#9ed6bb"
         />
-        {/* Supervisor Chair */}
-        <mesh position={[0.2, 0.4, -0.5]} rotation={[0, -0.2, 0]}><boxGeometry args={[0.5, 0.8, 0.5]} /><FacilityMaterial kind="painted-metal" color="#1a2228" /></mesh>
+        <ContextPlaque
+          position={[0, -0.9, 0.04]}
+          rotation={[0, Math.PI, 0]}
+          width={0.7}
+          height={0.22}
+          title="SYSTEMS — HORIZON"
+          subtitle="Architectural visualization · narrative simulation · CI automation"
+          accent="#9ed6bb"
+        />
+        <ContextPlaque
+          position={[1.3, -0.9, 0.04]}
+          rotation={[0, Math.PI, 0]}
+          width={0.7}
+          height={0.22}
+          title="ROADMAP — NEXUS"
+          subtitle="Personnel records · Research wing · procedural world streaming"
+          accent="#9ed6bb"
+        />
       </group>
 
-      {/* ─── ZONE 2: WORKSTATIONS (ENGINEERING CUBICLES) ─── */}
-      <group position={[0.5, 0, -0.5]}>
-        {/* Cross Divider */}
-        <CubicleDivider position={[0, 0, 0]} rotation={[0, 0, 0]} length={4} />
-        <CubicleDivider position={[0, 0, 0]} rotation={[0, Math.PI/2, 0]} length={4} />
-        
-        {/* Desk B: "Stood Up 5 Seconds Ago" (Sprint Goals) */}
-        <group position={[1.0, 0, -1.0]}>
-          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><FacilityMaterial kind="wood" color="#4a3e30" /></mesh>
-          <DeskLamp position={[0.5, 0.8, -0.5]} rotation={[0, -0.5, 0]} on={true} />
-          <CRTMonitor position={[0.2, 0.8, -0.2]} rotation={[0, -Math.PI/4 - 0.2, 0]} on={true} />
-          <Keyboard position={[-0.2, 0.77, 0.25]} rotation={[0, 0.3, 0]} />
-          <CoffeeMug position={[-0.4, 0.8, -0.2]} spilled={true} />
-          <DocumentProp position={[0.4, 0.8, 0.4]} rotation={[-Math.PI/2, 0, 0.2]} 
-            document={{ 
-              id: "DOC-SPRINT-GOALS", 
-              title: "DEVELOPER LOG", 
-              type: "dossier", 
-              content: `"Sleep later. Keep building."\n\nNext Milestones:\n- Deploy web application\n- Refine lighting shaders` 
-            }} 
-          />
-          <mesh position={[0.4, 0.4, -0.4]} rotation={[0, -Math.PI/4, 0]}><boxGeometry args={[0.4, 0.4, 0.4]} /><FacilityMaterial kind="painted-metal" color="#222b30" /></mesh>
-        </group>
+      {/* ═══════════════════════════════════════════════
+        ZONE B · SUPERVISOR / PERSONNEL DESK · NW QUADRANT
+        World anchor: x=−1.6, z=+2.2, rotation=0.
+        Employee sits on SOUTH side (−z) facing NORTH into the work surface.
+        Visitor / colleague approaches from SOUTH (z ≤ +1.5).
+        Working-orientation sightline: chair pulled out at z=+1.35 → desk
+        top at z∈[+1.7, +2.7] → modesty panel at z=+2.7.
+        ═══════════════════════════════════════════════ */}
+      <group position={[-1.6, 0, 2.2]} rotation={[0, 0, 0]}>
+        <RigidBody type="fixed" colliders="cuboid">
+          {/* Desktop 1.6 × 0.8 (reduced from 1.8×1.0 — less pale mass) */}
+          <mesh position={[0, 0.73, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.6, 0.04, 1.0]} />
+            <FacilityMaterial kind="wood" color="#3a2a1a" />
+          </mesh>
+          {/* Left leg */}
+          <mesh position={[-0.76, 0.365, 0]} castShadow>
+            <boxGeometry args={[0.04, 0.73, 0.92]} />
+            <FacilityMaterial kind="painted-metal" color="#222826" />
+          </mesh>
+          {/* Right leg */}
+          <mesh position={[0.76, 0.365, 0]} castShadow>
+            <boxGeometry args={[0.04, 0.73, 0.92]} />
+            <FacilityMaterial kind="painted-metal" color="#222826" />
+          </mesh>
+          {/* Modesty panel on NORTH side (+z) — visitor cannot see under */}
+          <mesh position={[0, 0.42, 0.47]} castShadow>
+            <boxGeometry args={[1.52, 0.52, 0.02]} />
+            <FacilityMaterial kind="painted-metal" color="#1b201e" />
+          </mesh>
+        </RigidBody>
 
-        {/* Desk C: Workspace and Coffee */}
-        <group position={[-1.0, 0, -1.0]}>
-          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><FacilityMaterial kind="wood" color="#4a3e30" /></mesh>
-          <CRTMonitor position={[-0.2, 0.8, -0.2]} rotation={[0, Math.PI/4, 0]} on={false} />
-          <DeskPhone position={[-0.6, 0.8, 0.2]} rotation={[0, 0.5, 0]} />
-          <InteractableObject label="Coffee mug" interactionKind="INSPECT" onInteract={() => setInteractionMessage("Late-night debugging sessions.")}>
-            <CoffeeMug position={[-0.4, 0.8, -0.2]} spilled={true} />
+        {/* Employee chair — pushed partially in. 1.5 m eye height, seated ≈1.1 m
+            top-of-head, so chair seat at ~0.45 m is proportionally correct. */}
+        <RigidBody type="fixed" colliders="cuboid">
+          <mesh position={[0, 0.225, -0.55]} castShadow>
+            <boxGeometry args={[0.48, 0.05, 0.48]} />
+            <FacilityMaterial kind="painted-metal" color="#1a1f1c" />
+          </mesh>
+          <mesh position={[0, 0.56, -0.77]} castShadow>
+            <boxGeometry args={[0.48, 0.6, 0.04]} />
+            <FacilityMaterial kind="painted-metal" color="#1a1f1c" />
+          </mesh>
+          <mesh position={[-0.2, 0.11, -0.55]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.22]} />
+            <FacilityMaterial kind="painted-metal" color="#121513" />
+          </mesh>
+          <mesh position={[0.2, 0.11, -0.55]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.22]} />
+            <FacilityMaterial kind="painted-metal" color="#121513" />
+          </mesh>
+        </RigidBody>
+
+        {/* ── Hero props, desktop Y = 0.75 + object bottom clearance ── */}
+
+        {/* 1. CRTMonitor — 14-inch-ish. Base bottom at Y=0.755 (on top of
+             desktop Y=0.73 + tiny 0.025 gap to account for texture).
+             Total monitor height ≈ 0.04+0.06+0.3 = 0.4, top ≈ 1.16 m.
+             Placed toward back of desk (+z=+0.2) so keyboard fits in front. */}
+        <CRTMonitor position={[0.22, 0.755, 0.08]} rotation={[0, -0.06, 0]} on />
+
+        {/* 2. Keyboard — in front of monitor, Y = desktop top + thickness. */}
+        <Keyboard position={[0.2, 0.731, -0.28]} rotation={[0, 0, 0]} />
+
+        {/* 3. Springer Capital / Experience plaque — physical desk standee.
+             Stands slightly leaned back on its own plinth, not a floating plane. */}
+        <group position={[-0.42, 0.73, 0.12]} rotation={[0, 0.04, 0]}>
+          <mesh position={[0, 0.005, -0.02]} castShadow>
+            <boxGeometry args={[0.22, 0.01, 0.06]} />
+            <FacilityMaterial kind="archive-brass" />
+          </mesh>
+          <mesh position={[0, 0.12, 0.005]} rotation={[-0.12, 0, 0]} castShadow>
+            <boxGeometry args={[0.2, 0.24, 0.012]} />
+            <FacilityMaterial kind="wood" color="#2a1e12" />
+          </mesh>
+          <InteractableObject
+            interactionRange={1.4}
+            label={`${springerExperience.company} record`}
+            interactionKind="READ"
+            onInteract={() =>
+              inspectDocument({
+                id: `EXP-${springerExperience.company.toUpperCase().replace(/\s+/g, "_")}`,
+                title: `${springerExperience.company} - ${springerExperience.role}`,
+                type: "dossier",
+                content: formatExperienceDocument(springerExperience),
+              })
+            }
+          >
+            <mesh position={[0, 0.12, 0.013]} rotation={[-0.12, 0, 0]}>
+              <boxGeometry args={[0.18, 0.22, 0.002]} />
+              <meshStandardMaterial color="#e5dfcf" roughness={0.85} />
+            </mesh>
+            <Text
+              position={[0, 0.15, 0.016]}
+              rotation={[-0.12, 0, 0]}
+              fontSize={0.018}
+              color="#181e1a"
+              anchorX="center"
+              anchorY="middle"
+              maxWidth={0.16}
+              material-toneMapped={false}
+            >
+              {springerExperience.company.toUpperCase()}
+            </Text>
           </InteractableObject>
-          <mesh position={[-0.4, 0.4, -0.4]} rotation={[0, Math.PI/4, 0]}><boxGeometry args={[0.4, 0.4, 0.4]} /><FacilityMaterial kind="painted-metal" color="#222b30" /></mesh>
         </group>
 
-        {/* Desk D: Network Credentials */}
-        <group position={[-1.0, 0, 1.0]}>
-          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><FacilityMaterial kind="wood" color="#4a3e30" /></mesh>
-          <FamilyPhoto position={[-0.5, 0.8, 0.5]} rotation={[0, Math.PI, 0]} />
-          <DeskLamp position={[-0.5, 0.8, 0.1]} rotation={[0, 1.5, 0]} on={false} />
-          <Pen position={[0.2, 0.8, 0.2]} rotation={[0, 0.1, 0]} />
-          <DocumentProp position={[-0.2, 0.8, 0.4]} rotation={[-Math.PI/2, 0, 0]} 
-            document={{ 
-              id: "DOC-PASSWORD", 
-              title: "NETWORK LOGIN CREDENTIALS", 
-              type: "note", 
-              content: `Network Login: kapoor.a\n\nSecurity Password Clues:\n- ICETM2026\n- LOCALFIRST\n- NOCLOUD` 
-            }} 
+        {/* 4. Important document: DOC-MANIFESTO (Auxilium Engineering manifesto).
+             Paper is 0.004 m thick, rests on desktop Y=0.73. Top of paper ≈ 0.734. */}
+        <group position={[-0.42, 0.731, -0.24]} rotation={[0, 0.12, 0]}>
+          <DocumentProp
+            position={[0, 0, 0]}
+            document={{
+              id: "DOC-MANIFESTO",
+              title: "AUXILIUM ENGINEERING — DEPARTMENT MANIFESTO",
+              type: "note",
+              content:
+                "1. Engineering discipline exists to serve human clarity.\n2. Simplicity without capability is hollow. Capability without restraint is harm.\n3. The system is honest only when its failures are visible.\n\n\"Don't forget why you started.\"",
+            }}
           />
-          <mesh position={[-0.4, 0.4, 0.4]} rotation={[0, 3*Math.PI/4, 0]}><boxGeometry args={[0.4, 0.4, 0.4]} /><FacilityMaterial kind="painted-metal" color="#222b30" /></mesh>
+          <Pen position={[0.12, 0.006, 0.02]} rotation={[0, 0.35, -0.1]} />
         </group>
 
-        {/* Desk E: Developer Manifesto */}
-        <group position={[1.0, 0, 1.0]}>
-          <mesh position={[0, 0.75, 0]}><boxGeometry args={[1.8, 0.05, 1.8]} /><FacilityMaterial kind="wood" color="#4a3e30" /></mesh>
-          <DocumentProp position={[0.0, 0.8, 0.0]} rotation={[-Math.PI/2, 0, 0.1]} 
-            document={{ 
-              id: "DOC-MANIFESTO", 
-              title: "DEVELOPER MANIFESTO", 
-              type: "dossier", 
-              content: `AUXILIUM ENGINEERING MANIFESTO:\n\nRule 1: Performance first.\nRule 2: Clean architecture.\nRule 3: No shortcuts.\n\n"Don't forget why you started."` 
-            }} 
+        {/* 5. Single restrained personal / story object: FamilyPhoto.
+             Stand-back-leaned frame, stand sits on desktop. */}
+        <FamilyPhoto position={[-0.05, 0.73, 0.4]} rotation={[0, -0.08, 0]} />
+      </group>
+
+      {/* ═══════════════════════════════════════════════
+        ZONE C · IDENTITY / INTAKE DESK · NE QUADRANT
+        World anchor: x=+1.6, z=+2.2, rotation = [0, 0, 0].
+        Employee sits on SOUTH side (−z) facing NORTH (+z) into the desk.
+        Visitor / applicant approaches from NORTH (+z), across the desk,
+        where the modesty panel is NOT placed (desk front is open on the
+        north visitor side). Correct seating: guest stands at z≈+2.9,
+        employee in chair at z≈+1.4.
+        ═══════════════════════════════════════════════ */}
+      <group position={[1.6, 0, -2.7]} rotation={[0, 0, 0]}>
+        <RigidBody type="fixed" colliders="cuboid">
+          {/* Desktop 1.6 × 0.85 m — institutional veneer */}
+          <mesh position={[0, 0.73, 0]} castShadow receiveShadow>
+            <boxGeometry args={[1.6, 0.04, 0.85]} />
+            <FacilityMaterial kind="wood" color="#402e1c" />
+          </mesh>
+          {/* Legs */}
+          <mesh position={[-0.76, 0.365, 0]} castShadow>
+            <boxGeometry args={[0.04, 0.73, 0.77]} />
+            <FacilityMaterial kind="painted-metal" color="#222826" />
+          </mesh>
+          <mesh position={[0.76, 0.365, 0]} castShadow>
+            <boxGeometry args={[0.04, 0.73, 0.77]} />
+            <FacilityMaterial kind="painted-metal" color="#222826" />
+          </mesh>
+          {/* Modesty panel on the EMPLOYEE / SOUTH side (−z=−0.4). The
+              north/+z face has no panel — this is the visitor approach side. */}
+          <mesh position={[0, 0.42, -0.40]} castShadow>
+            <boxGeometry args={[1.52, 0.52, 0.02]} />
+            <FacilityMaterial kind="painted-metal" color="#1b201e" />
+          </mesh>
+        </RigidBody>
+
+        {/* Employee chair — NOT displaced. Correctly seated. Seat bottom = 0.45 m.
+            Placed at z=−0.55 (south side) as intended, matching modesty panel side. */}
+        <RigidBody type="fixed" colliders="cuboid">
+          <mesh position={[0, 0.225, -0.55]} castShadow>
+            <boxGeometry args={[0.46, 0.05, 0.46]} />
+            <FacilityMaterial kind="painted-metal" color="#1a1f1c" />
+          </mesh>
+          <mesh position={[0, 0.56, -0.77]} castShadow>
+            <boxGeometry args={[0.46, 0.6, 0.04]} />
+            <FacilityMaterial kind="painted-metal" color="#1a1f1c" />
+          </mesh>
+          <mesh position={[-0.19, 0.11, -0.55]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.22]} />
+            <FacilityMaterial kind="painted-metal" color="#121513" />
+          </mesh>
+          <mesh position={[0.19, 0.11, -0.55]} castShadow>
+            <cylinderGeometry args={[0.015, 0.015, 0.22]} />
+            <FacilityMaterial kind="painted-metal" color="#121513" />
+          </mesh>
+        </RigidBody>
+
+        {/* Monitor on intake desk. Proportional 0.36-wide casing (≈13 in).
+             Bottom Y=0.755 on top of desktop Y=0.73. Placed back/center. */}
+        <group position={[0.05, 0.755, 0.0]}>
+          <group rotation={[0, -0.04, 0]}>
+            <mesh position={[0, 0.02, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.18, 0.04, 0.18]} />
+              <FacilityMaterial kind="painted-metal" color="#1a1f1d" />
+            </mesh>
+            <mesh position={[0, 0.06, 0]} castShadow receiveShadow>
+              <cylinderGeometry args={[0.036, 0.055, 0.055]} />
+              <FacilityMaterial kind="painted-metal" color="#141816" />
+            </mesh>
+            <mesh position={[0, 0.21, 0]} rotation={[-0.06, 0, 0]} castShadow receiveShadow>
+              <boxGeometry args={[0.36, 0.27, 0.26]} />
+              <FacilityMaterial kind="painted-metal" color="#1a1f1d" />
+            </mesh>
+            <mesh position={[0, 0.21, 0.134]} rotation={[-0.06, 0, 0]} receiveShadow>
+              <planeGeometry args={[0.3, 0.21]} />
+              <meshStandardMaterial color="#0e1f16" emissive="#34ffb6" emissiveIntensity={0.9} roughness={0.2} metalness={0.6} />
+            </mesh>
+          </group>
+        </group>
+
+        {/* DOC-PASSWORD intake login record sheet on visitor side of desk.
+             Paper top: 0.73 + 0.004 = 0.734 m. Visitor reads this easily. */}
+        <group position={[0.0, 0.731, 0.26]} rotation={[0, -0.05, 0]}>
+          <DocumentProp
+            position={[0, 0, 0]}
+            document={{
+              id: "DOC-PASSWORD",
+              title: "ACCESS INTAKE — LOGIN WORKSHEET",
+              type: "note",
+              content:
+                "Intake login:\n  username: kapoor.a\n\nPassword hints (rotate every 90 days):\n  1. ICETM2026\n  2. LOCALFIRST\n  3. NOCLOUD",
+            }}
           />
-          <mesh position={[0.4, 0.4, 0.4]} rotation={[0, -3*Math.PI/4, 0]}><boxGeometry args={[0.4, 0.4, 0.4]} /><FacilityMaterial kind="painted-metal" color="#222b30" /></mesh>
         </group>
+
+        {/* Intake desk phone. Resting fully on desktop. Bottom: 0.73 + 0.03 = 0.76. */}
+        <DeskPhone position={[-0.48, 0.76, 0.14]} rotation={[0, 0.08, 0]} />
+
+        {/* Pen beside intake form, fully on desk. */}
+        <Pen position={[0.32, 0.738, 0.34]} rotation={[0, 0.5, 0.05]} />
+
+        {/* Single personal object: CoffeeMug on employee side of desk.
+             Mug bottom at 0.735, on top of desktop Y=0.73. */}
+        <CoffeeMug position={[-0.48, 0.735, -0.18]} />
       </group>
 
-      {/* ─── ZONE 3: BREAK AREA (KITCHENETTE) ─── */}
-      <group position={[-2.2, 0, 2.8]}>
-        <OldRefrigerator position={[-1.4, 0, 0]} rotation={[0, Math.PI/2, 0]} />
-        <mesh position={[-0.5, 0.4, 0.5]}><boxGeometry args={[1.5, 0.05, 0.8]} /><FacilityMaterial kind="wood" color="#554435" /></mesh>
-        <Microwave position={[-0.8, 0.45, 0.5]} rotation={[0, 0, 0]} />
-        <CoffeeMachine position={[-0.2, 0.45, 0.5]} rotation={[0, -0.2, 0]} />
-        <VendingMachine position={[0.9, 0, 0.5]} rotation={[0, Math.PI, 0]} />
-        <TrashBin position={[1.6, 0, 0.5]} rotation={[0, 0, 0]} />
-        
-        <WallSign position={[-1.98, 1.8, 0.5]} rotation={[0, Math.PI/2, 0]} text="KITCHEN" size="large" />
-        <DocumentProp position={[-0.5, 0.48, 0.8]} rotation={[-Math.PI/2, 0, 0.4]} document={{ id: "DOC-MEMO", title: "WARNING MEMO", type: "note", content: "Please clean the microwave after use.\nAlso, stop putting blood vials in the fridge." }} />
-        
-        {/* Cohesive Breakroom Table & 2 Chairs */}
-        <group position={[0.1, 0, -0.6]}>
-          <mesh position={[0, 0.4, 0]}><cylinderGeometry args={[0.45, 0.45, 0.04, 16]} /><FacilityMaterial kind="wood" color="#443528" /></mesh>
-          <mesh position={[0, 0.2, 0]}><cylinderGeometry args={[0.04, 0.04, 0.4, 8]} /><FacilityMaterial kind="painted-metal" color="#222" /></mesh>
-          <mesh position={[0, 0.02, 0]}><cylinderGeometry args={[0.25, 0.25, 0.02, 16]} /><FacilityMaterial kind="painted-metal" color="#222" /></mesh>
-          {/* 2 Chairs neatly placed */}
-          <mesh position={[-0.45, 0.35, 0]} rotation={[0, Math.PI/2, 0]}><boxGeometry args={[0.3, 0.5, 0.3]} /><FacilityMaterial kind="painted-metal" color="#2a3a48" /></mesh>
-          <mesh position={[0.45, 0.35, 0]} rotation={[0, -Math.PI/2, 0]}><boxGeometry args={[0.3, 0.5, 0.3]} /><FacilityMaterial kind="painted-metal" color="#2a3a48" /></mesh>
+      {/* Filing bank: west-south stub wall only. Drawers face +X into the room.
+          0.85 m drawer standoff (x ∈ [-3.1, -2.25]). Not behind either desk.
+          Outside timeline prism (x∈[+1, +3.88], z∈[-2, +2]). */}
+      <group position={[0, 0, 0]}>
+        <FilingCabinet position={[-3.5, 0, -3.6]} rotation={[0, -Math.PI / 2, 0]} cabinetId="PERSONNEL_CABINET_1" />
+        <group position={[-3.5, 0, -2.75]} rotation={[0, -Math.PI / 2, 0]}>
+          <FilingCabinet position={[0, 0, 0]} cabinetId="PERSONNEL_CABINET_2" />
+          <mesh position={[0, 1.5, 0.455]} castShadow receiveShadow>
+            <boxGeometry args={[0.76, 0.3, 0.055]} />
+            <FacilityMaterial kind="painted-metal" color="#3b454d" />
+          </mesh>
+          <mesh position={[0, 1.5, 0.405]}>
+            <boxGeometry args={[0.48, 0.16, 0.01]} />
+            <meshStandardMaterial color="#c8bda4" roughness={0.9} metalness={0} />
+          </mesh>
         </group>
+        <FilingCabinet position={[-3.5, 0, -1.9]} rotation={[0, -Math.PI / 2, 0]} cabinetId="PERSONNEL_CABINET_3" />
+
+        <ArchiveBoxStack position={[-3.5, 1.82, -1.9]} rotation={[0, -Math.PI / 2 + 0.04, 0]} count={1} />
+        <PaperworkStack position={[-3.5, 1.82, -3.6]} rotation={[0, -Math.PI / 2 - 0.08, 0]} folderColor="#44382c" sheets={8} />
+
+        <OfficePrinter position={[0.2, 0, 3.55]} rotation={[0, Math.PI, 0]} />
+
+        <FacilitySignPanel
+          position={[-3.88, 2.35, -2.75]}
+          rotation={[0, Math.PI / 2, 0]}
+          title="PERSONNEL RECORDS"
+          subtitle="SECTION-02 · FILE CONSOLIDATION ACTIVE"
+          accent="#c9b98f"
+        />
+
+        <FloorScuffDecal position={[-2.55, 0.008, -2.75]} scale={[0.7, 1.6]} opacity={0.42} />
+        <FloorScuffDecal position={[-2.6, 0.008, -2.1]} scale={[0.55, 1.0]} opacity={0.38} />
       </group>
 
-      {/* ─── ZONE 4: FILING & PRINTING ─── */}
-      <group position={[2.5, 0, 3]}>
-        <OfficePrinter position={[-0.5, 0, 0]} rotation={[0, 0, 0]} />
-        
-        <FilingCabinet position={[0.5, 0, 0.6]} rotation={[0, Math.PI, 0]} />
-        <FilingCabinet position={[1.1, 0, 0.6]} rotation={[0, Math.PI, 0]} />
-        <ArchiveBoxStack position={[0.5, 0, -1.2]} rotation={[0, 0.2, 0]} count={3} label="PERSONNEL // 2024-2025" />
-        
-        {/* Tipped over cabinet */}
-        <group position={[1.0, 0.2, -0.8]} rotation={[Math.PI/2, 0, 0.3]}>
-          <FilingCabinet position={[0, 0, 0]} rotation={[0, 0, 0]} />
-        </group>
-        
-        <DocumentProp position={[1.0, 0.05, -1.8]} rotation={[-Math.PI/2, 0, 0.2]} document={{ id: "DOC-SECURITY", title: "SECURITY NOTICE", type: "dossier", content: "Lockdown overridden.\nFacility compromised.\nEvacuate immediately." }} />
-        
-        {/* Localized spilled papers specifically near tipped cabinet */}
-        <InstancedDebris count={6} areaSize={[1.2, 1.2]} position={[0.8, 0.01, -0.8]} type="paper" />
-      </group>
-
-      {/* Surface Wear & Conduits */}
-      <FloorScuffDecal position={[-2.0, 0.008, -2.5]} scale={[1.2, 0.8]} opacity={0.45} />
-      <FloorScuffDecal position={[0.5, 0.008, -0.5]} scale={[1.6, 1.2]} opacity={0.4} />
+      {/* ── Remaining ambient detail (not new visual layers; trimmed to stay
+           inside Task 9 per-room cap of ≤ 5 scuffs per family). Current scuff
+           count here = 3 (2 on filing standoff + 1 by Zone B desk). ── */}
+      <FloorScuffDecal position={[-1.6, 0.008, 1.2]} scale={[1.1, 0.6]} opacity={0.4} />
       <WaterStainDecal position={[-1.5, 2.88, 2.0]} size={1.1} opacity={0.35} />
       <CableConduitRun position={[0, 2.85, -3.88]} rotation={[0, 0, Math.PI / 2]} length={7.5} />
-      <PaperworkStack position={[-1.7, 0.8, -3.1]} rotation={[0, 0.3, 0]} folderColor="#4a3b2c" sheets={16} />
 
-      {/* ─── ZONE 5: LOCKERS ─── */}
-      {/* Keep the timeline wall's natural viewing zone clear. */}
-      <group position={[3.55, 0, -3.15]} rotation={[0, -Math.PI/2, 0]}>
-        {/* Bank of lockers */}
-        <mesh position={[0, 1.0, 0]} castShadow receiveShadow>
-          <boxGeometry args={[3.0, 2.0, 0.6]} />
-          <FacilityMaterial kind="painted-metal" color="#354248" />
-        </mesh>
-        {/* Open doors */}
-        <mesh position={[0.75, 1.0, 0.3]} rotation={[0, -0.6, 0]}>
-          <boxGeometry args={[0.5, 2.0, 0.05]} />
-          <FacilityMaterial kind="painted-metal" color="#354248" />
-        </mesh>
-        <mesh position={[-0.75, 1.0, 0.3]} rotation={[0, -1.2, 0]}>
-          <boxGeometry args={[0.5, 2.0, 0.05]} />
-          <FacilityMaterial kind="painted-metal" color="#354248" />
-        </mesh>
-        
-        <DocumentProp position={[0.6, 0.51, 0.1]} rotation={[-Math.PI/2, 0, 0.2]} document={{ id: "DOC-MEETING", title: "MEETING MINUTES", type: "note", content: "Department notice: System consolidation complete. Verify development credentials on the central board." }} />
-        
-        {/* Backpack inside open locker */}
-        <mesh position={[-0.7, 0.3, 0]}><boxGeometry args={[0.3, 0.4, 0.2]} /><FacilityMaterial kind="painted-metal" color="#5a2e2e" /></mesh>
-      </group>
-
+      <FacilityFluorescent position={[-0.8, 2.78, -1.2]} color="#e5dbc4" intensity={1.2} distance={5.5} />
+      <FacilityFluorescent position={[1.6, 2.78, 1.4]} color="#d8e4d3" intensity={1.0} distance={4.8} />
+      <FacilityTaskLight position={[-1.6, 1.75, 2.2]} color="#e4d6ad" />
+      <FacilityTaskLight position={[1.6, 1.75, -2.7]} color="#e4d6ad" />
     </group>
   );
 }

@@ -10,6 +10,9 @@ import {
   ReceptionWaterStreak,
   ReceptionDampPatch,
   ReceptionRepairPatch,
+  ReceptionPeelingPaint,
+  ReceptionRustBleed,
+  ReceptionCeilingPipeStain,
 } from "../materials/ReceptionAuthoredMaterials";
 import { ReceptionDesk } from "../props/ReceptionDesk";
 import { FilingCabinet } from "../props/FilingCabinet";
@@ -37,17 +40,17 @@ function SparkingCable({ position }: { position: [number, number, number] }) {
     
     if (isSparkingRef.current) {
       sparkDurationRef.current -= delta;
-      lightRef.current.intensity = Math.random() > 0.3 ? 6.0 : 1.0;
+      lightRef.current.intensity = Math.random() > 0.4 ? 3.5 : 0.6;
       if (sparkDurationRef.current <= 0) {
         isSparkingRef.current = false;
         lightRef.current.intensity = 0;
-        sparkTimerRef.current = 8 + Math.random() * 12; // 8-20 seconds
+        sparkTimerRef.current = 50 + Math.random() * 70;
       }
     } else {
       sparkTimerRef.current -= delta;
       if (sparkTimerRef.current <= 0) {
         isSparkingRef.current = true;
-        sparkDurationRef.current = 0.1 + Math.random() * 0.2; // 0.1-0.3 seconds
+        sparkDurationRef.current = 0.03 + Math.random() * 0.08;
       }
     }
   });
@@ -78,19 +81,35 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
       <HVACVent position={[0, 3.0, 3]} />
       <SparkingCable position={[1.5, 3.1, -1]} />
 
-      {/* ─── LOCALIZED WALL DECALS & TILING BREAKUPS (Requirement 6) ─── */}
-      {/* 1. Vertical Water Run Streaks under ceiling pipes / vent penetrations */}
-      <ReceptionWaterStreak position={[-1.5, 1.9, 4.89]} scale={[0.38, 1.9]} opacity={0.65} />
-      <ReceptionWaterStreak position={[-4.89, 2.0, 2.4]} rotation={[0, Math.PI / 2, 0]} scale={[0.4, 1.7]} opacity={0.65} />
-      <ReceptionWaterStreak position={[4.89, 1.9, 1.8]} rotation={[0, -Math.PI / 2, 0]} scale={[0.35, 1.6]} opacity={0.55} />
+      {/* Ceiling pipe-run discoloration stain (single pipe route — the older, more used run) */}
+      <ReceptionCeilingPipeStain position={[-1.5, 3.14, 0]} rotation={[-Math.PI / 2, 0, Math.PI / 2]} scale={[10, 0.62]} opacity={0.55} />
 
-      {/* 2. Plaster Repair Patches (Aged compound fills over structural settling) */}
-      <ReceptionRepairPatch position={[2.5, 1.75, 4.89]} scale={[0.6, 0.45]} />
-      <ReceptionRepairPatch position={[-4.89, 1.45, -2.7]} rotation={[0, Math.PI / 2, 0]} scale={[0.5, 0.38]} />
+      {/* ─── LOCALIZED WALL DECALS — NARRATIVE SURFACE DECAY ─── */}
 
-      {/* 3. Organic Damp Corner Patches near janitorial corner & south-east perimeter */}
-      <ReceptionDampPatch position={[-4.89, 0.5, 4.35]} rotation={[0, Math.PI / 2, 0]} scale={[0.95, 0.75]} opacity={0.55} />
-      <ReceptionDampPatch position={[4.89, 0.45, 4.35]} rotation={[0, -Math.PI / 2, 0]} scale={[0.85, 0.65]} opacity={0.5} />
+      {/* 1. Vertical Water Run Streaks — only under actual south-wall ceiling pipe penetrations */}
+      <ReceptionWaterStreak position={[-1.5, 1.9, 4.89]} scale={[0.42, 2.1]} opacity={0.62} />
+      <ReceptionWaterStreak position={[2.5, 1.7, 4.89]} scale={[0.28, 1.4]} opacity={0.5} />
+
+      {/* 2. Plaster Repair Patch — single aged compound fill under the shorter water streak (leak was fixed) */}
+      <ReceptionRepairPatch position={[2.5, 1.75, 4.89]} scale={[0.58, 0.44]} />
+
+      {/* 3. Organic Damp Corner Patches — janitorial service corner (plumbing riser proximity) + rear east (gate weep) */}
+      <ReceptionDampPatch position={[-4.89, 0.55, 4.35]} rotation={[0, Math.PI / 2, 0]} scale={[0.9, 0.75]} opacity={0.52} />
+      <ReceptionDampPatch position={[4.89, 0.5, -4.0]} rotation={[0, -Math.PI / 2, 0]} scale={[0.65, 0.5]} opacity={0.38} />
+
+      {/* Micro-polish: short weep streak descending gate lintel above rear-east damp corner (plausible leak source = ferrous gate post) */}
+      <ReceptionWaterStreak position={[4.89, 1.15, -4.0]} rotation={[0, -Math.PI / 2, 0]} scale={[0.18, 0.95]} opacity={0.42} />
+
+      {/* 4. Peeling Paint — single zone where the SW damp corner has lifted paint long-term */}
+      <ReceptionPeelingPaint position={[-4.89, 1.25, 4.0]} rotation={[0, Math.PI / 2, 0]} scale={[0.7, 0.6]} opacity={0.65} />
+
+      {/* 5. Rust Bleed — only beneath rear security gate frame hardware (old ferrous metal posts) */}
+      <ReceptionRustBleed position={[-2.5, 2.8, -4.89]} scale={[0.14, 0.36]} opacity={0.45} />
+      <ReceptionRustBleed position={[2.5, 2.8, -4.89]} scale={[0.14, 0.36]} opacity={0.45} />
+
+      {/* Micro-polish: localized base-wall scuff cluster immediately in front of filing cabinets (drawer-kick footwear wear — physically motivated) */}
+      <FloorScuffDecal position={[-4.2, 0.008, 3.1]} rotation={[-Math.PI / 2, 0, 0.4]} scale={[0.55, 0.35]} opacity={0.48} />
+      <FloorScuffDecal position={[-4.15, 0.008, 2.5]} rotation={[-Math.PI / 2, 0, -0.25]} scale={[0.45, 0.28]} opacity={0.42} />
 
       {/* Outer Reception Boundaries */}
       {/* South Wall */}
@@ -100,25 +119,25 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
       <ReceptionHeroWall position={[-5, 0, 3.25]} args={[0.2, 3.2, 3.5]} />
       <ReceptionHeroWall position={[-5, 0, -3.25]} args={[0.2, 3.2, 3.5]} />
       
-      {/* West Wing Portal Architectural Casing & Structural Lintel */}
+      {/* West Wing Portal Architectural Casing & Structural Lintel — charcoal horror trim */}
       <mesh position={[-4.95, 3.0, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.24, 0.4, 3.12]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
       <mesh position={[-4.95, 1.6, 1.5]} castShadow receiveShadow>
         <boxGeometry args={[0.24, 3.2, 0.1]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
       <mesh position={[-4.95, 1.6, -1.5]} castShadow receiveShadow>
         <boxGeometry args={[0.24, 3.2, 0.1]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
       <FacilitySignPanel
         position={[-4.82, 2.7, 0]}
         rotation={[0, Math.PI / 2, 0]}
         title="WEST WING // ARCHIVES & RESEARCH"
         subtitle="RECORDS HALL (SOUTH) // COMMUNICATIONS LAB (NORTH)"
-        accent="#b7d6d0"
+        accent="#8db5ae"
       />
 
       {/* East Boundary (Opening to Right Wing Corridor) */}
@@ -126,22 +145,22 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
       <ReceptionHeroWall position={[5, 0, -3.25]} args={[0.2, 3.2, 3.5]} />
       <mesh position={[4.95, 3.0, 0]} castShadow receiveShadow>
         <boxGeometry args={[0.24, 0.4, 3.12]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
       <mesh position={[4.95, 1.6, 1.5]} castShadow receiveShadow>
         <boxGeometry args={[0.24, 3.2, 0.1]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
       <mesh position={[4.95, 1.6, -1.5]} castShadow receiveShadow>
         <boxGeometry args={[0.24, 3.2, 0.1]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
       <FacilitySignPanel
         position={[4.82, 2.7, 0]}
         rotation={[0, -Math.PI / 2, 0]}
         title="EAST WING // PERSONNEL"
         subtitle="IDENTITY ARCHIVES // TIMELINE"
-        accent="#dfcfaa"
+        accent="#c9b98f"
       />
 
       {/* North Security Gate (Opening to Elevator Lobby) */}
@@ -149,21 +168,21 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
       <ReceptionHeroWall position={[3.75, 0, -5]} args={[2.5, 3.2, 0.2]} />
       <mesh position={[0, 3.0, -5]} castShadow receiveShadow>
         <boxGeometry args={[5.0, 0.4, 0.24]} />
-        <FacilityMaterial kind="painted-metal" color="#1e252a" />
+        <FacilityMaterial kind="painted-metal" color="#14191d" />
       </mesh>
 
-      {/* Security Gate Bars */}
+      {/* Security Gate Bars — charcoal black institutional horror finish */}
       <group position={[0, 0, -5]}>
         {Array.from({ length: 23 }).map((_, i) => (
           <mesh key={`bar-${i}`} position={[-2.3 + i * 0.2, 1.2, 0]}>
             <cylinderGeometry args={[0.02, 0.02, 2.4]} />
-            <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.5} />
+            <meshStandardMaterial color="#0e1113" metalness={0.82} roughness={0.62} />
           </mesh>
         ))}
-        <mesh position={[0, 0.5, 0]}><boxGeometry args={[5, 0.05, 0.05]} /><meshStandardMaterial color="#1a1a1a" metalness={0.9} /></mesh>
-        <mesh position={[0, 1.5, 0]}><boxGeometry args={[5, 0.05, 0.05]} /><meshStandardMaterial color="#1a1a1a" metalness={0.9} /></mesh>
-        <mesh position={[-2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
-        <mesh position={[2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#111" /></mesh>
+        <mesh position={[0, 0.5, 0]}><boxGeometry args={[5, 0.05, 0.05]} /><meshStandardMaterial color="#0e1113" metalness={0.82} roughness={0.62} /></mesh>
+        <mesh position={[0, 1.5, 0]}><boxGeometry args={[5, 0.05, 0.05]} /><meshStandardMaterial color="#0e1113" metalness={0.82} roughness={0.62} /></mesh>
+        <mesh position={[-2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#0a0c0e" metalness={0.75} roughness={0.68} /></mesh>
+        <mesh position={[2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#0a0c0e" metalness={0.75} roughness={0.68} /></mesh>
       </group>
 
       {/* ─── LEFT WING CORRIDOR (Leads to Communications & Records) ─── */}
@@ -174,24 +193,24 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
         {/* North Wall with Communications Office 3.0m suite cutout */}
         <ReceptionHeroWall position={[-6.5, 0, 1.5]} args={[3.0, 3.2, 0.2]} />
         <ReceptionHeroWall position={[-12.0, 0, 1.5]} args={[2.0, 3.2, 0.2]} />
-        <mesh position={[-9.5, 3.0, 1.5]}>
+        <mesh position={[-9.5, 3.0, 1.5]} castShadow receiveShadow>
           <boxGeometry args={[3.0, 0.4, 0.2]} />
-          <meshStandardMaterial color="#444" />
+          <meshStandardMaterial color="#22282c" roughness={0.75} metalness={0.35} />
         </mesh>
 
         {/* South Wall with Records Hall 3.0m suite cutout */}
         <ReceptionHeroWall position={[-6.5, 0, -1.5]} args={[3.0, 3.2, 0.2]} />
         <ReceptionHeroWall position={[-12.0, 0, -1.5]} args={[2.0, 3.2, 0.2]} />
-        <mesh position={[-9.5, 3.0, -1.5]}>
+        <mesh position={[-9.5, 3.0, -1.5]} castShadow receiveShadow>
           <boxGeometry args={[3.0, 0.4, 0.2]} />
-          <meshStandardMaterial color="#444" />
+          <meshStandardMaterial color="#22282c" roughness={0.75} metalness={0.35} />
         </mesh>
 
         {/* West Terminal Wall */}
         <ReceptionHeroWall position={[-13, 0, 0]} args={[0.2, 3.2, 3.0]} />
 
-        {/* Corridor Lighting & Pipes */}
-        <pointLight position={[-9, 2.8, 0]} color="#E5E3D4" intensity={2} distance={6} decay={2} />
+        {/* Corridor Lighting & Pipes — cold cyan-grey institutional spill */}
+        <pointLight position={[-9, 2.75, 0]} color="#5c7588" intensity={1.1} distance={5.5} decay={2.1} />
         <CeilingPipes position={[-9, 3.0, 0]} rotation={[0, 0, 0]} length={8} />
       </group>
 
@@ -214,44 +233,76 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
           <meshStandardMaterial color="#444" />
         </mesh>
 
-        {/* Corridor Lighting & Pipes */}
-        <pointLight position={[9, 2.8, 0]} color="#E5E3D4" intensity={2} distance={6} decay={2} />
+        {/* Corridor Lighting & Pipes — colder teal-grey east wing */}
+        <pointLight position={[9, 2.75, 0]} color="#687a79" intensity={1.0} distance={5.5} decay={2.1} />
         <CeilingPipes position={[9, 3.0, 0]} rotation={[0, 0, 0]} length={8} />
       </group>
 
-      {/* ─── RECEPTION DESK ─── */}
+      {/* ─── RECEPTION DESK — LAST ACTIVE CHECKPOINT, NARRATIVE CORE ─── */}
       <ReceptionDesk 
         position={[0, 0, -1.5]} 
-        rotation={[0, 0, 0]}
+        rotation={[0, 0.04, 0]}
         onInteractMap={onInteractMap}
       />
       <group position={[0, 0, -1.5]}>
-        {/* Reception Computer Terminal Trigger */}
+        {/* Dead CRT with tiny green standby LED — interrupted work, not "on" in horror */}
         <InteractableObject
           label="Use Reception Computer"
           onInteract={() => useGameState.getState().setActiveTerminal("RECEPTION_PC")}
         >
-          <CRTMonitor position={[-0.1, 0.81, -0.6]} rotation={[0, -0.2, 0]} on={true} />
+          <group position={[-0.15, 0.81, -0.6]} rotation={[0, -0.28, -0.04]}>
+            <CRTMonitor position={[0, 0, 0]} rotation={[0, 0, 0]} on={false} />
+            {/* Faint green standby indicator — single small LED glowing on monitor bezel */}
+            <mesh position={[0.17, 0.06, 0.202]} rotation={[-0.1, 0, 0]}>
+              <planeGeometry args={[0.012, 0.012]} />
+              <meshStandardMaterial color="#2eff6a" emissive="#3cff79" emissiveIntensity={2.4} toneMapped={false} />
+            </mesh>
+          </group>
         </InteractableObject>
-        <Keyboard position={[-0.1, 0.81, -0.3]} rotation={[0, -0.2, 0]} />
 
-        {/* Telephone Static Feedback Trigger */}
+        {/* Keyboard pulled slightly to the side, as if shoved when leaving */}
+        <Keyboard position={[-0.02, 0.81, -0.28]} rotation={[0, -0.38, 0.03]} />
+
+        {/* Desk Phone — handset askew, receiver not perfectly aligned, implies dropped call */}
         <InteractableObject
           label="Pick up Desk Phone"
           onInteract={() => useGameState.getState().setActivePrompt({ text: "[ PHONE LINE DEAD ] - Heavy static frequency..." })}
         >
-          <DeskPhone position={[-0.6, 0.81, -0.4]} rotation={[0, 0.3, 0]} />
+          <group position={[-0.65, 0.81, -0.38]} rotation={[0, 0.55, 0.04]}>
+            <DeskPhone position={[0, 0, 0]} rotation={[0, 0, 0]} />
+            {/* Receiver sitting slightly off the cradle */}
+            <mesh position={[-0.03, 0.02, -0.06]} rotation={[0, 0.3, 0.12]}>
+              <boxGeometry args={[0.04, 0.02, 0.2]} />
+              <meshStandardMaterial color="#131313" roughness={0.7} />
+            </mesh>
+          </group>
         </InteractableObject>
-        <Intercom position={[0.4, 0.81, -0.6]} rotation={[0, -0.4, 0]} />
-        <Bell position={[0.6, 0.81, -0.1]} />
-        <EmployeeID position={[-1.2, 0.81, -0.6]} rotation={[0, 0.4, 0]} name="A. Vance" />
-        <CoffeeMug position={[0.9, 0.81, -0.2]} rotation={[0, 0.8, 0]} spilled={true} />
-        <Pen position={[0.7, 0.81, -0.3]} rotation={[0, 1.2, 0]} />
-        <StickyNote position={[0.4, 0.81, -0.3]} rotation={[0, 0.2, 0]} color="#fcf383" />
-        <StickyNote position={[0.0, 1.15, -0.55]} rotation={[0, 0, 0]} color="#ff9e9e" />
+
+        {/* Intercom tilted as if last person jabbed the call button */}
+        <Intercom position={[0.4, 0.81, -0.58]} rotation={[0.05, -0.5, -0.05]} />
+        <Bell position={[0.62, 0.81, -0.12]} rotation={[0, 0.15, 0]} />
+
+        {/* Employee ID — slid partially toward edge of desk */}
+        <EmployeeID position={[-1.25, 0.81, -0.55]} rotation={[0, 0.55, 0.06]} name="A. Vance" />
+
+        {/* Spilled mug — pushed over on its side with a wider pool */}
+        <group position={[0.92, 0.81, -0.2]} rotation={[0, 0.95, 0]}>
+          <CoffeeMug position={[0, 0, 0]} rotation={[0, 0, 0]} spilled={true} />
+        </group>
+
+        {/* Pen rolled to the edge of the desk */}
+        <Pen position={[0.78, 0.81, -0.38]} rotation={[0, 1.55, 0.08]} />
+
+        {/* Sticky notes — curl implied with slight overlays */}
+        <StickyNote position={[0.4, 0.81, -0.3]} rotation={[0, 0.28, 0.04]} color="#e6d94b" />
+        <StickyNote position={[0.0, 1.15, -0.55]} rotation={[0, 0, 0]} color="#d64545" />
       </group>
-      <InstitutionalTablet position={[-0.8, 0.81, -1.4]} rotation={[0, 0.2, 0]} />
-      <DocumentProp position={[0.3, 0.81, -1.15]} rotation={[0, -0.1, 0]}
+
+      {/* Institutional tablet — tilted like it was dropped mid-use */}
+      <InstitutionalTablet position={[-0.72, 0.81, -1.38]} rotation={[0.08, 0.32, -0.05]} />
+
+      {/* Open file / partially open log on corner of desk */}
+      <DocumentProp position={[0.3, 0.81, -1.12]} rotation={[0, -0.22, 0.04]}
         document={{ 
           id: "LOGBOOK-01", 
           title: "VISITOR REGISTER", 
@@ -259,7 +310,8 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
           content: portfolioDocuments.receptionVisitorRegister
         }} 
       />
-      <DocumentProp position={[-0.5, 0.81, -1.4]} rotation={[0, 0.2, 0]}
+      {/* Second file left open further out */}
+      <DocumentProp position={[-0.45, 0.81, -1.38]} rotation={[0, 0.3, 0.08]}
         document={{ 
           id: "NOTE-WARN-01", 
           title: "DEVELOPER GOAL NOTE", 
@@ -268,18 +320,51 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
         }} 
       />
 
+      {/* ─── DESK SURFACE — localized paper scatter (interrupted departure) ─── */}
+      <InstancedDebris count={5} areaSize={[2.2, 1.3]} position={[0, 0.815, -1.2]} type="paper" />
+
+      {/* ─── FLOOR — scattered papers someone kicked aside in rush ─── */}
+      <InstancedDebris count={3} areaSize={[1.8, 1.2]} position={[-0.8, 0.01, -0.2]} type="paper" />
+      {/* Drag / scuff marks near chair — evidence of someone shoving back hard */}
+      <FloorScuffDecal position={[0.1, 0.008, -0.5]} rotation={[-Math.PI / 2, 0, 0.3]} scale={[1.1, 0.4]} opacity={0.5} />
+      <FloorScuffDecal position={[-0.4, 0.008, -0.9]} rotation={[-Math.PI / 2, 0, -0.2]} scale={[0.9, 0.35]} opacity={0.45} />
+      {/* Faint tracked-wear circulation paths */}
+      <FloorScuffDecal position={[0, 0.008, 1.0]} scale={[2.0, 1.2]} opacity={0.3} />
+
       {/* ─── WALL SIGNS ─── */}
       <WallSign position={[-4.5, 1.8, -4.9]} rotation={[0, 0, 0]} size="small" />
       <WallSign position={[4.5, 1.8, -4.9]} rotation={[0, 0, 0]} size="small" />
 
       {/* ─── RECEPTION LEFT-SIDE SERVICE & ADMINISTRATIVE ALCOVE (West Wall) ─── */}
-      {/* 1. Flush Contiguous Filing Cabinet Bank (Flush against West Wall X = -4.88) */}
-      <FilingCabinet position={[-4.48, 0, 3.65]} rotation={[0, Math.PI / 2, 0]} cabinetId="RECEPTION_CABINET_1" />
-      <FilingCabinet position={[-4.48, 0, 2.82]} rotation={[0, Math.PI / 2, 0]} cabinetId="RECEPTION_CABINET_2" />
+      {/* 1. Filing Cabinet Bank — second cabinet has middle drawer left ajar (interruption hint) */}
+      <FilingCabinet position={[-4.48, 0, 3.65]} rotation={[0, Math.PI / 2, 0.02]} cabinetId="RECEPTION_CABINET_1" />
+      <group position={[-4.48, 0, 2.82]} rotation={[0, Math.PI / 2, -0.02]}>
+        <FilingCabinet position={[0, 0, 0]} rotation={[0, 0, 0]} cabinetId="RECEPTION_CABINET_2" />
+        {/* Visual: middle drawer slightly pulled out, implies someone left mid-search */}
+        <group position={[0.4, 0.7, 0]}>
+          <mesh castShadow>
+            <boxGeometry args={[0.06, 0.34, 0.74]} />
+            <FacilityMaterial kind="painted-metal" color="#354048" />
+          </mesh>
+          <mesh position={[0.035, 0.08, 0]}>
+            <boxGeometry args={[0.04, 0.04, 0.3]} />
+            <FacilityMaterial kind="painted-metal" color="#7a858e" />
+          </mesh>
+          {/* Papers visible inside the ajar drawer gap */}
+          <mesh position={[0.07, 0, 0]} rotation={[0, 0.1, 0.06]}>
+            <boxGeometry args={[0.03, 0.26, 0.55]} />
+            <meshStandardMaterial color="#e8e2d0" roughness={0.9} />
+          </mesh>
+        </group>
+      </group>
 
-      {/* Purposeful Storage on Top of Cabinets (Institutional Record Storage) */}
-      <ArchiveBoxStack position={[-4.48, 1.81, 3.65]} rotation={[0, Math.PI / 2, 0]} count={1} label="RECEPTION // LOGS" />
-      <PaperworkStack position={[-4.48, 1.81, 2.82]} rotation={[0, 0.1, 0]} folderColor="#3a4856" sheets={10} />
+      {/* Storage on Top of Cabinets — archive box slightly offset for asymmetry */}
+      <group position={[-4.48, 1.81, 3.65]} rotation={[0, Math.PI / 2, 0.03]}>
+        <ArchiveBoxStack position={[0, 0, 0]} rotation={[0, 0, 0]} count={1} label="RECEPTION // LOGS" />
+      </group>
+      <PaperworkStack position={[-4.48, 1.81, 2.82]} rotation={[0, 0.18, 0.04]} folderColor="#2f3d49" sheets={10} />
+      {/* A single loose sheet drifting off the paperwork stack */}
+      <InstancedDebris count={1} areaSize={[0.25, 0.15]} position={[-4.22, 1.83, 2.82]} type="paper" />
 
       {/* 2. Institutional Archive & Records Wall Plaque */}
       <FacilitySignPanel
@@ -287,44 +372,76 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
         rotation={[0, Math.PI / 2, 0]}
         title="ADMINISTRATIVE ARCHIVE"
         subtitle="RECEPTION RECORDS // SECTION-01"
-        accent="#9ac5b8"
+        accent="#6f9e93"
       />
 
-      {/* 3. Wall-Mounted Emergency Lockbox / Key Cabinet */}
+      {/* 3. Wall-Mounted Emergency Lockbox / Key Cabinet — deeper horror dark tone */}
       <group position={[-4.88, 1.45, 2.05]} rotation={[0, Math.PI / 2, 0]}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={[0.26, 0.38, 0.06]} />
-          <FacilityMaterial kind="painted-metal" color="#262f36" />
+          <FacilityMaterial kind="painted-metal" color="#1e272e" />
         </mesh>
         <mesh position={[0, 0, 0.035]}>
           <planeGeometry args={[0.2, 0.06]} />
-          <meshBasicMaterial color="#b33939" toneMapped={false} />
+          <meshBasicMaterial color="#8b2626" toneMapped={false} />
         </mesh>
         <mesh position={[0.08, 0, 0.04]}>
           <cylinderGeometry args={[0.008, 0.008, 0.02, 8]} />
           <FacilityMaterial kind="archive-brass" />
         </mesh>
+        {/* Faint rust bleed under the lockbox edge */}
+        <ReceptionRustBleed position={[0, -0.28, 0.031]} rotation={[0, 0, 0]} scale={[0.12, 0.3]} opacity={0.45} />
       </group>
 
       {/* 4. Floor Wear Decal in Front of Cabinets (Showing Authentic Drawer Access Footwear) */}
-      <FloorScuffDecal position={[-3.9, 0.008, 3.24]} scale={[0.9, 1.4]} opacity={0.35} />
+      <FloorScuffDecal position={[-3.9, 0.008, 3.24]} scale={[0.95, 1.5]} opacity={0.42} />
 
-      {/* 5. Dedicated Service Corner (Tucked South-West Maintenance Equipment) */}
-      <CleaningTrolley position={[-4.45, 0, 4.45]} rotation={[0, 0, 0]} />
+      {/* 5. Dedicated Service Corner — trolley pulled slightly away from wall, a bit messy */}
+      <CleaningTrolley position={[-4.35, 0, 4.42]} rotation={[0, 0.08, 0]} />
       <FacilitySignPanel
         position={[-4.45, 1.75, 4.88]}
         rotation={[0, 0, 0]}
         title="FACILITY SERVICE"
         subtitle="STATION 01 // JANITORIAL"
-        accent="#9cb8a6"
+        accent="#7fa08e"
       />
 
       {/* ─── VISITOR WAITING & REFRESHMENT ZONE (East Wall) ─── */}
-      <VisitorChairs position={[4.5, 0, 3.2]} rotation={[0, -Math.PI / 2, 0]} />
-      <WaterDispenser position={[4.6, 0, 1.5]} rotation={[0, -Math.PI / 2, 0]} />
-      <TrashBin position={[4.6, 0, 0.9]} rotation={[0, -Math.PI / 2, 0]} />
-      <VendingMachine position={[4.6, 0, -3.2]} rotation={[0, -Math.PI / 2, 0]} />
-      <NoticeBoard position={[4.88, 1.5, 3.2]} rotation={[0, -Math.PI / 2, 0]} />
+      {/* Visitor chairs: whole group is slightly rotated, not perfectly flush to wall */}
+      <VisitorChairs position={[4.52, 0, 3.22]} rotation={[0, -Math.PI / 2 + 0.06, -0.02]} />
+      <WaterDispenser position={[4.62, 0, 1.48]} rotation={[0, -Math.PI / 2 + 0.04, 0]} />
+      {/* Trash bin: slightly tilted, hinting at someone knocking into it */}
+      <group position={[4.6, 0, 0.9]} rotation={[0, -Math.PI / 2 - 0.05, 0.03]}>
+        <TrashBin position={[0, 0, 0]} rotation={[0, 0, 0]} />
+        {/* A crumpled scrap beside the bin */}
+      </group>
+      <InstancedDebris count={1} areaSize={[0.4, 0.3]} position={[4.25, 0.01, 0.9]} type="paper" />
+      <VendingMachine position={[4.62, 0, -3.18]} rotation={[0, -Math.PI / 2 + 0.03, 0]} />
+
+      {/* NoticeBoard — slightly tilted; we layer torn memos and a half-removed sheet in front */}
+      <group position={[4.88, 1.5, 3.2]} rotation={[0, -Math.PI / 2, -0.02]}>
+        <NoticeBoard position={[0, 0, 0]} rotation={[0, 0, 0]} />
+        {/* Torn memo strips layered in front of cork */}
+        <mesh position={[-0.55, 0.3, 0.032]} rotation={[0, 0, -0.12]}>
+          <planeGeometry args={[0.22, 0.08]} />
+          <meshStandardMaterial color="#e6dfc9" roughness={0.95} />
+        </mesh>
+        <mesh position={[-0.2, -0.4, 0.032]} rotation={[0, 0, 0.18]}>
+          <planeGeometry args={[0.18, 0.12]} />
+          <meshStandardMaterial color="#d8d0b5" roughness={0.95} />
+        </mesh>
+        {/* Half-peeled corner of a notice */}
+        <mesh position={[0.45, 0.25, 0.035]} rotation={[0, 0, 0.35]}>
+          <planeGeometry args={[0.1, 0.1]} />
+          <meshStandardMaterial color="#cfc5a8" roughness={0.95} />
+        </mesh>
+        {/* One pin — dark red pushpin */}
+        <mesh position={[-0.55, 0.3, 0.04]}>
+          <cylinderGeometry args={[0.006, 0.006, 0.012, 8]} />
+          <meshStandardMaterial color="#6a2222" roughness={0.4} />
+        </mesh>
+      </group>
+
       <DocumentProp
         position={[4.85, 1.5, 3.4]}
         rotation={[0, -Math.PI / 2, 0]}
@@ -336,14 +453,20 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
         }}
       />
 
-      {/* Entrance Accessories (South Entry Wall) */}
-      <CoatRack position={[-2.8, 0, 4.6]} rotation={[0, 0.2, 0]} />
-      <FloorScuffDecal position={[0, 0.008, -2.4]} scale={[1.4, 0.9]} opacity={0.4} />
-      <PaperworkStack position={[-1.2, 0.81, -1.8]} rotation={[0, 0.15, 0]} folderColor="#3a4856" sheets={14} />
+      {/* Entrance Accessories (South Entry Wall) — coat rack slightly off-kilter */}
+      <CoatRack position={[-2.85, 0, 4.58]} rotation={[0, 0.35, 0.04]} />
+      {/* Drag scuff marks near gate axis (faint movement traces toward the elevator) */}
+      <FloorScuffDecal position={[0, 0.008, -2.4]} rotation={[-Math.PI / 2, 0, 0.08]} scale={[1.4, 0.9]} opacity={0.44} />
+      <FloorScuffDecal position={[0.8, 0.008, -3.0]} rotation={[-Math.PI / 2, 0, -0.15]} scale={[0.7, 0.35]} opacity={0.5} />
+      {/* Paperwork stack on the side desk — slightly misaligned */}
+      <PaperworkStack position={[-1.2, 0.81, -1.8]} rotation={[0, 0.22, 0.05]} folderColor="#2f3d49" sheets={14} />
 
       {/* ─── PURPOSEFUL LOCALIZED ABANDONMENT (CLEAN TRAVERSAL) ─── */}
-      <InstancedDebris count={5} areaSize={[1.2, 1.0]} position={[-1.2, 0.01, -0.6]} type="paper" />
-      <InstancedDebris count={3} areaSize={[0.6, 0.6]} position={[4.2, 0.01, 4.0]} type="rubble" />
+      <InstancedDebris count={2} areaSize={[1.2, 1.0]} position={[-1.2, 0.01, -0.6]} type="paper" />
+      {/* Rubble near waiting area — single small ceiling tile chip */}
+      <InstancedDebris count={1} areaSize={[0.6, 0.6]} position={[4.2, 0.01, 4.0]} type="rubble" />
+      {/* Tiny dust/dirt ring in front of the elevator gate (heavy foot traffic) */}
+      <FloorScuffDecal position={[0, 0.008, -3.6]} scale={[2.0, 1.4]} opacity={0.22} />
     </group>
   );
 }
