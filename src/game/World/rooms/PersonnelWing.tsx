@@ -92,7 +92,7 @@ export function PersonnelWing({ position }: RoomProps) {
       <PersonnelHeroWall position={[-4, 0, 2.75]} args={[0.2, 3.2, 2.5]} />
 
       <FacilitySignPanel
-        position={[-3.88, 2.3, 2.05]}
+        position={[-3.88, 2.15, -2.75]}
         rotation={[0, Math.PI / 2, 0]}
         title="PERSONNEL // IDENTITY & RECORDS"
         subtitle="DEPARTMENT-02 · AUTHORIZED ACCESS ONLY"
@@ -105,7 +105,7 @@ export function PersonnelWing({ position }: RoomProps) {
         x=+3.88 (east wall), z-centred on 0, viewing prism
         x∈[+1.0, +3.88], z∈[−2.0, +2.0]. No furniture inside.
         ═══════════════════════════════════════════════ */}
-      <group position={[3.88, 1.5, 0]} rotation={[0, Math.PI, 0]}>
+      <group position={[3.88, 1.6, 0]} rotation={[0, -Math.PI / 2, 0]}>
         <InteractableObject
           label="Developer timeline"
           interactionKind="VIEW"
@@ -135,7 +135,7 @@ export function PersonnelWing({ position }: RoomProps) {
           </mesh>
           <ContextPlaque
             position={[0, 0, 0.01]}
-            rotation={[0, Math.PI, 0]}
+            rotation={[0, 0, 0]}
             width={0.26}
             height={0.12}
             title="DEVELOPER JOURNEY"
@@ -153,7 +153,7 @@ export function PersonnelWing({ position }: RoomProps) {
           </mesh>
           <ContextPlaque
             position={[0, 0, 0.01]}
-            rotation={[0, Math.PI, 0]}
+            rotation={[0, 0, 0]}
             width={0.26}
             height={0.12}
             title="IDENTITY ARCHIVES"
@@ -164,8 +164,8 @@ export function PersonnelWing({ position }: RoomProps) {
 
         {/* Three milestone context plaques below timeline */}
         <ContextPlaque
-          position={[-1.3, -0.9, 0.04]}
-          rotation={[0, Math.PI, 0]}
+          position={[-1.3, -1.08, 0.04]}
+          rotation={[0, 0, 0]}
           width={0.7}
           height={0.22}
           title="TECH STACK — FRONTIER"
@@ -173,8 +173,8 @@ export function PersonnelWing({ position }: RoomProps) {
           accent="#9ed6bb"
         />
         <ContextPlaque
-          position={[0, -0.9, 0.04]}
-          rotation={[0, Math.PI, 0]}
+          position={[0, -1.08, 0.04]}
+          rotation={[0, 0, 0]}
           width={0.7}
           height={0.22}
           title="SYSTEMS — HORIZON"
@@ -182,8 +182,8 @@ export function PersonnelWing({ position }: RoomProps) {
           accent="#9ed6bb"
         />
         <ContextPlaque
-          position={[1.3, -0.9, 0.04]}
-          rotation={[0, Math.PI, 0]}
+          position={[1.3, -1.08, 0.04]}
+          rotation={[0, 0, 0]}
           width={0.7}
           height={0.22}
           title="ROADMAP — NEXUS"
@@ -193,14 +193,11 @@ export function PersonnelWing({ position }: RoomProps) {
       </group>
 
       {/* ═══════════════════════════════════════════════
-        ZONE B · SUPERVISOR / PERSONNEL DESK · NW QUADRANT
-        World anchor: x=−1.6, z=+2.2, rotation=0.
-        Employee sits on SOUTH side (−z) facing NORTH into the work surface.
-        Visitor / colleague approaches from SOUTH (z ≤ +1.5).
-        Working-orientation sightline: chair pulled out at z=+1.35 → desk
-        top at z∈[+1.7, +2.7] → modesty panel at z=+2.7.
+        ZONE B · SUPERVISOR DESK · SOUTH-EAST PERIMETER
+        Anchor [1.35, 0, -2.55]. Chair toward south wall; visitor from the room (+Z).
+        Outside timeline viewing prism (z ≤ −2.05).
         ═══════════════════════════════════════════════ */}
-      <group position={[-1.6, 0, 2.2]} rotation={[0, 0, 0]}>
+      <group position={[1.35, 0, -2.55]} rotation={[0, 0, 0]}>
         <RigidBody type="fixed" colliders="cuboid">
           {/* Desktop 1.6 × 0.8 (reduced from 1.8×1.0 — less pale mass) */}
           <mesh position={[0, 0.73, 0]} castShadow receiveShadow>
@@ -321,15 +318,11 @@ export function PersonnelWing({ position }: RoomProps) {
       </group>
 
       {/* ═══════════════════════════════════════════════
-        ZONE C · IDENTITY / INTAKE DESK · NE QUADRANT
-        World anchor: x=+1.6, z=+2.2, rotation = [0, 0, 0].
-        Employee sits on SOUTH side (−z) facing NORTH (+z) into the desk.
-        Visitor / applicant approaches from NORTH (+z), across the desk,
-        where the modesty panel is NOT placed (desk front is open on the
-        north visitor side). Correct seating: guest stands at z≈+2.9,
-        employee in chair at z≈+1.4.
+        ZONE C · INTAKE / IDENTITY DESK · WEST-NORTH OF ENTRANCE
+        Anchor [−2.7, 0, 2.7], yaw +π/2. Employee toward west wall; visitor from room (+X).
+        North of the 3 m doorway; not on the entrance axis z≈0.
         ═══════════════════════════════════════════════ */}
-      <group position={[1.6, 0, -2.7]} rotation={[0, 0, 0]}>
+      <group position={[-2.7, 0, 2.7]} rotation={[0, Math.PI / 2, 0]}>
         <RigidBody type="fixed" colliders="cuboid">
           {/* Desktop 1.6 × 0.85 m — institutional veneer */}
           <mesh position={[0, 0.73, 0]} castShadow receiveShadow>
@@ -397,6 +390,28 @@ export function PersonnelWing({ position }: RoomProps) {
           </group>
         </group>
 
+        {/* S2 · Personnel / Identity file — opened from the intake desk monitor.
+            No visible geometry added: the interaction rides the existing
+            monitor's invisible trigger volume. */}
+        <InteractableObject
+          label={`Personnel file — ${portfolioManifest.identity.name}`}
+          interactionKind="VIEW"
+          priority={2}
+          interactionRange={2.2}
+          onInteract={() =>
+            inspectDocument({
+              id: "FILE-PERSONNEL-KAPOOR",
+              title: `${portfolioManifest.identity.name.toUpperCase()} — PERSONNEL / IDENTITY FILE`,
+              type: "personnel-file",
+              content: "",
+            })
+          }
+        >
+          <mesh position={[0.05, 0.88, 0.14]} visible={false}>
+            <boxGeometry args={[0.5, 0.38, 0.1]} />
+          </mesh>
+        </InteractableObject>
+
         {/* DOC-PASSWORD intake login record sheet on visitor side of desk.
              Paper top: 0.73 + 0.004 = 0.734 m. Visitor reads this easily. */}
         <group position={[0.0, 0.731, 0.26]} rotation={[0, -0.05, 0]}>
@@ -407,7 +422,7 @@ export function PersonnelWing({ position }: RoomProps) {
               title: "ACCESS INTAKE — LOGIN WORKSHEET",
               type: "note",
               content:
-                "Intake login:\n  username: kapoor.a\n\nPassword hints (rotate every 90 days):\n  1. ICETM2026\n  2. LOCALFIRST\n  3. NOCLOUD",
+                "Intake login:\\n  username: kapoor.a\\n\\nPassword hints (rotate every 90 days):\\n  1. ARCHIVE2026\\n  2. LOCALFIRST\\n  3. NOCLOUD",
             }}
           />
         </group>
@@ -423,12 +438,11 @@ export function PersonnelWing({ position }: RoomProps) {
         <CoffeeMug position={[-0.48, 0.735, -0.18]} />
       </group>
 
-      {/* Filing bank: west-south stub wall only. Drawers face +X into the room.
-          0.85 m drawer standoff (x ∈ [-3.1, -2.25]). Not behind either desk.
-          Outside timeline prism (x∈[+1, +3.88], z∈[-2, +2]). */}
+      {/* Filing bank: south wall, west of supervisor desk. Drawers face +Z.
+          Drawer standoff z ∈ [−3.1, −2.5]. Not in timeline approach or doorway. */}
       <group position={[0, 0, 0]}>
-        <FilingCabinet position={[-3.5, 0, -3.6]} rotation={[0, -Math.PI / 2, 0]} cabinetId="PERSONNEL_CABINET_1" />
-        <group position={[-3.5, 0, -2.75]} rotation={[0, -Math.PI / 2, 0]}>
+        <FilingCabinet position={[-2.45, 0, -3.5]} rotation={[0, 0, 0]} cabinetId="PERSONNEL_CABINET_1" />
+        <group position={[-1.6, 0, -3.5]} rotation={[0, 0, 0]}>
           <FilingCabinet position={[0, 0, 0]} cabinetId="PERSONNEL_CABINET_2" />
           <mesh position={[0, 1.5, 0.455]} castShadow receiveShadow>
             <boxGeometry args={[0.76, 0.3, 0.055]} />
@@ -439,29 +453,29 @@ export function PersonnelWing({ position }: RoomProps) {
             <meshStandardMaterial color="#c8bda4" roughness={0.9} metalness={0} />
           </mesh>
         </group>
-        <FilingCabinet position={[-3.5, 0, -1.9]} rotation={[0, -Math.PI / 2, 0]} cabinetId="PERSONNEL_CABINET_3" />
+        <FilingCabinet position={[-0.75, 0, -3.5]} rotation={[0, 0, 0]} cabinetId="PERSONNEL_CABINET_3" />
 
-        <ArchiveBoxStack position={[-3.5, 1.82, -1.9]} rotation={[0, -Math.PI / 2 + 0.04, 0]} count={1} />
-        <PaperworkStack position={[-3.5, 1.82, -3.6]} rotation={[0, -Math.PI / 2 - 0.08, 0]} folderColor="#44382c" sheets={8} />
+        <ArchiveBoxStack position={[-0.75, 1.82, -3.5]} rotation={[0, 0.04, 0]} count={1} />
+        <PaperworkStack position={[-2.45, 1.82, -3.5]} rotation={[0, -0.08, 0]} folderColor="#44382c" sheets={8} />
 
-        <OfficePrinter position={[0.2, 0, 3.55]} rotation={[0, Math.PI, 0]} />
+        <OfficePrinter position={[-3.25, 0, -3.5]} rotation={[0, 0, 0]} />
 
         <FacilitySignPanel
-          position={[-3.88, 2.35, -2.75]}
-          rotation={[0, Math.PI / 2, 0]}
+          position={[-1.6, 2.15, -3.88]}
+          rotation={[0, 0, 0]}
           title="PERSONNEL RECORDS"
           subtitle="SECTION-02 · FILE CONSOLIDATION ACTIVE"
           accent="#c9b98f"
         />
 
-        <FloorScuffDecal position={[-2.55, 0.008, -2.75]} scale={[0.7, 1.6]} opacity={0.42} />
-        <FloorScuffDecal position={[-2.6, 0.008, -2.1]} scale={[0.55, 1.0]} opacity={0.38} />
+        <FloorScuffDecal position={[-1.6, 0.008, -2.55]} scale={[1.6, 0.7]} opacity={0.42} />
+        <FloorScuffDecal position={[-0.9, 0.008, -2.6]} scale={[1.0, 0.55]} opacity={0.38} />
       </group>
 
       {/* ── Remaining ambient detail (not new visual layers; trimmed to stay
            inside Task 9 per-room cap of ≤ 5 scuffs per family). Current scuff
            count here = 3 (2 on filing standoff + 1 by Zone B desk). ── */}
-      <FloorScuffDecal position={[-1.6, 0.008, 1.2]} scale={[1.1, 0.6]} opacity={0.4} />
+      <FloorScuffDecal position={[1.35, 0.008, -1.85]} scale={[1.1, 0.6]} opacity={0.4} />
       <WaterStainDecal position={[-1.5, 2.88, 2.0]} size={1.1} opacity={0.35} />
       <CableConduitRun position={[0, 2.85, -3.88]} rotation={[0, 0, Math.PI / 2]} length={7.5} />
 

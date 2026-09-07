@@ -2,9 +2,9 @@
 import { openDB, DBSchema, IDBPDatabase } from "idb";
 
 interface ArchiveDB extends DBSchema {
-  history: { key: string; value: any };
-  incidents: { key: string; value: any };
-  events: { key: string; value: any };
+  history: { key: string; value: unknown };
+  incidents: { key: string; value: unknown };
+  events: { key: string; value: unknown };
 }
 
 let dbPromise: Promise<IDBPDatabase<ArchiveDB>> | null = null;
@@ -22,7 +22,7 @@ export const IndexedDB = {
     }
     return dbPromise;
   },
-  async saveIncident(slug: string, data: any) {
+  async saveIncident(slug: string, data: unknown) {
     const db = await this.getDB();
     await db.put("incidents", data, slug);
   },
@@ -30,7 +30,7 @@ export const IndexedDB = {
     const db = await this.getDB();
     return db.get("incidents", slug);
   },
-  async saveEvent(id: string, data: any) {
+  async saveEvent(id: string, data: unknown) {
     const db = await this.getDB();
     await db.put("events", data, id);
   },

@@ -136,6 +136,8 @@ export interface PublicationEntry extends VerificationMeta {
   notes: string[];
   factualDescription: string;
   publicWording: string;
+  /** Local public PDF path when an authentic copy is integrated, else absent. */
+  pdfLocal?: string | null;
 }
 
 export interface CertificationEntry extends VerificationMeta {
@@ -378,6 +380,59 @@ const flagshipProjectEntries = [
     ...meta("verified", "Final Portfolio Selection Board and local workspace audit"),
   },
   {
+    slug: "metis",
+    name: "Metis",
+    category: "Applied AI / Solution Engineering Platform",
+    displayTier: "FLAGSHIP EXHIBIT",
+    lifecycleStatus: "Active private prototype with gate review",
+    oneLiner:
+      "AI-native solution-engineering workspace for turning raw briefs into validated architecture artifacts and deployable outputs.",
+    caseStudyDescription:
+      "Metis combines a web dashboard, FastAPI backend, workflow engine, and artifact-generation system to translate briefs into architecture diagrams, reports, and deployable system outputs.",
+    factualDescription:
+      "Private multi-service platform with workflow orchestration, architecture generation, remediation services, and generated artifact bundles.",
+    atmosphericPresentation:
+      "FLAGSHIP EXHIBIT: METIS // Structured briefs transformed into workflows, architecture artifacts, and validation gates.",
+    technologies: ["Next.js 15", "React 19", "FastAPI", "Python", "PostgreSQL", "Redis", "Docker"],
+    implementedFeatures: [
+      "Web dashboard and FastAPI backend",
+      "Workflow orchestration with auth and traceability layers",
+      "Terraform generation and remediation services",
+      "Constraint engine, artifact bundling, and architecture-diagram generation",
+      "Generated reports, SVGs, PDFs, and other artifact outputs",
+    ],
+    repositoryVisibility: "Confirmed private GitHub repository",
+    repositoryUrl: null,
+    liveDemoUrl: null,
+    exactContribution:
+      "Aryan appears to be the primary builder of the web app, API, workflow engine, artifact generation path, and architecture tooling.",
+    ownershipModel: "Solo private prototype with one visible author and active local development.",
+    evidenceSummary:
+      "Local workspace review surfaced 24 commits, a gate report, extensive API tests, deployment files, and many generated architecture artifacts.",
+    verificationState:
+      "Strong local evidence exists, and Batch 4D promotes Metis for V1 because its current evidence package is presentable even though full runtime behavior was not independently rerun during the launch audit.",
+    publicSafeAssets: [
+      "Generated architecture diagrams",
+      "Report artifacts after redaction",
+      "Gate report summary",
+    ],
+    knownLimitations: [
+      "README ambition outruns fully verified runtime proof.",
+      "Public case-study assets require redaction and a tighter narrative before launch.",
+    ],
+    facilityPlacement: "Final Showcase centerpiece - Applied AI Systems Wing",
+    assetRequirements: [
+      "Hero architecture artifact",
+      "Two supporting workflow or dashboard screenshots",
+      "Architecture diagram",
+    ],
+    dates: "2026-06-04 to 2026-07-02",
+    ...meta("verified", "Final Portfolio Selection Board and local workspace audit"),
+  },
+] satisfies ProjectEntry[];
+
+const detailedDossierProjectEntries = [
+  {
     slug: "poseidon",
     name: "Poseidon",
     category: "Distributed Systems / Real-Time Simulation",
@@ -430,59 +485,6 @@ const flagshipProjectEntries = [
       "Final Portfolio Selection Board and GitHub repository audit",
       "https://github.com/Keninjavelas/Poseidon"
     ),
-  },
-] satisfies ProjectEntry[];
-
-const detailedDossierProjectEntries = [
-  {
-    slug: "metis",
-    name: "Metis",
-    category: "Applied AI / Solution Engineering Platform",
-    displayTier: "FLAGSHIP EXHIBIT",
-    lifecycleStatus: "Active private prototype with gate review",
-    oneLiner:
-      "AI-native solution-engineering workspace for turning raw briefs into validated architecture artifacts and deployable outputs.",
-    caseStudyDescription:
-      "Metis combines a web dashboard, FastAPI backend, workflow engine, and artifact-generation system to translate briefs into architecture diagrams, reports, and deployable system outputs.",
-    factualDescription:
-      "Private multi-service platform with workflow orchestration, architecture generation, remediation services, and generated artifact bundles.",
-    atmosphericPresentation:
-      "FLAGSHIP EXHIBIT: METIS // Structured briefs transformed into workflows, architecture artifacts, and validation gates.",
-    technologies: ["Next.js 15", "React 19", "FastAPI", "Python", "PostgreSQL", "Redis", "Docker"],
-    implementedFeatures: [
-      "Web dashboard and FastAPI backend",
-      "Workflow orchestration with auth and traceability layers",
-      "Terraform generation and remediation services",
-      "Constraint engine, artifact bundling, and architecture-diagram generation",
-      "Generated reports, SVGs, PDFs, and other artifact outputs",
-    ],
-    repositoryVisibility: "Confirmed private GitHub repository",
-    repositoryUrl: null,
-    liveDemoUrl: null,
-    exactContribution:
-      "Aryan appears to be the primary builder of the web app, API, workflow engine, artifact generation path, and architecture tooling.",
-    ownershipModel: "Solo private prototype with one visible author and active local development.",
-    evidenceSummary:
-      "Local workspace review surfaced 24 commits, a gate report, extensive API tests, deployment files, and many generated architecture artifacts.",
-    verificationState:
-      "Strong local evidence exists, and Batch 4D promotes Metis for V1 because its current evidence package is presentable even though full runtime behavior was not independently rerun during the launch audit.",
-    publicSafeAssets: [
-      "Generated architecture diagrams",
-      "Report artifacts after redaction",
-      "Gate report summary",
-    ],
-    knownLimitations: [
-      "README ambition outruns fully verified runtime proof.",
-      "Public case-study assets require redaction and a tighter narrative before launch.",
-    ],
-    facilityPlacement: "Final Showcase centerpiece - Applied AI Systems Wing",
-    assetRequirements: [
-      "Hero architecture artifact",
-      "Two supporting workflow or dashboard screenshots",
-      "Architecture diagram",
-    ],
-    dates: "2026-06-04 to 2026-07-02",
-    ...meta("verified", "Final Portfolio Selection Board and local workspace audit"),
   },
   {
     slug: "multicloud-serverless-analytics",
@@ -541,16 +543,16 @@ const detailedDossierProjectEntries = [
     slug: "word-extension",
     name: "Word Extension",
     category: "Productivity Tooling / Office Add-in",
-    displayTier: "DETAILED DOSSIER",
-    lifecycleStatus: "Local QA freeze",
+    displayTier: "DEFERRED - OWNER EVIDENCE REQUIRED",
+    lifecycleStatus: "Deferred from V1 launch",
     oneLiner:
       "Microsoft Word Office Add-in for document analysis, guided editing, and safe command-plan execution.",
     caseStudyDescription:
-      "Word Extension combines a task-pane interface, local interpreter, provider hook, and a Word-specific QA harness to support structured document workflows.",
+      "Word Extension is deferred from V1 launch because a real Microsoft Word host transformation capture was not available during the final launch audit.",
     factualDescription:
       "Local-only productivity tool workspace with strong evidence from automated QA, structured reports, and Office-specific integration surfaces.",
     atmosphericPresentation:
-      "DETAILED DOSSIER: WORD EXTENSION // A document workflow tool strengthened by deliberate QA and desktop integration.",
+      "DEFERRED RECORD: WORD EXTENSION // Office add-in deferred from V1 launch pending Word host transformation capture.",
     technologies: ["TypeScript", "React", "Office.js", "Webpack", "Vitest", "PowerShell"],
     implementedFeatures: [
       "Task-pane UI and local interpreter",
@@ -578,11 +580,8 @@ const detailedDossierProjectEntries = [
       "No remote repository or public distribution surface exists yet.",
       "Document-derived screenshots need redaction before public use.",
     ],
-    facilityPlacement: "Research Lab dossier shelf",
-    assetRequirements: [
-      "Hero task-pane screenshot",
-      "One supporting QA or workflow screenshot",
-    ],
+    facilityPlacement: "Internal records only",
+    assetRequirements: [],
     dates: "Through 2026-08-06",
     ...meta("verified", "Final Portfolio Selection Board and local workspace audit"),
   },
@@ -641,16 +640,16 @@ const detailedDossierProjectEntries = [
     slug: "ghost-protocol",
     name: "Ghost Protocol",
     category: "Cybersecurity / Backend Platform",
-    displayTier: "DETAILED DOSSIER",
-    lifecycleStatus: "Large integrated prototype",
+    displayTier: "DEFERRED - OWNER EVIDENCE REQUIRED",
+    lifecycleStatus: "Deferred from V1 launch",
     oneLiner:
       "Cybersecurity platform with scanning, policy, graph, remediation, and dashboard components.",
     caseStudyDescription:
-      "Ghost Protocol is best treated as a technical dossier for security-platform architecture rather than a polished public product, because the code surface is broad but the clean verification story is weaker than the flagship set.",
+      "Ghost Protocol is deferred from V1 launch because the code surface is broad but the clean verification story is weaker than the flagship set, and repository hygiene issues require owner review before public promotion.",
     factualDescription:
       "Original public repository with many security modules, Docker packaging, dashboard media, and architecture-oriented markdown, but no clean automated-proof layer.",
     atmosphericPresentation:
-      "DETAILED DOSSIER: GHOST PROTOCOL // Security modules, policy logic, and graph reasoning assembled into a serious prototype.",
+      "DEFERRED RECORD: GHOST PROTOCOL // Security platform deferred from V1 launch pending repository hygiene review and verification confirmation.",
     technologies: ["Python", "Docker", "Alembic", "Security scanning", "Graph modules", "Threat intelligence"],
     implementedFeatures: [
       "AI-core modules for intent inference, MITRE mapping, report generation, and scoring",
@@ -667,7 +666,7 @@ const detailedDossierProjectEntries = [
     evidenceSummary:
       "Repository inspection confirmed large security-module coverage, dashboard media, Docker assets, and architecture markdown.",
     verificationState:
-      "The code surface is substantial, but no clean first-party automated suite or CI proof was confirmed after excluding noisy repo artifacts.",
+      "The code surface is substantial, but no clean first-party automated suite or CI proof was confirmed after excluding noisy repo artifacts. Repository hygiene issues (tracked .env files, demo credentials, checked-in environments) require owner review before public promotion.",
     publicSafeAssets: [
       "Dashboard image",
       "Architecture and deployment markdown",
@@ -676,11 +675,8 @@ const detailedDossierProjectEntries = [
       "Tracked .env files, demo credentials, and checked-in environment artifacts need review before public promotion.",
       "Do not overstate attacker coverage, deception effectiveness, or production hardening.",
     ],
-    facilityPlacement: "Research Lab dossier shelf",
-    assetRequirements: [
-      "Hero dashboard screenshot",
-      "One supporting workflow or architecture screenshot",
-    ],
+    facilityPlacement: "Internal records only",
+    assetRequirements: [],
     dates: "2026-02-25 to 2026-03-07",
     ...meta(
       "verified",
@@ -698,42 +694,45 @@ const archiveProjectEntries = [
     displayTier: "ARCHIVE RECORD",
     lifecycleStatus: "Archive - evidence-backed but overlapping",
     oneLiner:
-      "AI-assisted campus recruitment platform spanning backend, frontend, AI-service, and deployment scaffolding.",
+      "Campus recruitment and placement-readiness platform spanning backend, frontend, and deployment scaffolding.",
     caseStudyDescription:
       "Student OS remains a technically valid record, but it now sits in the archive because its broad AI-product narrative overlaps stronger and cleaner dossier candidates.",
     factualDescription:
-      "Original public repository with backend, frontend, tests, Terraform, workflows, and broad product scope.",
+      "Platform prototype spanning backend, frontend, tests, and deployment scaffolding.",
     atmosphericPresentation:
-      "ARCHIVE RECORD: STUDENT OS // A broad AI-product platform retained as technical history rather than a lead showcase.",
-    technologies: ["JavaScript", "Node.js", "React", "Docker", "Terraform", "AI service"],
+      "ARCHIVE RECORD: STUDENT OS // A broad product platform retained as technical history rather than a lead showcase.",
+    technologies: ["JavaScript", "Node.js", "React", "Docker"],
     implementedFeatures: [
       "Backend auth and student-flow routes",
-      "Frontend dashboards, mentorship, job, and resume surfaces",
-      "AI-service component and deployment scaffolding",
+      "Frontend dashboards for mentorship, job, and resume surfaces",
+      "Deployment scaffolding",
       "Tests plus GitHub workflow files",
     ],
-    repositoryVisibility: "Public original repository",
-    repositoryUrl: "https://github.com/Keninjavelas/Student-OS",
+    repositoryVisibility:
+      "Repository unlinked — ownership could not be verified (see audit note)",
+    repositoryUrl: null,
     liveDemoUrl: null,
     exactContribution:
-      "Aryan appears central to the build, but public wording should stay conservative until noisy environment artifacts are cleaned up.",
-    ownershipModel: "Likely solo original project; fetched history showed one author.",
+      "Earlier Selection Board audit reviewed the project content. The previously linked repository is no longer public, so live contribution cannot be independently confirmed.",
+    ownershipModel:
+      "Unverified — the previously linked repository is no longer public (see audit note).",
     evidenceSummary:
-      "Repository inspection confirmed backend, frontend, AI-service, tests, Terraform, and workflow files.",
+      "Earlier local audit recorded backend, frontend, tests, and workflow artifacts. AUDIT NOTE (2026-09-06): the previously linked repository could not be verified as the user's work; the currently public Student_OS repository is a fork of muqeet1001/Student_OS with no commits authored by the user, and it is NOT linked to this record.",
     verificationState:
-      "Evidence is real, but tracked environment files and broad production-style README language make it weaker than the selected dossiers.",
+      "Record retained as technical history with claims reduced to what the earlier audit supported; repository evidence is void pending an owner-supplied source.",
     publicSafeAssets: ["Architecture markdown", "Curatable app assets"],
     knownLimitations: [
       "Heavy overlap with DayOne AI and YatinVeda in the AI-product lane.",
       "Tracked environment files require cleanup before any promotion.",
+      "Repository link removed 2026-09-06 after ownership could not be verified.",
     ],
     facilityPlacement: "Archive Room - product systems shelf",
     assetRequirements: ["Single archive screenshot"],
-    dates: "2026-03-24 to 2026-06-08",
+    dates:
+      "Evidence reviewed 2026-03 to 2026-06; source repository no longer public as of 2026-09-06",
     ...meta(
       "verified",
-      "Final Portfolio Selection Board and GitHub repository audit",
-      "https://github.com/Keninjavelas/Student-OS"
+      "Final Portfolio Selection Board audit (2026-09-06): repository link removed after ownership could not be verified — see evidence note"
     ),
   },
   {
@@ -1156,11 +1155,9 @@ const projectDisplayOrder = [
   "inframind",
   "auxilium",
   "metis",
+  "poseidon",
   "multicloud-serverless-analytics",
   "dayone-ai",
-  "poseidon",
-  "word-extension",
-  "ghost-protocol",
   "student-os",
   "yatinveda",
   "reconcilyx",
@@ -1169,6 +1166,8 @@ const projectDisplayOrder = [
   "aws-helix-data-lakehouse",
   "fashion-feet",
   "odysseus",
+  "word-extension",
+  "ghost-protocol",
   "hermes",
   "yggdrasil",
   "understanding-studio",
@@ -1425,7 +1424,7 @@ export const portfolioManifest = {
         "Explicit user confirmation in Batch 1 decisions",
         "verified",
         ["Final showcase", "Resume interface"],
-        { images: ["Professional headshot"], pdfs: ["Current resume PDF"] }
+        { images: ["Professional headshot"] }
       ),
       approvalItem(
         "identity-availability",
@@ -1488,8 +1487,8 @@ export const portfolioManifest = {
         label: "Resume PDF",
         url: "/portfolio/documents/resume.pdf",
         visibility: "public",
-        note: "Hide or disable this download in production until the real PDF exists.",
-        ...meta("needs-source", "Resume PDF path reserved; file not yet provided"),
+        note: "Downloadable public resume (user-supplied PDF, integrated 2026-09-06).",
+        ...meta("verified", "Real resume PDF present at the manifest path"),
       },
     ] satisfies ManifestLink[],
     entries: [
@@ -1598,11 +1597,12 @@ export const portfolioManifest = {
         "Resume PDF",
         "contact",
         "/portfolio/documents/resume.pdf",
-        "Downloadable public resume PDF. Hide or disable until the file exists in production.",
-        "Reserved public path only; actual PDF not yet supplied",
-        "needs-source",
+        "Downloadable public resume PDF.",
+        "User-supplied resume PDF integrated at /portfolio/documents/resume.pdf (2026-09-06)",
+        "verified",
         ["Final showcase", "Resume interface"],
-        { pdfs: ["Current resume PDF"] }
+        {},
+        "/portfolio/documents/resume.pdf"
       ),
     ] satisfies ApprovalItem[],
   },
@@ -2027,25 +2027,26 @@ export const portfolioManifest = {
         "Publication focused on post-quantum cryptography adoption within Zero Trust architecture planning.",
       publicWording:
         "A Decision Framework for Post-Quantum Cryptography Deployment in Zero Trust Architecture.",
+      pdfLocal: "/portfolio/documents/papers/post-quantum-zero-trust.pdf",
       ...meta("verified", "Correction brief", "https://zenodo.org/records/20002606"),
     } satisfies PublicationEntry,
     {
       title:
         "AI-Driven Systems for Education and Recruitment: A Comprehensive Survey",
-      venue: "ICETM 2026",
-      statusLine: "Accepted for oral presentation and publication",
+      venue: "Standalone manuscript",
+      statusLine: "Complete manuscript",
       notes: [
         "Co-authored with Abdul Muqeet, Bhavani Singh Rajput, Dawood Masoodi, and Dr. Pushpa Mohan.",
-        "Paper ID: S0124.",
-        "IEEE proceedings remain conditional on registration and presentation.",
+        "Standalone manuscript; no external publication record is attached to this paper.",
       ],
       factualDescription:
         "Survey paper covering AI systems for education and recruitment, including interviews, resume parsing, placement prediction, and programming education.",
       publicWording:
-        "AI-Driven Systems for Education and Recruitment: A Comprehensive Survey, accepted for oral presentation and publication at ICETM 2026.",
-      ...meta("verified", "Correction brief and final paper summary"),
+        "AI-Driven Systems for Education and Recruitment: A Comprehensive Survey.",
+      pdfLocal: "/portfolio/documents/papers/ai-education-recruitment-survey.pdf",
+      ...meta("verified", "Final manuscript PDF (user-supplied) and approved summary"),
     } satisfies PublicationEntry,
-  ],
+  ] as PublicationEntry[],
   certifications: [
     {
       title: "Google Project Management Professional Certificate",
@@ -2444,7 +2445,7 @@ export const portfolioApproval = {
       {
         links: publication.sourceUrl ? [] : ["External publication or conference record"],
         images: ["Cover-page image"],
-        pdfs: ["Publication PDF"],
+        pdfs: publication.pdfLocal ? [] : ["Publication PDF"],
       },
       publication.sourceUrl
     )

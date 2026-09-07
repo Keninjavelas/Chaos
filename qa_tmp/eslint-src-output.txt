@@ -1,0 +1,84 @@
+﻿
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\archive\controller\ArchiveController.ts
+  2:31  warning  'ArchiveMetrics' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\archive\degradation\degradationEngine.ts
+  23:15  warning  'page' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\archive\init\initIdleDetection.ts
+  7:10  warning  'ObservationEngine' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\archive\init\initObservationEngine.ts
+  8:10  warning  'ArchiveController' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\archive\init\initPersistence.ts
+  14:15  warning  'degradationLevel' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  14:33  warning  'archiveHealth' is assigned a value but never used     @typescript-eslint/no-unused-vars
+  14:48  warning  'memoryIntegrity' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\archive\observation\noteGenerator.ts
+  16:20  warning  'section' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\components\archive\TheLobby.tsx
+  33:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\components\debug\ArchiveDebugPanel.tsx
+  21:5  warning  'favoriteSection' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  22:5  warning  'lastVisitedPage' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  23:5  warning  'totalSessions' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  24:5  warning  'totalTimeSpent' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  28:5  warning  'archiveMetrics' is assigned a value but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\components\intro\LoadingDesktop.tsx
+   25:10  warning  'clockTime' is assigned a value but never used                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+   26:22  warning  'setVisitorNum' is assigned a value but never used                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   32:10  warning  'catClickCount' is assigned a value but never used                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  189:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  194:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  199:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  204:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  209:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  214:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  219:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  224:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  274:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\components\intro\QuoteSequence.tsx
+   3:28  warning  'useRef' is defined but never used             @typescript-eslint/no-unused-vars
+  19:17  warning  'setQuote' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\components\intro\ReflectionSilhouette.tsx
+  12:7  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\components\intro\SkipButton.tsx
+  3:17  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  3:28  warning  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\game\Gameplay\useInput.ts
+  39:6  warning  React Hook useEffect has missing dependencies: 'handleKeyDown' and 'handleKeyUp'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\game\Interactables\InspectionView.tsx
+  1:8  warning  'React' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\game\Narrative\AnomalyEngine.tsx
+  2:8   warning  'React' is defined but never used                @typescript-eslint/no-unused-vars
+  8:64  warning  'isAwakened' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\game\UI\PersonnelRecordOverlay.tsx
+  33:7  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\game\World\props\RingingPhone.tsx
+  33:26  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\game\World\rooms\Sublevel.tsx
+  7:13  warning  'THREE' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\hooks\usePageVisit.ts
+  46:6  warning  React Hook useEffect has a missing dependency: 'router.pathname'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\aryan\OneDrive\Desktop\Chaos\src\lib\state.ts
+  90:18  warning  'get' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 40 problems (0 errors, 40 warnings)
+
+

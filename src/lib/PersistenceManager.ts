@@ -9,15 +9,15 @@ import { useArchiveStore } from './state';
 interface ArchiveDB extends DBSchema {
   history: {
     key: string; // e.g., 'visitCount'
-    value: any;
+    value: unknown;
   };
   incidents: {
     key: string; // incident slug
-    value: any; // incident object
+    value: unknown; // incident object
   };
   events: {
     key: string; // event id
-    value: any;
+    value: unknown;
   };
 }
 
@@ -86,7 +86,7 @@ export const PersistenceManager = {
     });
   },
   // IndexedDB for complex collections
-  async saveIncident(slug: string, incident: any) {
+  async saveIncident(slug: string, incident: unknown) {
     const db = await getDB();
     await db.put('incidents', incident, slug);
   },
@@ -94,7 +94,7 @@ export const PersistenceManager = {
     const db = await getDB();
     return await db.get('incidents', slug);
   },
-  async saveEvent(id: string, event: any) {
+  async saveEvent(id: string, event: unknown) {
     const db = await getDB();
     await db.put('events', event, id);
   },

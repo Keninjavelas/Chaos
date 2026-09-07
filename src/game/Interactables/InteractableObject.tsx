@@ -27,6 +27,7 @@ const inferredKind = (label: string): InteractionKind => {
 const tempWorldPos = new THREE.Vector3();
 const tempCameraDir = new THREE.Vector3();
 const tempToTarget = new THREE.Vector3();
+const tempBox = new THREE.Box3();
 
 export function InteractableObject({ 
   label,
@@ -55,7 +56,19 @@ export function InteractableObject({
       return;
     }
 
-    group.getWorldPosition(tempWorldPos);
+    // Aim at the world centre of the interactable's own bounds rather than at
+    // the group origin. Many interactables are mounted at floor level (y=0)
+    // with their trigger/label raised (vitrines, terminals, drawers, panels);
+    // targeting the origin made those impossible to focus from standing eye
+    // height. The AABB is the group's own content (invisible trigger + label),
+    // so this keeps existing focus behaviour unchanged while fixing the
+    // raised-object class.
+    tempBox.setFromObject(group);
+    if (tempBox.isEmpty()) {
+      group.getWorldPosition(tempWorldPos);
+    } else {
+      tempBox.getCenter(tempWorldPos);
+    }
     state.camera.getWorldDirection(tempCameraDir);
 
     tempToTarget.subVectors(tempWorldPos, state.camera.position);

@@ -137,10 +137,12 @@ export function FlagshipExhibitPedestal({
           <boxGeometry args={[0.48, 0.03, 0.36]} />
           <FacilityMaterial kind="painted-metal" color="#283238" />
         </mesh>
-        {/* Paper Document Insert with Project Title */}
+        {/* Paper Document Insert with Project Title — lit material so the page
+            reads as a document under the dim case light, not as a self-lit
+            white rectangle that turns the vitrine into a glowing panel. */}
         <mesh position={[0, 0.018, 0]}>
           <planeGeometry args={[0.44, 0.32]} />
-          <meshBasicMaterial color="#e8e2d4" />
+          <meshStandardMaterial color="#d8cfbc" roughness={0.88} />
         </mesh>
         <Text
           position={[0, 0.02, 0.04]}
@@ -165,8 +167,9 @@ export function FlagshipExhibitPedestal({
         <FacilityMaterial kind="painted-metal" color="#222b30" />
       </mesh>
 
-      {/* 4. Subtle Interior Vitrine Showcase Light */}
-      <pointLight position={[0, 1.32, 0]} color={accentColor} intensity={0.65} distance={2.0} decay={2} />
+      {/* 4. Subtle Interior Vitrine Showcase Light — dim pool so the case
+          stays identifiable without glowing like a lit rectangle in the room. */}
+      <pointLight position={[0, 1.32, 0]} color={accentColor} intensity={0.22} distance={1.7} decay={2} />
 
       {/* 5. Front Angled Display Plaque (Engraved Anodized Metal) */}
       <group position={[0, 0.65, 0.45]} rotation={[-0.24, 0, 0]}>
@@ -283,7 +286,7 @@ export function ProjectDossierBinder({
 }
 
 /**
- * Research Folio (For Zenodo and ICETM publications)
+ * Research Folio (For Zenodo publication and survey manuscript)
  */
 export function ResearchFolio({
   position,
@@ -488,7 +491,7 @@ export function ContactTerminalStation({
           inspectDocument({
             id: "RECRUITER-SUMMARY",
             title: "CANDIDATE SUMMARY & RECRUITER CONTACT",
-            type: "dossier",
+            type: "personnel-dossier",
             content: [
               "CANDIDATE SUMMARY // ARYAN KAPOOR",
               "================================================",
@@ -497,16 +500,16 @@ export function ContactTerminalStation({
               "LOCATION: Bengaluru, India",
               "",
               "CORE FLAGSHIP PROJECTS:",
-              "1. InfraMind - AI-driven multi-cloud topology generator & cost analyzer",
-              "2. Auxilium Digital Archive - First-person 3D WebGL interactive archive",
-              "3. Metis - Distributed AI agent cognitive architecture",
+              "1. InfraMind - Local-first infrastructure cognition layer for Terraform, Kubernetes, and Docker",
+              "2. Auxilium Digital Archive - Interactive first-person WebGL developer portfolio",
+              "3. Metis - AI-native solution-engineering workspace for architecture artifacts and deployable outputs",
               "",
               "PROFESSIONAL INTERNSHIP:",
-              "• Springer Capital (Nov 2025 - Present) - Flask microservices, SQLAlchemy, REST APIs, integration testing",
+              "• Springer Capital (Aug 2025 - Nov 2025) - Flask microservices, SQLAlchemy, REST APIs, integration testing",
               "",
               "RESEARCH & PUBLICATIONS:",
               "• Post-Quantum Cryptography Survey (Zenodo 20002606)",
-              "• AI Agent Systems Survey (ICETM 2026)",
+              "• AI-Driven Systems for Education and Recruitment survey (manuscript)",
               "",
               "CONTACT CHANNELS:",
               "• GitHub: https://github.com/Keninjavelas",

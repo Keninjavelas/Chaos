@@ -1,7 +1,7 @@
 // src/components/debug/ArchiveDebugPanel.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useArchiveStore } from "@/lib/state";
 import { ArchiveController } from "@/archive/controller/ArchiveController";
 
@@ -12,15 +12,6 @@ import { ArchiveController } from "@/archive/controller/ArchiveController";
  * or hidden in production builds.
  */
 export const ArchiveDebugPanel: React.FC = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      setIsEnabled(localStorage.getItem("archive-debug") === "true");
-    }
-  }, []);
-
-  if (!isEnabled) return null;
   const {
     degradationLevel,
     visitCount,
@@ -37,6 +28,16 @@ export const ArchiveDebugPanel: React.FC = () => {
     archiveMetrics,
   } = useArchiveStore();
 
+  // Dev-only: read the localStorage enable flag once at mount (no effect,
+  // no setState-in-effect). Production builds compile this branch to false.
+  const [isEnabled] = useState(() => {
+    if (process.env.NODE_ENV !== "development") return false;
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("archive-debug") === "true";
+  });
+
+  if (!isEnabled) return null;
+
   const handleIdle = () => {
     ArchiveController.addIdleTime(15);
   };
@@ -45,9 +46,10 @@ export const ArchiveDebugPanel: React.FC = () => {
     ArchiveController.addPanicEvent();
   };
 
-  const triggerRare = (name: string) => {
-    // @ts-ignore – runtime will ensure correct event name
-    ArchiveController.triggerRareEvent(name as any);
+  const triggerRare = (
+    name: keyof typeof import("../../archive/events/rareEvents").RareEventProbabilities
+  ) => {
+    ArchiveController.triggerRareEvent(name);
   };
 
   return (

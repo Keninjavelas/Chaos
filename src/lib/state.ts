@@ -182,7 +182,7 @@ export const useArchiveStore = create<ArchiveState>()(
       set(state => ({
         archiveMetrics: {
           ...state.archiveMetrics,
-          [name]: ((state.archiveMetrics as any)[name] as number) + value,
+          [name]: ((state.archiveMetrics[name] as number) ?? 0) + value,
         },
       })),
     setSessionInfo: info => set(state => ({ session: { ...state.session, ...info } })),

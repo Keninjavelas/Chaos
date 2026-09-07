@@ -28,6 +28,7 @@ import { FacilitySignPanel } from "../props/FacilityKit";
 import { CoatRack, PaperworkStack, FloorScuffDecal, ArchiveBoxStack } from "../props/EnvironmentalProps";
 import { FacilityMaterial } from "../materials/FacilityMaterials";
 import { portfolioDocuments } from "@/data/portfolioData";
+import { RigidBody } from "@react-three/rapier";
 
 function SparkingCable({ position }: { position: [number, number, number] }) {
   const lightRef = useRef<THREE.PointLight>(null);
@@ -184,6 +185,27 @@ export function ReceptionWing({ position, onInteractMap }: RoomProps) {
         <mesh position={[-2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#0a0c0e" metalness={0.75} roughness={0.68} /></mesh>
         <mesh position={[2.5, 1.2, 0]}><boxGeometry args={[0.1, 2.4, 0.1]} /><meshStandardMaterial color="#0a0c0e" metalness={0.75} roughness={0.68} /></mesh>
       </group>
+
+      {/* Invisible restricted-gate collider — V1 gate-bypass fix.
+          The bars above are decorative only; this single fixed barrier spans
+          the COMPLETE gate opening (x ±2.52, overlapping the jamb faces at
+          ±2.5 by 0.02 to leave no edge seam), floor-to-lintel (y 0–3.0), at
+          the bar plane (z −5). It makes the red/restricted gate physically
+          impassable across the entire mouth — center and both edges — while
+          preserving all visual bars, the red elevator state, the elevator-door
+          collider, call-panel behaviour, and every interaction/narrative. No
+          keycard or unlock mechanic. */}
+      <RigidBody type="fixed" position={[0, 1.5, -5]} colliders="cuboid">
+        {/* Invisible via material (mesh stays visible) — the codebase-proven
+            idiom for hidden colliders (see RoomArchitecture floor/wall
+            collision boxes). A `visible={false}` mesh is NOT reliably picked
+            up for auto-colliders by @react-three/rapier, which let players
+            pass mid-span. */}
+        <mesh>
+          <boxGeometry args={[5.04, 3.0, 0.06]} />
+          <meshBasicMaterial visible={false} />
+        </mesh>
+      </RigidBody>
 
       {/* ─── LEFT WING CORRIDOR (Leads to Communications & Records) ─── */}
       <group position={[0, 0, 0]}>

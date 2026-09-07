@@ -23,7 +23,7 @@ export const LoadingDesktop: React.FC<{ onComplete: () => void, onSkip: () => vo
 
   const [progress, setProgress] = useState(0);
   const [clockTime, setClockTime] = useState("");
-  const [visitorNum, setVisitorNum] = useState(0);
+  const [visitorNum, setVisitorNum] = useState(() => Math.floor(Math.random() * 9000) + 1000);
   const [frozen, setFrozen] = useState(false);
   
   // Interaction tracking
@@ -51,11 +51,6 @@ export const LoadingDesktop: React.FC<{ onComplete: () => void, onSkip: () => vo
     baseLoadingMessages.length - 1
   );
   const currentMessage = baseLoadingMessages[currentMessageIndex];
-
-  // Initialize random values on client only
-  useEffect(() => {
-    setVisitorNum(Math.floor(Math.random() * 9000) + 1000);
-  }, []);
 
   // Clock
   useEffect(() => {
@@ -180,7 +175,7 @@ export const LoadingDesktop: React.FC<{ onComplete: () => void, onSkip: () => vo
           />
           <DesktopIcon 
             icon="📖" label="Guestbook" 
-            onClick={() => openDialog("guestbook", "Guestbook", <p>Entries: 1<br/>Visitor #1: "Nice site."</p>)} 
+            onClick={() => openDialog("guestbook", "Guestbook", <p>Entries: 1<br/>Visitor #1: &quot;Nice site.&quot;</p>)} 
           />
           <DesktopIcon 
             icon="✉️" label="Contact Me" 
@@ -268,7 +263,7 @@ export const LoadingDesktop: React.FC<{ onComplete: () => void, onSkip: () => vo
                   <li onClick={() => openDialog("about", "About Me", <p>I am a developer.</p>)}>About Me</li>
                   <li onClick={() => openDialog("projects", "My Projects", <p>Loading projects...</p>)}>My Projects</li>
                   <li onClick={() => openDialog("resume", "Resume", <p>Access denied.</p>)}>Resume</li>
-                  <li onClick={() => openDialog("guestbook", "Guestbook", <p>Visitor #1: "Nice site."</p>)}>Guestbook</li>
+                  <li onClick={() => openDialog("guestbook", "Guestbook", <p>Visitor #1: &quot;Nice site.&quot;</p>)}>Guestbook</li>
                   <li onClick={() => openDialog("contact", "Email Me", <p>No mail client found.</p>)}>Email Me</li>
                 </ul>
               </div>

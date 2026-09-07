@@ -18,7 +18,7 @@ export default function TheMirrorRoom() {
       <div className="mirror-frame">
         <div className={`reflection ${degradationLevel > 0.4 ? "distorted" : ""}`}>
           <p className="mirror-text">
-            I look at the face in the glass and it doesn't quite fit anymore.
+            I look at the face in the glass and it doesn&apos;t quite fit anymore.
           </p>
           <p className="mirror-text">
             {getCorruptedText("I remember studying systems. Architectures. Finding comfort in things that compile cleanly. Now the code just looks like dead language.", 0.6)}
@@ -32,7 +32,7 @@ export default function TheMirrorRoom() {
           )}
           
           {degradationLevel > 0.8 && (
-            <p className="mirror-text creeping-text">It's staring back.</p>
+            <p className="mirror-text creeping-text">It&apos;s staring back.</p>
           )}
         </div>
       </div>

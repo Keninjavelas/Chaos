@@ -5,7 +5,7 @@ import { RoomProps } from "../types";
 import { RoomFloor, RoomCeiling, RoomWall, ElevatorDoor } from "../props/RoomArchitecture";
 import { InteractableObject } from "../../Interactables/InteractableObject";
 import { useArchiveStore } from "@/lib/state";
-import { HorrorMaterial } from "../materials/HorrorMaterial";
+import { FacilityMaterial } from "../materials/FacilityMaterials";
 import { ContactTerminalStation } from "../props/PortfolioExhibits";
 import { InstancedDebris } from "../props/InstancedDebris";
 
@@ -65,7 +65,7 @@ export function ElevatorLobby({ position }: RoomProps) {
         >
           <mesh position={[1.3, 1.2, 0.1]} castShadow>
             <boxGeometry args={[0.3, 0.5, 0.05]} />
-            <HorrorMaterial color="#111" metalness={0.9} roughness={0.3} noiseScale={1.0} />
+            <FacilityMaterial kind="painted-metal" color="#14191c" />
           </mesh>
           <mesh position={[1.3, 1.25, 0.13]} rotation={[Math.PI/2, 0, 0]}>
             <cylinderGeometry args={[0.04, 0.04, 0.02]} />

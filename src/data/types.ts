@@ -17,7 +17,7 @@ export interface ItemMetadata {
   isNew: boolean;
 }
 
-export type DocumentType = 'letter' | 'dossier' | 'blueprint' | 'note' | 'certificate' | 'log' | 'terminal' | 'case_file';
+export type DocumentType = 'letter' | 'dossier' | 'blueprint' | 'note' | 'certificate' | 'log' | 'terminal' | 'case_file' | 'personnel-file' | 'personnel-dossier';
 
 export interface DocumentContent {
   id: string;

@@ -17,7 +17,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({ onEnter }) => {
         </button>
 
         <p className="text-[#8a8570] text-sm leading-relaxed mb-16 max-w-[250px]">
-          You are not just visiting a portfolio. You are wandering through what's left of a memory.
+          You are not just visiting a portfolio. You are wandering through what&apos;s left of a memory.
         </p>
 
         <h3 className="text-xs uppercase tracking-[0.2em] text-[#555] mb-6">Features</h3>

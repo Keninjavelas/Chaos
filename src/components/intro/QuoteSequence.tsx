@@ -16,7 +16,7 @@ interface QuoteSequenceProps {
  * Total time: ~7 seconds. Then fires onComplete.
  */
 export const QuoteSequence: React.FC<QuoteSequenceProps> = ({ onComplete }) => {
-  const quoteRef = useRef(quotes[Math.floor(Math.random() * quotes.length)]);
+  const [quote, setQuote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
   const [showCracks, setShowCracks] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export const QuoteSequence: React.FC<QuoteSequenceProps> = ({ onComplete }) => {
   return (
     <>
       <div className="reflection-quote">
-        {quoteRef.current}
+        {quote}
       </div>
       {showCracks && <div className="glass-cracks" />}
     </>

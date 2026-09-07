@@ -43,10 +43,12 @@ export default function Renderer() {
   const [, setIsGameUIActive] = useState(false);
   const isDebugMode = useArchiveStore((state) => state.isDebugMode);
 
-  // Developer Debug Mode (F1)
+  // Developer Debug Mode (F1) — development builds only; the toggle is inert
+  // in production so physics/lighting debug overlays are never exposed to
+  // public visitors (see docs/portfolio-launch-readiness.md security audit).
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "F1") {
+      if (e.key === "F1" && process.env.NODE_ENV === "development") {
         e.preventDefault();
         useArchiveStore.getState().toggleDebugMode();
       }

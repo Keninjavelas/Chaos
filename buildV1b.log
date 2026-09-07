@@ -1,0 +1,46 @@
+
+> archive-app@0.1.0 build
+> next build
+
+▲ Next.js 16.2.9 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.9s
+  Running TypeScript ...
+  Finished TypeScript in 12.8s ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/13) ...
+[Archive] ArchiveProvider mounted
+[Archive] ArchiveProvider mounted
+[Archive] ArchiveProvider mounted
+[Archive] ArchiveProvider mounted
+  Generating static pages using 11 workers (3/13) 
+  Generating static pages using 11 workers (6/13) 
+[Archive] ArchiveProvider mounted
+[Archive] ArchiveProvider mounted
+[Archive] ArchiveProvider mounted
+IntroFlow render – current phase: desktop
+Rendering LoadingDesktop
+[Archive] ArchiveProvider mounted
+[Archive] ArchiveProvider mounted
+  Generating static pages using 11 workers (9/13) 
+✓ Generating static pages using 11 workers (13/13) in 736ms
+  Finalizing page optimization ...
+
+Route (app)          Revalidate  Expire
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/contact
+├ ○ /api/repos               1h      1y
+├ ○ /correspondence
+├ ○ /hallway
+├ ○ /library
+├ ○ /memory-archive
+├ ○ /mirror-room
+├ ○ /timeline
+└ ○ /workshop
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -4,6 +4,14 @@ import { playInteractionFeedback } from "../Interactables/interactionFeedback";
 
 export function KeypadSafeUI() {
   const activeKeypad = useGameState((state) => state.activeKeypad);
+
+  // Remount the panel per keypad open (keyed by keypad id) so local input
+  // state always starts fresh — no reset state is needed inside an effect.
+  if (!activeKeypad) return null;
+  return <KeypadPanel key={activeKeypad} keypadId={activeKeypad} />;
+}
+
+function KeypadPanel({ keypadId }: { keypadId: string }) {
   const clearInteraction = useGameState((state) => state.clearInteraction);
   const unlockSafe = useGameState((state) => state.unlockSafe);
   const setInteractionMessage = useGameState((state) => state.setInteractionMessage);
@@ -13,16 +21,12 @@ export function KeypadSafeUI() {
   const [statusColor, setStatusColor] = useState("text-[#aaccff]");
 
   useEffect(() => {
-    if (!activeKeypad) return;
     document.exitPointerLock?.();
-    setInputCode("");
-    setStatusText("ENTER 4-DIGIT PIN");
-    setStatusColor("text-[#aaccff]");
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       const key = e.key.toLowerCase();
-      if (key === 'escape') {
+      if (key === "escape") {
         playInteractionFeedback("close");
         clearInteraction();
       }
@@ -30,9 +34,7 @@ export function KeypadSafeUI() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeKeypad, clearInteraction]);
-
-  if (!activeKeypad) return null;
+  }, [clearInteraction]);
 
   const handleKeyPress = (digit: string) => {
     if (inputCode.length < 4) {
@@ -51,7 +53,7 @@ export function KeypadSafeUI() {
     if (inputCode === "0845") {
       setStatusText("ACCESS GRANTED");
       setStatusColor("text-green-400 animate-pulse");
-      unlockSafe(activeKeypad);
+      unlockSafe(keypadId);
       playInteractionFeedback("open");
       setInteractionMessage("[ SAFE UNLOCKED ] Heavy steel bolt disengaged.");
       setTimeout(() => {
@@ -77,7 +79,7 @@ export function KeypadSafeUI() {
         {/* Keypad Title */}
         <div className="w-full text-center border-b border-[#2d353c] pb-3">
           <div className="text-xs text-[#556677] tracking-widest uppercase">AUXILIUM SECURITY LOCK</div>
-          <div className="text-sm font-bold text-[#aaccff] tracking-wider uppercase">{activeKeypad.replace('_', ' ')}</div>
+          <div className="text-sm font-bold text-[#aaccff] tracking-wider uppercase">{keypadId.replace('_', ' ')}</div>
         </div>
 
         {/* Digital LED Display */}

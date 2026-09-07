@@ -9,13 +9,18 @@ export function AnomalyEngine() {
 
   // The Impossible Room Event Hook
   useEffect(() => {
-    if (mapDiscovered && !mapAnomalyRevealed) {
-      setIsBlackout(true);
-      setTimeout(() => {
-        revealMapAnomaly();
-        setIsBlackout(false);
-      }, 3000);
-    }
+    if (!mapDiscovered || mapAnomalyRevealed) return;
+    // All state changes are deferred into timer callbacks so the effect body
+    // never calls setState synchronously (react-hooks/set-state-in-effect).
+    const blackoutTimer = setTimeout(() => setIsBlackout(true), 0);
+    const revealTimer = setTimeout(() => {
+      revealMapAnomaly();
+      setIsBlackout(false);
+    }, 3000);
+    return () => {
+      clearTimeout(blackoutTimer);
+      clearTimeout(revealTimer);
+    };
   }, [mapDiscovered, mapAnomalyRevealed, revealMapAnomaly]);
 
   useEffect(() => {

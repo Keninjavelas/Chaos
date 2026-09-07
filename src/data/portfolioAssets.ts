@@ -18,11 +18,11 @@ export interface ExternalResourceRecord {
 export const portfolioAssets = {
   profile: {
     headshot: {
-      path: "/portfolio/profile/headshot.webp",
-      status: "missing",
+      path: "/portfolio/profile/headshot.jpg",
+      status: "available",
       visibility: "public",
       alt: "Professional portrait of Aryan Kapoor",
-      note: "Primary headshot for public portfolio surfaces.",
+      note: "Primary headshot for public portfolio surfaces (user-supplied, integrated 2026-09-06).",
     } satisfies AssetRecord,
     avatar: {
       path: "/portfolio/profile/avatar.webp",
@@ -43,18 +43,18 @@ export const portfolioAssets = {
     resume: {
       pdf: {
         path: "/portfolio/documents/resume.pdf",
-        status: "missing",
+        status: "available",
         visibility: "public",
-        note: "Current downloadable public resume PDF. Keep the production button hidden or disabled until this file exists.",
+        note: "Current downloadable public resume PDF (user-supplied, integrated 2026-09-06). Production resume action is now enabled.",
       } satisfies AssetRecord,
     },
     papers: {
       postQuantum: {
         pdf: {
           path: "/portfolio/documents/papers/post-quantum-zero-trust.pdf",
-          status: "missing",
+          status: "available",
           visibility: "public",
-          note: "Local PDF for the Zenodo publication.",
+          note: "Local PDF for the Zenodo publication (user-supplied, integrated 2026-09-06).",
         } satisfies AssetRecord,
         coverImage: {
           path: "/portfolio/documents/papers/post-quantum-zero-trust-cover.webp",
@@ -66,9 +66,9 @@ export const portfolioAssets = {
       aiSurvey: {
         pdf: {
           path: "/portfolio/documents/papers/ai-education-recruitment-survey.pdf",
-          status: "missing",
+          status: "available",
           visibility: "public",
-          note: "Final PDF for the ICETM 2026 survey paper.",
+          note: "Final manuscript PDF for the AI education/recruitment survey paper (user-supplied, integrated 2026-09-06).",
         } satisfies AssetRecord,
         coverImage: {
           path: "/portfolio/documents/papers/ai-education-recruitment-cover.webp",
@@ -172,10 +172,11 @@ export const portfolioAssets = {
         },
         {
           path: "/portfolio/projects/auxilium/personnel-wing.webp",
-          status: "missing",
+          status: "available",
           visibility: "public",
           alt: "Personnel or records room view from Auxilium Digital Archive",
-        },
+          note: "Authentic capture from the production build (2026-09-07): Personnel Wing timeline/records room, normal gameplay HUD only.",
+        } satisfies AssetRecord,
         {
           path: "/portfolio/projects/auxilium/document-overlay.png",
           status: "available",
@@ -400,9 +401,10 @@ export const portfolioAssets = {
         alt: "Archive screenshot for Student OS",
       } satisfies AssetRecord,
       repositoryUrl: {
-        url: "https://github.com/Keninjavelas/Student-OS",
-        status: "available",
-        visibility: "public",
+        url: null,
+        status: "private",
+        visibility: "private",
+        note: "Repository unlinked 2026-09-06 — ownership could not be verified; see portfolioData audit note on the Student OS archive record.",
       } satisfies ExternalResourceRecord,
     },
     yatinveda: {

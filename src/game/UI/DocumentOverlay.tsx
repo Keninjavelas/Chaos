@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useGameState } from "../useGameState";
 import { playInteractionFeedback } from "../Interactables/interactionFeedback";
+import { PersonnelRecordOverlay } from "./PersonnelRecordOverlay";
 
 export function DocumentOverlay() {
   const activeDocument = useGameState((state) => state.activeDocument);
@@ -26,6 +27,15 @@ export function DocumentOverlay() {
   }, [activeDocument, clearInteraction]);
 
   if (!activeDocument) return null;
+
+  // Personnel / Identity Archive overlays (S2 personnel file, S3 recruiter
+  // dossier) render their own dedicated presentation.
+  if (
+    activeDocument.type === 'personnel-file' ||
+    activeDocument.type === 'personnel-dossier'
+  ) {
+    return <PersonnelRecordOverlay document={activeDocument} />;
+  }
 
   const isNote = activeDocument.type === 'note';
 
