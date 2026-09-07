@@ -118,11 +118,27 @@ export async function POST(request: Request): Promise<NextResponse> {
   const message = (payload.message as string).trim();
 
   // 3. SMTP configuration — environment only.
-  const host = process.env.SMTP_HOST;
+  let host = process.env.SMTP_HOST;
   const portRaw = process.env.SMTP_PORT;
   const user = process.env.SMTP_USER;
   const password = process.env.SMTP_PASSWORD;
   const toEmail = process.env.CONTACT_TO_EMAIL ?? DEFAULT_TO_EMAIL;
+
+  // Resolve hostname to IPv4 address to avoid IPv6 connection issues
+  // on networks without IPv6 connectivity (common in local development)
+  if (host) {
+    try {
+      const dns = require('dns');
+      const { promisify } = require('util');
+      const lookup = promisify(dns.lookup);
+      const resolved = await lookup(host, { family: 4 });
+      host = resolved.address;
+      console.log(`[contact] Resolved ${process.env.SMTP_HOST} to IPv4: ${host}`);
+    } catch (dnsError) {
+      console.error(`[contact] DNS lookup failed for ${host}, using original hostname:`, dnsError);
+      host = process.env.SMTP_HOST; // Fallback to original hostname
+    }
+  }
 
   if (!host || !portRaw || !user || !password) {
     // Configuration is incomplete — fail gracefully without exposing which
@@ -148,15 +164,39 @@ export async function POST(request: Request): Promise<NextResponse> {
   // 4. Send through SMTP. Success is only reported after the remote server
   // accepts the message.
   try {
-    const transporter = nodemailer.createTransport({
+    const transporterConfig: any = {
       host,
       port,
       secure,
       auth: { user, pass: password },
-      tls: {
-        rejectUnauthorized: false, // Allow self-signed certificates for Gmail SMTP
-      },
-    });
+      connectionTimeout: 60000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
+    };
+
+    // In production (Vercel), enforce strict certificate validation.
+    // In local development, allow relaxed validation to accommodate local network
+    // configurations (proxies, VPNs, corporate firewalls) that may use
+    // self-signed certificates for SSL inspection. This is a common
+    // scenario in local development environments and does not affect
+    // production security.
+    // 
+    // Use SMTP_TLS_STRICT=true to force strict validation (for testing)
+    // Use SMTP_TLS_STRICT=false to force relaxed validation (for local dev with proxy issues)
+    // Default: strict validation on Vercel production, relaxed in local development
+    const isVercelProduction = process.env.VERCEL_ENV === 'production';
+    const tlsStrict = process.env.SMTP_TLS_STRICT === 'true' || (isVercelProduction && process.env.SMTP_TLS_STRICT !== 'false');
+    
+    console.log('[contact] NODE_ENV:', process.env.NODE_ENV, 'VERCEL_ENV:', process.env.VERCEL_ENV, 'SMTP_TLS_STRICT:', process.env.SMTP_TLS_STRICT, 'tlsStrict:', tlsStrict);
+    
+    if (!tlsStrict) {
+      transporterConfig.tls = {
+        rejectUnauthorized: false,
+      };
+      console.log('[contact] Relaxed TLS certificate validation enabled');
+    }
+
+    const transporter = nodemailer.createTransport(transporterConfig);
 
     await transporter.sendMail({
       from: user,
